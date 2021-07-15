@@ -1,0 +1,17 @@
+﻿<Window x:Class="EcoSys.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EcoSys"
+        mc:Ignorable="d"
+        Title="" Height="353" Width="600" SizeToContent="Manual" ResizeMode="NoResize">
+    <Grid x:Name="starting_page">
+        <Label Content="Приветственный экран" Margin="0,35,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
+        <Button x:Name="ImportButton" Content="Новый Excel-файл" Margin="122,100,314,0" VerticalAlignment="Top" Height="69" Click="ImportButton_Click" HorizontalContentAlignment="Center"/>
+        <Button x:Name="OpenLastButton" Content="Загрузить последний использованный файл" Margin="122,184,122,0" VerticalAlignment="Top" Height="69" Click="OpenLastButton_Click"/>
+        <TextBox x:Name="LastPath" Margin="0,258,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="False" BorderBrush="White" HorizontalAlignment="Center" Width="356" Height="35"/>
+        <Button x:Name="ImportJSON" Content="JSON-файл" Margin="319,100,122,0" VerticalAlignment="Top" Height="69" Click="ImportJSON_Click"/>
+
+    </Grid>
+</Window>
