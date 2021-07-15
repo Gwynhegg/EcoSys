@@ -7,8 +7,19 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button x:Name="JSONButton" Content="Создать JSON-файл" Margin="273,0,295,175" VerticalAlignment="Bottom" Height="100" Click="JSONButton_Click"/>
-        <TextBox x:Name="test" HorizontalAlignment="Left" Margin="230,314,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="479" Height="91"/>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="JSONButton" Content="Создать JSON-файл" Grid.Row="1" Grid.Column="1" Click="JSONButton_Click"/>
+        <Button x:Name="BackToChoose" Content="На экран выбора файла" Grid.Row="3" Grid.Column="1" Click="BackToChoose_Click"/>
     </Grid>
 </UserControl>

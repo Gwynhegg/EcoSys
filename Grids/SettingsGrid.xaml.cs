@@ -22,10 +22,13 @@ namespace EcoSys.Grids
     public partial class SettingsGrid : UserControl
     {
         Entities.DataEntity data;
-        public SettingsGrid(Entities.DataEntity data)
+
+        WorkWindow parent_window;
+        public SettingsGrid(Entities.DataEntity data, WorkWindow parent_window)
         {
             InitializeComponent();
             this.data = data;
+            this.parent_window = parent_window;
         }
 
         private void JSONButton_Click(object sender, RoutedEventArgs e)
@@ -56,6 +59,18 @@ namespace EcoSys.Grids
             }
 
             
+        }
+
+        private void BackToChoose_Click(object sender, RoutedEventArgs e)       //кнопка для возвращения на предыдущую форму
+        {
+            var result = MessageBox.Show("При переходе на предыдущий экран прогресс будет утерян. Продолжить?", "Предупреждение", MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                WelcomeWindow welcome_window = new WelcomeWindow();
+                welcome_window.Show();
+                parent_window.Close();
+            }
         }
     }
 }

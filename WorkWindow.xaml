@@ -7,9 +7,30 @@
         mc:Ignorable="d"
         Title="EcoSys" Height="600" Width="1200">
     <Grid x:Name="main_grid">
-        <Expander x:Name="main_menu" Header="Меню" Margin="10,10,1000,0" Height="496" VerticalAlignment="Top">
-            <Grid x:Name="menu_grid" Background="#FFE5E5E5">
-                <Button x:Name="Settings" Content="Настройки" HorizontalAlignment="Center" Margin="0,23,0,0" VerticalAlignment="Top" Height="57" Width="168" Click="Settings_Click_1"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="8*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Expander x:Name="main_menu" Header="Меню" Grid.Column="0" Height="500" VerticalAlignment="Top">
+            <Grid x:Name="menu_grid" Background="#FFE5E5E5" MinWidth="120" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="4*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="Settings" Content="Настройки" Grid.Row="1" Grid.Column="1" Click="Settings_Click_1"/>
             </Grid>
         </Expander>
     </Grid>

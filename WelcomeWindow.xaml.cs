@@ -23,10 +23,10 @@ namespace EcoSys
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class WelcomeWindow : Window
     {
         string last_path = String.Empty;
-        public MainWindow()
+        public WelcomeWindow()
         {
             InitializeComponent();
 

@@ -24,18 +24,15 @@ namespace EcoSys
             InitializeComponent();
 
             this.data = data;
-
-            menu_grid.MinWidth = 0.2 * this.Width;
-            menu_grid.MaxWidth = 0.3 * this.Width;
-
-            this.MinWidth = this.Width;
-            this.MinHeight = this.Height;
         }
 
 
         private void Settings_Click_1(object sender, RoutedEventArgs e)
         {
-            main_grid.Children.Add(new Grids.SettingsGrid(data));
+            var settings = new Grids.SettingsGrid(data, this);
+            Grid.SetColumn(settings, 0);
+            Grid.SetColumnSpan(settings, 2);
+            main_grid.Children.Add(settings);
 
         }
     }
