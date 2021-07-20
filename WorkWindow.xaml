@@ -7,11 +7,16 @@
         mc:Ignorable="d"
         Title="EcoSys" Height="600" Width="1200">
     <Grid x:Name="main_grid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="20*"></RowDefinition>
+
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="8*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Expander x:Name="main_menu" Header="Меню" Grid.Column="0" Height="500" VerticalAlignment="Top">
+        <Expander x:Name="main_menu" Header="Меню" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Height="500" VerticalAlignment="Top">
             <Grid x:Name="menu_grid" Background="#FFE5E5E5" MinWidth="120" HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"></RowDefinition>
@@ -31,6 +36,8 @@
                     <ColumnDefinition Width="1*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Button x:Name="Settings" Content="Настройки" Grid.Row="1" Grid.Column="1" Click="Settings_Click_1"/>
+                <Button x:Name="Block1Btn" Content="Блок 1" Grid.Row="3" Grid.Column="1" Click="Block1Btn_Click"/>
+
             </Grid>
         </Expander>
     </Grid>

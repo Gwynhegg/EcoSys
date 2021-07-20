@@ -20,6 +20,37 @@ namespace EcoSys.Entities
         public HashSet<string> regions { get; } = new HashSet<string>();
         public HashSet<string> years { get; } = new HashSet<string>();
 
+        public DataTable getBalanceData(HashSet<string> regions, string year)       //Метод доступа к сальдированным таблицам
+        {
+            DataTable result_table = null;
+            foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
+                if (result_table == null) result_table = balance[(region, year)]; else result_table = summarizeDataTables(result_table, balance[(region, year)]);
+            return result_table;
+        }
+
+        public DataTable getPassiveData(HashSet<string> regions, string year)       //Метод доступа к пассивной части таблиц
+        {
+            DataTable result_table = null;
+            foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
+                if (result_table == null) result_table = passive[(region, year)]; else result_table = summarizeDataTables(result_table, passive[(region, year)]);
+            return result_table;
+        }
+
+        public DataTable getActiveData(HashSet<string> regions, string year)       //Метод доступа к активной части таблиц
+        {
+            DataTable result_table = null;
+            foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
+                if (result_table == null) result_table = balance[(region, year)]; else result_table = summarizeDataTables(result_table, balance[(region, year)]);
+            return result_table;
+        }
+
+        private DataTable summarizeDataTables(DataTable first_table, DataTable second_table)        //Метод для суммирования ячеек таблицы данных
+        {
+            for (int i = 0; i < first_table.Rows.Count; i++)
+                for (int j = 0; j < first_table.Columns.Count; j++)
+                    first_table.Rows[i].SetField<Double>(j, first_table.Rows[i].Field<Double>(j) + second_table.Rows[i].Field<Double>(j));
+            return first_table;
+        }
         private async Task asyncFragmentizeData(Dictionary<(string, string), DataTable> used_dict, DataTable table)
         {
             CultureInfo cult_info = new CultureInfo("ru-RU", false);
@@ -95,7 +126,6 @@ namespace EcoSys.Entities
 
                 result_table.Rows.Add(row);
             }
-
             return result_table;
         }
 

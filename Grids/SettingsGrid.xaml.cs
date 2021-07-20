@@ -19,7 +19,7 @@ namespace EcoSys.Grids
     /// <summary>
     /// Логика взаимодействия для UserControl1.xaml
     /// </summary>
-    public partial class SettingsGrid : UserControl
+    public partial class SettingsGrid : UserControl, IGrid
     {
         Entities.DataEntity data;
 
@@ -72,5 +72,16 @@ namespace EcoSys.Grids
                 parent_window.Close();
             }
         }
+
+        public void hideGrid()
+        {
+            this.Visibility = Visibility.Hidden;
+        }
+
+        public void showGrid()
+        {
+            this.Visibility = Visibility.Visible;
+        }
+
     }
 }
