@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data;
 
 namespace EcoSys.Grids
 {
@@ -38,6 +39,11 @@ namespace EcoSys.Grids
             getYears();
         }
 
+        ~Block1()
+        {
+            GC.Collect();
+        }
+
         public void hideGrid()
         {
             this.Visibility = Visibility.Hidden;
@@ -51,6 +57,8 @@ namespace EcoSys.Grids
         private void getAllRegions()        //метод для отображения списка всех регионов
         {
             TreeViewItem item = new TreeViewItem() { Header = String.Format("Все регионы ({0})",data.regions.Count)};
+
+            item.IsExpanded = true;
 
             foreach (string region in data.regions)     //заполняем лист необходимыми чекбоксами
             {
@@ -120,7 +128,7 @@ namespace EcoSys.Grids
 
         private void regions_text_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (matrix_type.SelectedIndex != -1 && year_choose.SelectedIndex != -1) getData();
+            if (matrix_type.SelectedIndex != -1 && year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "") getData();
         }
 
         private void getData()      //привязка к выбранному типу матрицы и отправление соответствующих запросов
@@ -128,16 +136,31 @@ namespace EcoSys.Grids
             switch (matrix_type.SelectedIndex)
             {
                 case 0:
-                    data_field.ItemsSource = data.getPassiveData(region_query, year_choose.Text).DefaultView;
+                    data_field.ItemsSource = data.getPassiveData(region_query, year_choose.Text).AsDataView();
                     break;
                 case 1:
-                    data_field.ItemsSource = data.getActiveData(region_query, year_choose.Text).DefaultView;
+                    data_field.ItemsSource = data.getActiveData(region_query, year_choose.Text).AsDataView();
                     break;
                 case 2:
-                    data_field.ItemsSource = data.getBalanceData(region_query, year_choose.Text).DefaultView;
+                    data_field.ItemsSource = data.getBalanceData(region_query, year_choose.Text).AsDataView();
                     break;
             }
+
             data_field.Visibility = Visibility.Visible;
+        }
+
+        private void r2_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)        //Кастомный метод для правильного отображения заголовков
+        {
+            if (e.PropertyName.Contains('.') && e.Column is DataGridBoundColumn)
+            {
+                DataGridBoundColumn dataGridBoundColumn = e.Column as DataGridBoundColumn;
+                dataGridBoundColumn.Binding = new Binding("[" + e.PropertyName + "]");
+            }
+        }
+
+        private void export_to_exc_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

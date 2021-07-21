@@ -47,8 +47,8 @@ namespace EcoSys.Entities
         private DataTable summarizeDataTables(DataTable first_table, DataTable second_table)        //Метод для суммирования ячеек таблицы данных
         {
             for (int i = 0; i < first_table.Rows.Count; i++)
-                for (int j = 0; j < first_table.Columns.Count; j++)
-                    first_table.Rows[i].SetField<Double>(j, first_table.Rows[i].Field<Double>(j) + second_table.Rows[i].Field<Double>(j));
+                for (int j = 1; j < first_table.Columns.Count; j++)
+                    first_table.Rows[i].SetField<Double>(j, Math.Round(first_table.Rows[i].Field<Double>(j) + second_table.Rows[i].Field<Double>(j), 2));
             return first_table;
         }
         private async Task asyncFragmentizeData(Dictionary<(string, string), DataTable> used_dict, DataTable table)
@@ -104,9 +104,15 @@ namespace EcoSys.Entities
         private DataTable pickOutData(DataTable table, int col_start, int row_start)
         {
             col_start += 1;     //отступы до самих данных
-            row_start += 3;
+            row_start += 2;
 
             var result_table = new DataTable();
+
+            var lines_col = new DataColumn();       //Добавление столбца для сохранения названий показателей
+            lines_col.ColumnName = "Показатели (млн. руб.)";
+            lines_col.DataType = System.Type.GetType("System.String");
+
+            result_table.Columns.Add(lines_col);
 
             foreach (string column in columns)      //заполнение столбцов
             {
@@ -120,12 +126,23 @@ namespace EcoSys.Entities
             for (int i=0; i < lines.Count; i++)
             {
                 var row = result_table.NewRow();        //создание строк
-                
-                for (int j = 0; j < columns.Count; j++)
-                    row[result_table.Columns[j]] = table.Rows[row_start + i].Field<double>(col_start + j);      //заполнение таблицы согласно отступам в документе
+
+                row[0] = lines[i];
+                for (int j = 1; j <= columns.Count; j++)
+                    row[result_table.Columns[j]] = table.Rows[row_start + i].Field<double>(col_start + (j - 1));      //заполнение таблицы согласно отступам в документе
 
                 result_table.Rows.Add(row);
             }
+
+            //for (int i = 0; i < result_table.Rows.Count; i++)
+            //{
+            //    for (int j = 0; j < result_table.Columns.Count; j++)
+            //    {
+            //        DataRow row = result_table.Rows[i];
+            //        Console.Write(result_table.Rows[i].Field<Double>(j) + " ");
+            //    }
+            //    Console.WriteLine();
+            //}
             return result_table;
         }
 

@@ -42,6 +42,10 @@ namespace EcoSys
             {
                 OpenLastButton.IsEnabled = false;
             }
+            catch (System.NullReferenceException exc1)
+            {
+                OpenLastButton.IsEnabled = false;
+            }
             
         }
 
@@ -79,7 +83,16 @@ namespace EcoSys
 
         private async void importingExcelData(string file_path)        //Метод для импорта данных. Использование асинхронных методов
         {
-            var stream = File.OpenRead(file_path);
+            FileStream stream;
+            try
+            {
+                stream = File.OpenRead(file_path);      //Попытка открытия файла для чтения данных
+            }
+            catch
+            {
+                Console.WriteLine("Не удалось открыть файл. Возможно, он открыт в другом приложении");
+                return;
+            }
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             var reader = ExcelReaderFactory.CreateReader(stream, new ExcelReaderConfiguration() { FallbackEncoding = Encoding.GetEncoding(1252) });
             var dataset = reader.AsDataSet();
@@ -99,7 +112,17 @@ namespace EcoSys
         private void importingJsonData(string file_path)      //Десериализация json-файла
         {
             System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //ИСпользование кастомного конвертера
-            Entities.DataEntity new_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path));    
+            //ДОБАВИТЬ ПРОВЕРКУ НА ОТКРЫТОСТЬ ФАЙЛА
+            Entities.DataEntity new_entity;
+            try
+            {
+                new_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path));
+            }
+            catch
+            {
+                Console.WriteLine("Не удалось открыть файл для чтения. Возможно, он уже открыт в другом приложении");
+                return;
+            }
             WorkWindow work_window = new WorkWindow(new_entity);
             work_window.Show();
             this.Close();

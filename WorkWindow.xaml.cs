@@ -27,6 +27,11 @@ namespace EcoSys
             this.data = data;
         }
 
+        ~WorkWindow()
+        {
+            GC.Collect();
+        }
+
 
         private void Settings_Click_1(object sender, RoutedEventArgs e)
         {

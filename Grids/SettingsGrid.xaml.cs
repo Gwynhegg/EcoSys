@@ -31,6 +31,11 @@ namespace EcoSys.Grids
             this.parent_window = parent_window;
         }
 
+        ~SettingsGrid()
+        {
+            GC.Collect();
+        }
+
         private void JSONButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -69,6 +74,7 @@ namespace EcoSys.Grids
             {
                 WelcomeWindow welcome_window = new WelcomeWindow();
                 welcome_window.Show();
+                GC.Collect();
                 parent_window.Close();
             }
         }
