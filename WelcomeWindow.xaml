@@ -12,7 +12,13 @@
             <RowDefinition Height="8*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
@@ -25,10 +31,21 @@
             <ColumnDefinition Width="7*"></ColumnDefinition>
             <ColumnDefinition Width="5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+        
+
         <Label Content="Приветственный экран" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <Button x:Name="ImportButton" Content="Новый Excel-файл" Grid.Row="3" Grid.Column="1" Click="ImportButton_Click" HorizontalContentAlignment="Center"/>
         <Button x:Name="OpenLastButton" Content="Загрузить последний использованный файл" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Click="OpenLastButton_Click"/>
         <TextBox x:Name="LastPath" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Text="" TextWrapping="Wrap"  IsEnabled="False" BorderBrush="White" HorizontalAlignment="Center"/>
         <Button x:Name="ImportJSON" Content="JSON-файл" Grid.Row="3" Grid.Column="3" Click="ImportJSON_Click"/>
+        <Border BorderThickness="1" BorderBrush="Black" Grid.Column="1" Grid.Row="3" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
+        <Button x:Name="ScenarioImportButton" Content="Новый Excel-файл" Grid.Column="1" Grid.Row="9" Click="ImportButton_Click"/>
+        <Button x:Name="ScenarioJsonButton" Content="JSON-файл" Grid.Column="3" Grid.Row="9" Click="ImportJSON_Click"/>
+        <Button x:Name="ScenarioLastButton" Content="Загрузить последний использованный файл" Grid.Column="1" Grid.Row="11" Grid.ColumnSpan="3" Click="OpenLastButton_Click"/>
+        <TextBox x:Name="LastScenarioPath" Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="3" Text="" TextWrapping="Wrap"  IsEnabled="False" BorderBrush="White" HorizontalAlignment="Center"/>
+        <Border BorderThickness="1" BorderBrush="Black" Grid.Column="1" Grid.Row="9" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
+        <Button x:Name="FirstIsOK" Content="OK" Background="Green" Grid.Row="3" Grid.Column="1" Grid.RowSpan="5" Grid.ColumnSpan="3"  Visibility="Hidden"/>
+        <Button x:Name="SecondIsOK" Content="OK" Background="Green" Grid.Column="1" Grid.Row="9" Grid.RowSpan="5" Grid.ColumnSpan="3"  Visibility="Hidden"/>
+
     </Grid>
 </Window>

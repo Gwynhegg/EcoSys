@@ -6,49 +6,102 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Linq;
 
 namespace EcoSys.Entities
 {
-    public class DataEntity        //Класс содержит в себе три Dictionary, отвечающих за хранение набора матриц АКТИВЫ, ПАССИВЫ, САЛЬДО
+    public class DataEntity : BaseEntity        //Класс содержит в себе три Dictionary, отвечающих за хранение набора матриц АКТИВЫ, ПАССИВЫ, САЛЬДО
     {
         public Dictionary<(string, string), DataTable> balance { get; set; } = new Dictionary<(string, string), DataTable>();
         public Dictionary<(string, string), DataTable> active { get; set; } = new Dictionary<(string, string), DataTable>();
         public Dictionary<(string, string), DataTable> passive { get; set; } = new Dictionary<(string, string), DataTable>();
 
-        public List<string> lines { get; } = new List<string>();
-        public List<string> columns { get; } = new List<string>();
+        //public List<string> lines { get; } = new List<string>();
+        //public List<string> columns { get; } = new List<string>();
         public HashSet<string> regions { get; } = new HashSet<string>();
         public HashSet<string> years { get; } = new HashSet<string>();
 
-        public DataTable getBalanceData(HashSet<string> regions, string year)       //Метод доступа к сальдированным таблицам
+        public DataTable getBalanceData(HashSet<string> regions, string year)       //Метод доступа к сальдированным таблицам (БЛОК 1)
         {
             DataTable result_table = null;
             foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
                 if (result_table == null) result_table = balance[(region, year)]; else result_table = summarizeDataTables(result_table, balance[(region, year)]);
+
+            roundDataTable(result_table, 3);
+
             return result_table;
         }
 
-        public DataTable getPassiveData(HashSet<string> regions, string year)       //Метод доступа к пассивной части таблиц
+        public DataTable getBalanceData(HashSet<string> regions, int year)       //Метод доступа к сальдированным таблицам (БЛОК 2)
+        {
+            DataTable result_table = null;
+            foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
+                for (int i = 0; i < year; i++)
+                    if (result_table == null) result_table = balance[(region, years.ElementAt(i))]; else result_table = summarizeDataTables(result_table, balance[(region, years.ElementAt(i))]);
+
+            roundDataTable(result_table, 3);
+
+            return result_table;
+        }
+
+        public DataTable getPassiveData(HashSet<string> regions, string year)       //Метод доступа к пассивной части таблиц (БЛОК 1)
         {
             DataTable result_table = null;
             foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
                 if (result_table == null) result_table = passive[(region, year)]; else result_table = summarizeDataTables(result_table, passive[(region, year)]);
+
+            roundDataTable(result_table, 3);
+
             return result_table;
         }
 
-        public DataTable getActiveData(HashSet<string> regions, string year)       //Метод доступа к активной части таблиц
+        public DataTable getPassiveData(HashSet<string> regions, int year)       //Метод доступа к пассивной части таблиц (БЛОК 2)
         {
             DataTable result_table = null;
             foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
-                if (result_table == null) result_table = balance[(region, year)]; else result_table = summarizeDataTables(result_table, balance[(region, year)]);
+                for (int i = 0; i < year; i++)
+                    if (result_table == null) result_table = passive[(region, years.ElementAt(i))]; else result_table = summarizeDataTables(result_table, passive[(region, years.ElementAt(i))]);
+
+            roundDataTable(result_table, 3);
+
             return result_table;
+        }
+
+        public DataTable getActiveData(HashSet<string> regions, string year)       //Метод доступа к активной части таблиц (БЛОК 1)
+        {
+            DataTable result_table = null;
+            foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
+                if (result_table == null) result_table = active[(region, year)]; else result_table = summarizeDataTables(result_table, active[(region, year)]);
+
+            roundDataTable(result_table, 3);
+
+            return result_table;
+        }
+
+        public DataTable getActiveData(HashSet<string> regions, int year)       //Метод доступа к активной части таблиц (БЛОК 2)
+        {
+            DataTable result_table = null;
+            foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
+                for (int i = 0; i < year; i++)
+                    if (result_table == null) result_table = active[(region, years.ElementAt(i))]; else result_table = summarizeDataTables(result_table, active[(region, years.ElementAt(i))]);
+
+            roundDataTable(result_table, 3);
+
+            return result_table;
+        }
+
+        private void roundDataTable(DataTable table, int num_of_symb)      //Метод для задания количества знаков после запятой
+        {
+            for (int i = 0; i < table.Rows.Count; i++)
+                for (int j = 1; j < table.Columns.Count; j++)
+                    table.Rows[i].SetField<Decimal>(j, Math.Round(table.Rows[i].Field<Decimal>(j), num_of_symb));
         }
 
         private DataTable summarizeDataTables(DataTable first_table, DataTable second_table)        //Метод для суммирования ячеек таблицы данных
         {
             for (int i = 0; i < first_table.Rows.Count; i++)
                 for (int j = 1; j < first_table.Columns.Count; j++)
-                    first_table.Rows[i].SetField<Double>(j, Math.Round(first_table.Rows[i].Field<Double>(j) + second_table.Rows[i].Field<Double>(j), 2));
+                    first_table.Rows[i].SetField<Decimal>(j, first_table.Rows[i].Field<Decimal>(j) + second_table.Rows[i].Field<Decimal>(j));
             return first_table;
         }
         private async Task asyncFragmentizeData(Dictionary<(string, string), DataTable> used_dict, DataTable table)
@@ -69,14 +122,14 @@ namespace EcoSys.Entities
                     string year = table.Rows[hor_index].Field<string>(vert_index);      //Получение временного промежутка
                     years.Add(year);
 
-                    used_dict.Add((region, year), pickOutData(table, vert_index, hor_index));   //добавление таблицы-выборки в словарь
+                    used_dict.Add((region, year), pickOutData(table, vert_index, hor_index, 1, 2));   //добавление таблицы-выборки в словарь
                 }
             }
         } 
 
         public async void createTables(DataSet dataset)     //В данном методе асинхронно заполяются все три словаря
         {
-            createLinesAndColumns(dataset.Tables[0]);   //создаем заголовки строк и столбцов
+            createLinesAndColumns(dataset.Tables[0], 3, 4, 31);   //создаем заголовки строк и столбцов
 
             Task import_balance = asyncFragmentizeData(balance, dataset.Tables[0]);
             Task import_actives = asyncFragmentizeData(active, dataset.Tables[1]);
@@ -85,66 +138,19 @@ namespace EcoSys.Entities
             var complete_tasks = new List<Task>() {import_balance, import_actives, import_passives};
 
             await Task.WhenAll(complete_tasks);
-            Console.WriteLine();
         }
 
-        private void createLinesAndColumns(DataTable table)
-        {
-            //Создание заголовков столбцов для датасета
-            for (int i = 1; i < 4; i++) 
-                columns.Add("Финансовые корпорации. " + table.Rows[3].Field<string>(i));
-            for (int i = 4; i < 8; i++)
-                columns.Add(table.Rows[2].Field<string>(i));
+        //private void createLinesAndColumns(DataTable table)
+        //{
+        //    //Создание заголовков столбцов для датасета
+        //    for (int i = 1; i < 4; i++) 
+        //        columns.Add("Финансовые корпорации. " + table.Rows[3].Field<string>(i));
+        //    for (int i = 4; i < 8; i++)
+        //        columns.Add(table.Rows[2].Field<string>(i));
 
-            //Создание заголовков строк для датасета
-            for (int i = 4; i < 31; i++)
-                lines.Add(table.Rows[i].Field<string>(0));
-        }
-
-        private DataTable pickOutData(DataTable table, int col_start, int row_start)
-        {
-            col_start += 1;     //отступы до самих данных
-            row_start += 2;
-
-            var result_table = new DataTable();
-
-            var lines_col = new DataColumn();       //Добавление столбца для сохранения названий показателей
-            lines_col.ColumnName = "Показатели (млн. руб.)";
-            lines_col.DataType = System.Type.GetType("System.String");
-
-            result_table.Columns.Add(lines_col);
-
-            foreach (string column in columns)      //заполнение столбцов
-            {
-                var data_col = new DataColumn();
-                data_col.ColumnName = column;
-                data_col.DataType = System.Type.GetType("System.Double");
-
-                result_table.Columns.Add(data_col);
-            }
-
-            for (int i=0; i < lines.Count; i++)
-            {
-                var row = result_table.NewRow();        //создание строк
-
-                row[0] = lines[i];
-                for (int j = 1; j <= columns.Count; j++)
-                    row[result_table.Columns[j]] = table.Rows[row_start + i].Field<double>(col_start + (j - 1));      //заполнение таблицы согласно отступам в документе
-
-                result_table.Rows.Add(row);
-            }
-
-            //for (int i = 0; i < result_table.Rows.Count; i++)
-            //{
-            //    for (int j = 0; j < result_table.Columns.Count; j++)
-            //    {
-            //        DataRow row = result_table.Rows[i];
-            //        Console.Write(result_table.Rows[i].Field<Double>(j) + " ");
-            //    }
-            //    Console.WriteLine();
-            //}
-            return result_table;
-        }
-
+        //    //Создание заголовков строк для датасета
+        //    for (int i = 4; i < 31; i++)
+        //        lines.Add(table.Rows[i].Field<string>(0));
+        //}
     }
 }

@@ -25,7 +25,12 @@ namespace EcoSys
     /// </summary>
     public partial class WelcomeWindow : Window
     {
-        string last_path = String.Empty;
+        private StreamWriter writer;        //объект для записи кэша и сохранения пути файлов
+        private string entity_last_path = String.Empty;     //переменная для запоминания последнего пути файла с данными МДФП
+        private Entities.DataEntity data_entity;     //объект для хранения данных МДФП
+        private Entities.ScenarioEntity scenario_entity;        //Объект для хранения сценариев ДФП
+
+        private bool first_condition = false, second_condition = false;     //Переменные, отображающие готовность перехода в рабочую область
         public WelcomeWindow()
         {
             InitializeComponent();
@@ -34,7 +39,7 @@ namespace EcoSys
             {
                 StreamReader reader = new StreamReader("cache");        //проверка на наличие кэша и отображение последнего пути
                 string input = reader.ReadLine();
-                last_path = input.Split(' ')[0];        //запоминаем путь в переменной
+                entity_last_path = input.Split(' ')[0];        //запоминаем путь в переменной
                 LastPath.Text = input;
                 reader.Close();
             } 
@@ -63,9 +68,8 @@ namespace EcoSys
 
             try
             {
-                importingExcelData(file_path);
-                createLogFile(file_path);
-            } 
+                if (((Button)sender).Name == "ImportButton") importingExcelData(file_path, "Data"); else importingExcelData(file_path, "Scenario");
+            }
             catch (IOException exc)
             {
                 var dialog_result = MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
@@ -77,11 +81,11 @@ namespace EcoSys
         private void createLogFile(string file_path)        //Метод для создания/переписывания лог-файла
         {
             var writer = new StreamWriter("cache");
-            writer.Write(String.Join(' ', file_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
+            writer.WriteLine(String.Join(' ', entity_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
             writer.Close();
         }
 
-        private async void importingExcelData(string file_path)        //Метод для импорта данных. Использование асинхронных методов
+        private async void importingExcelData(string file_path, string type)        //Метод для импорта данных. Использование асинхронных методов
         {
             FileStream stream;
             try
@@ -100,40 +104,58 @@ namespace EcoSys
             stream.Close();     //Закрываем считываемые потоки
             reader.Close();
 
-            Entities.DataEntity new_entity = new Entities.DataEntity();
+            if (type == "Data")
+            {
+                data_entity = new Entities.DataEntity();
 
-            await Task.Run(() => new_entity.createTables(dataset));     //Начинаем асинхронное заполнение таблиц на основе датасета
+                await Task.Run(() => data_entity.createTables(dataset));     //Начинаем асинхронное заполнение таблиц на основе датасета
 
-            WorkWindow work_window = new WorkWindow(new_entity);
-            work_window.Show();
-            this.Close();
+                firstOK();
+            } 
+            else if (type == "Scenario")
+            {
+                scenario_entity = new Entities.ScenarioEntity();
+
+                await Task.Run(() => scenario_entity.createTables(dataset));
+
+                secondOK();
+            }
+
         }
 
-        private void importingJsonData(string file_path)      //Десериализация json-файла
+        private void importingJsonData(string file_path, string type)      //Десериализация json-файла
         {
             System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //ИСпользование кастомного конвертера
-            //ДОБАВИТЬ ПРОВЕРКУ НА ОТКРЫТОСТЬ ФАЙЛА
-            Entities.DataEntity new_entity;
             try
             {
-                new_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path));
+                if (type == "Data")
+                {
+                    data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path));
+
+                    firstOK();
+                }
+                else if (type == "Scenario")
+                {
+                    scenario_entity = JsonConvert.DeserializeObject<Entities.ScenarioEntity>(File.ReadAllText(file_path));
+
+                    secondOK();
+                }
             }
             catch
             {
                 Console.WriteLine("Не удалось открыть файл для чтения. Возможно, он уже открыт в другом приложении");
                 return;
             }
-            WorkWindow work_window = new WorkWindow(new_entity);
-            work_window.Show();
-            this.Close();
         }
 
         private void OpenLastButton_Click(object sender, RoutedEventArgs e)     //открытие последнего использованного файла
         {
             try
             {
-                if (last_path.Contains(".json")) importingJsonData(last_path); else importingExcelData(last_path);      //Проверка на формат последнего файла
-                createLogFile(last_path);
+                if (((Button)sender).Name == "OpenLastButton")
+                    if (entity_last_path.Contains(".json")) importingJsonData(entity_last_path, "Data"); else importingExcelData(entity_last_path, "Data");      //Проверка на формат последнего файла
+                else 
+                    if (entity_last_path.Contains(".json")) importingJsonData(entity_last_path, "Scenario"); else importingExcelData(entity_last_path, "Scenario");
             }
             catch (IOException exc)
             {
@@ -155,14 +177,37 @@ namespace EcoSys
 
             try
             {
-                importingJsonData(file_path);
-                createLogFile(file_path);
+                if (((Button)sender).Name == "ImportJSON") importingJsonData(file_path, "Data"); else importingJsonData(file_path, "Scenario");
             }
             catch (IOException exc)
             {
                 var dialog_result = MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;
             }
+        }
+
+        private void checkConditions()
+        {
+            if (first_condition && second_condition)
+            {
+                WorkWindow work_window = new WorkWindow(data_entity, scenario_entity);
+                work_window.Show();
+                this.Close();
+            }
+        }
+
+        private void firstOK()
+        {
+            FirstIsOK.Visibility = Visibility.Visible;
+            first_condition = true;
+            checkConditions();
+        }
+
+        private void secondOK()
+        {
+            SecondIsOK.Visibility = Visibility.Visible;
+            second_condition = true;
+            checkConditions();
         }
     }
 }

@@ -24,11 +24,12 @@ namespace EcoSys.Grids
         Entities.DataEntity data;
 
         WorkWindow parent_window;
-        public SettingsGrid(Entities.DataEntity data, WorkWindow parent_window)
+
+        public SettingsGrid(Entities.DataEntity data, WorkWindow parent)
         {
             InitializeComponent();
             this.data = data;
-            this.parent_window = parent_window;
+            parent_window = parent;
         }
 
         ~SettingsGrid()

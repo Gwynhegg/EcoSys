@@ -18,17 +18,16 @@ namespace EcoSys.Grids
     /// <summary>
     /// Логика взаимодействия для Block1.xaml
     /// </summary>
-    public partial class Block1 : UserControl, IGrid
+    public partial class Block2 : UserControl, IGrid
     {
 
         private HashSet<string> region_query;
 
         private Entities.DataEntity data;
 
-
         private DataTable current_table = null;
 
-        public Block1(Entities.DataEntity data)
+        public Block2(Entities.DataEntity data)
         {
             InitializeComponent();
             this.data = data;
@@ -38,7 +37,7 @@ namespace EcoSys.Grids
             getYears();
         }
 
-        ~Block1()
+        ~Block2()
         {
             GC.Collect();
         }
@@ -73,8 +72,11 @@ namespace EcoSys.Grids
 
         private void getYears()     //добавление списка всех годов, встреченных в файле
         {
-            foreach (string year in data.years)
-                year_choose.Items.Add(new ComboBoxItem() { Content = year });
+            for (int i=1; i < data.years.Count; i++)
+                year_choose.Items.Add(new ComboBoxItem() { Content = ("На 1 января " + data.years.ElementAt(i) + "а") });
+
+            string[] temp = data.years.Last<string>().Split(' ');
+            year_choose.Items.Add(new ComboBoxItem() { Content = "На 1 января " + (Int32.Parse(temp[0]) + 1) + " " + temp[1] + "а"});
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -116,37 +118,39 @@ namespace EcoSys.Grids
 
         private void matrix_type_SelectionChanged(object sender, SelectionChangedEventArgs e)       //Было принято решение о динамической загрузке таблицы
         {
-            if (year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
+            if (year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "") 
                 getData();
-
+                
         }
 
         private void year_choose_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (matrix_type.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
+            if (matrix_type.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "") 
                 getData();
         }
 
         private void regions_text_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (matrix_type.SelectedIndex != -1 && year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "") getData();
+            if (matrix_type.SelectedIndex != -1 && year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "") 
+                getData();
         }
 
         private void getData()      //привязка к выбранному типу матрицы и отправление соответствующих запросов
         {
+
             int selected_index = matrix_type.SelectedIndex;
-            string selected_year = ((ComboBoxItem)year_choose.SelectedItem).Content.ToString();
+            int selected_year_index = year_choose.SelectedIndex + 1;
 
             switch (selected_index)
             {
                 case 0:
-                    this.current_table = data.getPassiveData(region_query, selected_year);
+                    this.current_table = data.getPassiveData(region_query, selected_year_index);
                     break;
                 case 1:
-                    this.current_table = data.getActiveData(region_query, selected_year);
+                    this.current_table = data.getActiveData(region_query, selected_year_index);
                     break;
                 case 2:
-                    this.current_table = data.getBalanceData(region_query, selected_year);
+                    this.current_table = data.getBalanceData(region_query, selected_year_index);
                     break;
             }
 

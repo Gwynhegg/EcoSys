@@ -37,6 +37,7 @@
                 </Grid.ColumnDefinitions>
                 <Button x:Name="Settings" Content="Настройки" Grid.Row="1" Grid.Column="1" Click="Settings_Click_1"/>
                 <Button x:Name="Block1Btn" Content="Блок 1" Grid.Row="3" Grid.Column="1" Click="Block1Btn_Click"/>
+                <Button x:Name="Block2Btn" Content="Блок 2" Grid.Row="5" Grid.Column="1" Click="Block2Btn_Click"/>
 
             </Grid>
         </Expander>

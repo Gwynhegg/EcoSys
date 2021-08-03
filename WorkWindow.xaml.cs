@@ -19,12 +19,14 @@ namespace EcoSys
     public partial class WorkWindow : Window
     {
         Entities.DataEntity data;
+        Entities.ScenarioEntity scenario;
 
-        public WorkWindow(Entities.DataEntity data)
+        public WorkWindow(Entities.DataEntity data, Entities.ScenarioEntity scenario)
         {
             InitializeComponent();
 
             this.data = data;
+            this.scenario = scenario;
         }
 
         ~WorkWindow()
@@ -36,13 +38,7 @@ namespace EcoSys
         private void Settings_Click_1(object sender, RoutedEventArgs e)
         {
             if (!alreadyExist<Grids.SettingsGrid>())        //Если элемента нет - создаем его
-            {
-                var settings = new Grids.SettingsGrid(data, this);
-                Grid.SetColumn(settings, 0);
-                Grid.SetColumnSpan(settings, 2);
-                Grid.SetRow(settings, 1);
-                main_grid.Children.Insert(0, settings);
-            }
+            createNewGrid(new Grids.SettingsGrid(data, this));
 
             main_menu.IsExpanded = false;
         }
@@ -50,26 +46,34 @@ namespace EcoSys
         private void Block1Btn_Click(object sender, RoutedEventArgs e)
         {
             if (!alreadyExist<Grids.Block1>())
-            {
-                var block1 = new Grids.Block1(data, this);
-                Grid.SetColumn(block1, 0);
-                Grid.SetColumnSpan(block1, 2);
-                Grid.SetRow(block1, 1);
-                main_grid.Children.Insert(0, block1);
-            }
+                createNewGrid(new Grids.Block1(data));
+
+            main_menu.IsExpanded = false;
+        }
+
+        private void Block2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!alreadyExist<Grids.Block2>())
+                createNewGrid(new Grids.Block2(data));
+
             main_menu.IsExpanded = false;
         }
 
         private bool alreadyExist<T>()      //Проверка существования с использованием обобщенного типа
         {
-            if (main_grid.Children.OfType<T>().Any())      //Если элемент уже есть, то скрываем все другие гриды и показываем его
-            {
-                foreach (object grid in main_grid.Children)
-                    if (grid is Grids.IGrid)
-                        if (grid is T) ((Grids.IGrid)grid).showGrid(); else ((Grids.IGrid)grid).hideGrid();
-                return true;
-            }
-            else return false;
+                foreach (object grid in main_grid.Children)     //Пробегаем по всем дочерним элементам главного окна
+                    if (grid is Grids.IGrid)        //Поскольку мы работаем только с кастомными гридами, не затрагиваем все остальное
+                        if (grid is T) ((Grids.IGrid)grid).showGrid(); else ((Grids.IGrid)grid).hideGrid();     //Если грид найден, то показываем его, скрывая остальные. Работает даже в случаях, когда грида еще нет
+            if (main_grid.Children.OfType<T>().Any()) return true; else return false;       //говорим о необходимости создавать новый грид
+        }
+
+
+        private void createNewGrid(UIElement grid)      //Создание нового пользовательского элемента и отображение его на главной форме
+        {
+            Grid.SetColumn(grid, 0);
+            Grid.SetColumnSpan(grid, 2);
+            Grid.SetRow(grid, 1);
+            main_grid.Children.Insert(0, grid);
         }
     }
 }
