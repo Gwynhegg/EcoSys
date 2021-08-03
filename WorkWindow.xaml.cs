@@ -19,14 +19,14 @@ namespace EcoSys
     public partial class WorkWindow : Window
     {
         Entities.DataEntity data;
-        Entities.ScenarioEntity scenario;
+        Entities.ScenarioEntity scenarios;
 
         public WorkWindow(Entities.DataEntity data, Entities.ScenarioEntity scenario)
         {
             InitializeComponent();
 
             this.data = data;
-            this.scenario = scenario;
+            this.scenarios = scenario;
         }
 
         ~WorkWindow()
@@ -38,7 +38,7 @@ namespace EcoSys
         private void Settings_Click_1(object sender, RoutedEventArgs e)
         {
             if (!alreadyExist<Grids.SettingsGrid>())        //Если элемента нет - создаем его
-            createNewGrid(new Grids.SettingsGrid(data, this));
+            createNewGrid(new Grids.SettingsGrid(data, scenarios, this));
 
             main_menu.IsExpanded = false;
         }

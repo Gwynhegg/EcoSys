@@ -26,7 +26,7 @@ namespace EcoSys
     public partial class WelcomeWindow : Window
     {
         private StreamWriter writer;        //объект для записи кэша и сохранения пути файлов
-        private string entity_last_path = String.Empty;     //переменная для запоминания последнего пути файла с данными МДФП
+        private string data_last_path = String.Empty, scenario_last_path = String.Empty;     //переменная для запоминания последнего пути файла с данными МДФП
         private Entities.DataEntity data_entity;     //объект для хранения данных МДФП
         private Entities.ScenarioEntity scenario_entity;        //Объект для хранения сценариев ДФП
 
@@ -35,25 +35,31 @@ namespace EcoSys
         {
             InitializeComponent();
 
+            StreamReader reader = new StreamReader("cache");        //проверка на наличие кэша и отображение последнего пути
+
+            tryToFindLastFile(reader, ref data_last_path, OpenLastButton, LastPath);
+            tryToFindLastFile(reader, ref scenario_last_path, ScenarioLastButton, LastScenarioPath);
+
+            reader.Close();
+        }
+
+        private void tryToFindLastFile(StreamReader reader, ref string param, Button button, TextBox text_box)
+        {
             try
             {
-                StreamReader reader = new StreamReader("cache");        //проверка на наличие кэша и отображение последнего пути
                 string input = reader.ReadLine();
-                entity_last_path = input.Split(' ')[0];        //запоминаем путь в переменной
-                LastPath.Text = input;
-                reader.Close();
-            } 
+                param = input.Split(' ')[0];        //запоминаем путь в переменной
+                text_box.Text = input;
+            }
             catch (System.IO.FileNotFoundException exc)
             {
-                OpenLastButton.IsEnabled = false;
+                button.IsEnabled = false;
             }
             catch (System.NullReferenceException exc1)
             {
-                OpenLastButton.IsEnabled = false;
+                button.IsEnabled = false;
             }
-            
         }
-
         private void ImportButton_Click(object sender, RoutedEventArgs e)       //Событие при нажатии на кнопку импорта данных
         {
             string file_path = string.Empty;
@@ -78,10 +84,13 @@ namespace EcoSys
 
         }
 
-        private void createLogFile(string file_path)        //Метод для создания/переписывания лог-файла
+        private void createLogFile()        //Метод для создания/переписывания лог-файла
         {
             var writer = new StreamWriter("cache");
-            writer.WriteLine(String.Join(' ', entity_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
+
+            writer.WriteLine(String.Join(' ', data_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
+            writer.WriteLine(String.Join(' ', scenario_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
+
             writer.Close();
         }
 
@@ -110,13 +119,17 @@ namespace EcoSys
 
                 await Task.Run(() => data_entity.createTables(dataset));     //Начинаем асинхронное заполнение таблиц на основе датасета
 
+                data_last_path = file_path;
+
                 firstOK();
-            } 
+            }
             else if (type == "Scenario")
             {
                 scenario_entity = new Entities.ScenarioEntity();
 
                 await Task.Run(() => scenario_entity.createTables(dataset));
+
+                scenario_last_path = file_path;
 
                 secondOK();
             }
@@ -132,18 +145,24 @@ namespace EcoSys
                 {
                     data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path));
 
+                    data_last_path = file_path;
+
                     firstOK();
                 }
                 else if (type == "Scenario")
                 {
+                    System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TripletConverter<string, string, string>)));        //ИСпользование кастомного конвертера
+
                     scenario_entity = JsonConvert.DeserializeObject<Entities.ScenarioEntity>(File.ReadAllText(file_path));
+
+                    scenario_last_path = file_path;
 
                     secondOK();
                 }
             }
             catch
             {
-                Console.WriteLine("Не удалось открыть файл для чтения. Возможно, он уже открыт в другом приложении");
+                MessageBox.Show("Не удалось открыть файл для чтения. Возможно, он уже открыт в другом приложении", "Ошибка импортирования", MessageBoxButton.OK);
                 return;
             }
         }
@@ -153,9 +172,9 @@ namespace EcoSys
             try
             {
                 if (((Button)sender).Name == "OpenLastButton")
-                    if (entity_last_path.Contains(".json")) importingJsonData(entity_last_path, "Data"); else importingExcelData(entity_last_path, "Data");      //Проверка на формат последнего файла
-                else 
-                    if (entity_last_path.Contains(".json")) importingJsonData(entity_last_path, "Scenario"); else importingExcelData(entity_last_path, "Scenario");
+                    if (data_last_path.Contains(".json")) importingJsonData(data_last_path, "Data"); else importingExcelData(data_last_path, "Data");      //Проверка на формат последнего файла
+                else
+                    if (scenario_last_path.Contains(".json")) importingJsonData(scenario_last_path, "Scenario"); else importingExcelData(scenario_last_path, "Scenario");
             }
             catch (IOException exc)
             {
@@ -190,6 +209,9 @@ namespace EcoSys
         {
             if (first_condition && second_condition)
             {
+
+                createLogFile();
+
                 WorkWindow work_window = new WorkWindow(data_entity, scenario_entity);
                 work_window.Show();
                 this.Close();

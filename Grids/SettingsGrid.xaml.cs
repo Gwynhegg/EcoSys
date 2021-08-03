@@ -22,13 +22,15 @@ namespace EcoSys.Grids
     public partial class SettingsGrid : UserControl, IGrid
     {
         Entities.DataEntity data;
+        Entities.ScenarioEntity scenarios;
 
         WorkWindow parent_window;
 
-        public SettingsGrid(Entities.DataEntity data, WorkWindow parent)
+        public SettingsGrid(Entities.DataEntity data, Entities.ScenarioEntity scenarios, WorkWindow parent)
         {
             InitializeComponent();
             this.data = data;
+            this.scenarios = scenarios;
             parent_window = parent;
         }
 
@@ -51,8 +53,18 @@ namespace EcoSys.Grids
                 try
                 {
                     var writer = File.CreateText(save_filedialog.FileName);
-                    System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //использование кастомного конвертера
-                    writer.Write(JsonConvert.SerializeObject(data));        //Сериализуем объект с помощью Newtonsoft
+                    if (((Button)sender).Name == "JSONButton")
+                    {
+                        System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //использование кастомного конвертера
+                        writer.Write(JsonConvert.SerializeObject(data));        //Сериализуем объект с помощью Newtonsoft
+                    }
+                    else
+                    {
+                        System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //использование кастомного конвертера
+                        System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TripletConverter<string, string, string>)));        //использование кастомного конвертера
+                        writer.Write(JsonConvert.SerializeObject(scenarios));        //Сериализуем объект с помощью Newtonsoft
+                    }
+
                     writer.Close();
                     MessageBox.Show("Файл успешно создан!", "", MessageBoxButton.OK);
                 }
@@ -63,9 +75,9 @@ namespace EcoSys.Grids
                 }
                     
             }
-
             
         }
+
 
         private void BackToChoose_Click(object sender, RoutedEventArgs e)       //кнопка для возвращения на предыдущую форму
         {

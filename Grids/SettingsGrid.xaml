@@ -8,18 +8,21 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="3*"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Button x:Name="JSONButton" Content="Создать JSON-файл" Grid.Row="1" Grid.Column="1" Click="JSONButton_Click"/>
-        <Button x:Name="BackToChoose" Content="На экран выбора файла" Grid.Row="3" Grid.Column="1" Click="BackToChoose_Click"/>
+        <Button x:Name="JSONButton" Content="Создать JSON-файл для файла МДФП" Grid.Row="1" Grid.Column="1" Click="JSONButton_Click"/>
+        <Button x:Name="JSONButton1" Content="Создать JSON-файл для файла сценариев" Grid.Row="3" Grid.Column="1" Click="JSONButton_Click"/>
+        <Button x:Name="BackToChoose" Content="На экран выбора файла" Grid.Row="5" Grid.Column="1" Click="BackToChoose_Click"/>
     </Grid>
 </UserControl>

@@ -15,9 +15,6 @@ namespace EcoSys.Entities
         public Dictionary<(string, string), DataTable> balance { get; set; } = new Dictionary<(string, string), DataTable>();
         public Dictionary<(string, string), DataTable> active { get; set; } = new Dictionary<(string, string), DataTable>();
         public Dictionary<(string, string), DataTable> passive { get; set; } = new Dictionary<(string, string), DataTable>();
-
-        //public List<string> lines { get; } = new List<string>();
-        //public List<string> columns { get; } = new List<string>();
         public HashSet<string> regions { get; } = new HashSet<string>();
         public HashSet<string> years { get; } = new HashSet<string>();
 
@@ -139,18 +136,5 @@ namespace EcoSys.Entities
 
             await Task.WhenAll(complete_tasks);
         }
-
-        //private void createLinesAndColumns(DataTable table)
-        //{
-        //    //Создание заголовков столбцов для датасета
-        //    for (int i = 1; i < 4; i++) 
-        //        columns.Add("Финансовые корпорации. " + table.Rows[3].Field<string>(i));
-        //    for (int i = 4; i < 8; i++)
-        //        columns.Add(table.Rows[2].Field<string>(i));
-
-        //    //Создание заголовков строк для датасета
-        //    for (int i = 4; i < 31; i++)
-        //        lines.Add(table.Rows[i].Field<string>(0));
-        //}
     }
 }
