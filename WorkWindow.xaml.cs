@@ -59,6 +59,29 @@ namespace EcoSys
             main_menu.IsExpanded = false;
         }
 
+        private void BlockBtnClick(object sender, RoutedEventArgs e)
+        {
+            switch (((Button)sender).Name)
+            {
+                case "Block1Btn":
+                    if (!alreadyExist<Grids.Block1>())
+                        createNewGrid(new Grids.Block1(data));
+                    break;
+                case "Block2Btn":
+                    if (!alreadyExist<Grids.Block2>())
+                        createNewGrid(new Grids.Block2(data));
+                    break;
+                case "Block3Btn":
+                    if (!alreadyExist<Grids.Block2>())
+                        createNewGrid(new Grids.Block3(scenarios));
+                    break;
+
+            }
+
+            main_menu.IsExpanded = false;
+
+        }
+
         private bool alreadyExist<T>()      //Проверка существования с использованием обобщенного типа
         {
                 foreach (object grid in main_grid.Children)     //Пробегаем по всем дочерним элементам главного окна
@@ -75,5 +98,7 @@ namespace EcoSys
             Grid.SetRow(grid, 1);
             main_grid.Children.Insert(0, grid);
         }
+
+
     }
 }

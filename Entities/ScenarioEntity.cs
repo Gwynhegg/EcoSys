@@ -4,6 +4,7 @@ using System.Text;
 using System.Data;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Linq;
 
 namespace EcoSys.Entities
 {
@@ -14,6 +15,14 @@ namespace EcoSys.Entities
         public HashSet<string> regions { get; } = new HashSet<string>();
         public List<string> years { get; } = new List<string>();
         public List<string> scenario_name { get; } = new List<string>();
+
+        public DataTable getScenarioData(int year_index, int region_index, string scenario_name)
+        {
+            var region = regions.ElementAt(region_index);
+            var year = years[year_index];
+
+            return scenarios[(year, region, scenario_name)];
+        }
         private async Task asyncFragmentizeScenario(DataTable table)        //Выделение таблиц и заполнение словарей
         {
             CultureInfo cult_info = new CultureInfo("ru-RU", false);
@@ -123,7 +132,7 @@ namespace EcoSys.Entities
             {
                 var data_col = new DataColumn();
                 data_col.ColumnName = table.Rows[row_start - 1].Field<string>(col_start + i);
-                data_col.DataType = System.Type.GetType("System.Decimal");
+                data_col.DataType = System.Type.GetType("System.Double");
                 data_col.AllowDBNull = true;
 
                 result_table.Columns.Add(data_col);
@@ -133,7 +142,7 @@ namespace EcoSys.Entities
             {
                 var row = result_table.NewRow();
 
-                row[0] = table.Rows[row_start + index].Field<double>(col_start - 1).ToString();
+                row[0] = table.Rows[row_start + index].Field<double?>(col_start - 1).ToString();
 
                 for (int i = 0; i < 5; i++)
                 {

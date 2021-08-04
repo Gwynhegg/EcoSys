@@ -91,14 +91,14 @@ namespace EcoSys.Entities
         {
             for (int i = 0; i < table.Rows.Count; i++)
                 for (int j = 1; j < table.Columns.Count; j++)
-                    table.Rows[i].SetField<Decimal>(j, Math.Round(table.Rows[i].Field<Decimal>(j), num_of_symb));
+                    table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
         }
 
         private DataTable summarizeDataTables(DataTable first_table, DataTable second_table)        //Метод для суммирования ячеек таблицы данных
         {
             for (int i = 0; i < first_table.Rows.Count; i++)
                 for (int j = 1; j < first_table.Columns.Count; j++)
-                    first_table.Rows[i].SetField<Decimal>(j, first_table.Rows[i].Field<Decimal>(j) + second_table.Rows[i].Field<Decimal>(j));
+                    first_table.Rows[i].SetField<double>(j, first_table.Rows[i].Field<double>(j) + second_table.Rows[i].Field<double>(j));
             return first_table;
         }
         private async Task asyncFragmentizeData(Dictionary<(string, string), DataTable> used_dict, DataTable table)
