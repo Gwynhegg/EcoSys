@@ -36,7 +36,7 @@ namespace EcoSys.Entities
             {
                 var data_col = new DataColumn();
                 data_col.ColumnName = column;
-                data_col.DataType = System.Type.GetType("System.Decimal");
+                data_col.DataType = System.Type.GetType("System.Double");
                 data_col.AllowDBNull = true;
 
                 result_table.Columns.Add(data_col);
