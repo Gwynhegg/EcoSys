@@ -5,40 +5,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EcoSys"
         mc:Ignorable="d"
-        Title="EcoSys" Height="600" Width="1200">
+        Title="EcoSys" Height="600" Width="1200" MinHeight="700" MinWidth="800">
+    <Window.Background>
+        <ImageBrush ImageSource="Resources/background.png" Stretch="UniformToFill" TileMode="None"/>
+    </Window.Background>
     <Grid x:Name="main_grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="20*"></RowDefinition>
+            <RowDefinition Height="20*" MinHeight="600"></RowDefinition>
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="8*"></ColumnDefinition>
+            <ColumnDefinition Width="*" MinWidth="90"></ColumnDefinition>
+            <ColumnDefinition Width="8*" MinWidth="710"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Expander x:Name="main_menu" Header="Меню" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Height="500" VerticalAlignment="Top">
-            <Grid x:Name="menu_grid" Background="#FFE5E5E5" MinWidth="120" HorizontalAlignment="Stretch">
+
+        <Expander x:Name="main_menu" Header="" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" MinHeight="500" MinWidth="90" VerticalAlignment="Top" FontSize="20" Background="{x:Null}" FontStyle="Normal" FontWeight="SemiBold">
+            <Grid x:Name="menu_grid" MinWidth="90" HorizontalAlignment="Stretch" Background="#FF003366">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="0.6*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="0.6*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="0.6*"></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="0.6*"></RowDefinition>
                     <RowDefinition Height="3*"></RowDefinition>
                     <RowDefinition Height="1*"></RowDefinition>
-                    <RowDefinition Height="3*"></RowDefinition>
-                    <RowDefinition Height="1*"></RowDefinition>
-                    <RowDefinition Height="3*"></RowDefinition>
-                    <RowDefinition Height="1*"></RowDefinition>
-                    <RowDefinition Height="3*"></RowDefinition>
-                    <RowDefinition Height="1*"></RowDefinition>
-                    <RowDefinition Height="3*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"></ColumnDefinition>
-                    <ColumnDefinition Width="4*"></ColumnDefinition>
-                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*" MinWidth="5"></ColumnDefinition>
+                    <ColumnDefinition Width="4*" MinWidth="80"></ColumnDefinition>
+                    <ColumnDefinition Width="*" MinWidth="5"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="Settings" Content="Настройки" Grid.Row="1" Grid.Column="1" Click="Settings_Click_1"/>
-                <Button x:Name="Block1Btn" Content="Блок 1" Grid.Row="3" Grid.Column="1" Click="BlockBtnClick"/>
-                <Button x:Name="Block2Btn" Content="Блок 2" Grid.Row="5" Grid.Column="1" Click="BlockBtnClick"/>
-                <Button x:Name="Block3Btn" Content="Блок 3" Grid.Row="7" Grid.Column="1" Click="BlockBtnClick"/>
+                <Button x:Name="Settings" Content="Настройки" Grid.Row="1" Grid.Column="1" Click="Settings_Click_1" FontSize="14"/>
+                <Button x:Name="Block1Btn" Content="Блок 1" Grid.Row="3" Grid.Column="1" Click="BlockBtnClick" FontSize="14"/>
+                <Button x:Name="Block2Btn" Content="Блок 2" Grid.Row="5" Grid.Column="1" Click="BlockBtnClick" FontSize="14"/>
+                <Button x:Name="Block3Btn" Content="Блок 3" Grid.Row="7" Grid.Column="1" Click="BlockBtnClick" FontSize="14"/>
+                <Button x:Name="Block4Btn" Content="Блок 4" Grid.Row="9" Grid.Column="1" Click="BlockBtnClick" FontSize="14"/>
 
             </Grid>
         </Expander>

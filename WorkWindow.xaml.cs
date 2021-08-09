@@ -72,10 +72,13 @@ namespace EcoSys
                         createNewGrid(new Grids.Block2(data));
                     break;
                 case "Block3Btn":
-                    if (!alreadyExist<Grids.Block2>())
+                    if (!alreadyExist<Grids.Block3>())
                         createNewGrid(new Grids.Block3(scenarios));
                     break;
-
+                case "Block4Btn":
+                    if (!alreadyExist<Grids.Block4>())
+                        createNewGrid(new Grids.Block4(scenarios));
+                    break;
             }
 
             main_menu.IsExpanded = false;

@@ -21,8 +21,8 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Button x:Name="JSONButton" Content="Создать JSON-файл для файла МДФП" Grid.Row="1" Grid.Column="1" Click="JSONButton_Click"/>
-        <Button x:Name="JSONButton1" Content="Создать JSON-файл для файла сценариев" Grid.Row="3" Grid.Column="1" Click="JSONButton_Click"/>
-        <Button x:Name="BackToChoose" Content="На экран выбора файла" Grid.Row="5" Grid.Column="1" Click="BackToChoose_Click"/>
+        <Button x:Name="JSONButton" Content="Создать JSON-файл для файла МДФП" Grid.Row="1" Grid.Column="1" Click="JSONButton_Click" FontSize="14"/>
+        <Button x:Name="JSONButton1" Content="Создать JSON-файл для файла сценариев" Grid.Row="3" Grid.Column="1" Click="JSONButton_Click" FontSize="14"/>
+        <Button x:Name="BackToChoose" Content="На экран выбора файла" Grid.Row="5" Grid.Column="1" Click="BackToChoose_Click" FontSize="14"/>
     </Grid>
 </UserControl>

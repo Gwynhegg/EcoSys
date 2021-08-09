@@ -5,6 +5,8 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.Linq;
+using LiveCharts.Wpf;
+using LiveCharts;
 
 namespace EcoSys.Entities
 {
@@ -16,13 +18,80 @@ namespace EcoSys.Entities
         public List<string> years { get; } = new List<string>();
         public List<string> scenario_name { get; } = new List<string>();
 
+        public List<string> categories { get; } = new List<string>();
+
         public DataTable getScenarioData(int year_index, int region_index, string scenario_name)
         {
             var region = regions.ElementAt(region_index);
             var year = years[year_index];
 
-            return scenarios[(year, region, scenario_name)];
+            var result = scenarios[(year, region, scenario_name)];
+            roundDataTable(result, 2);
+
+            return result;
         }
+
+        public List<object> getCategoriesData(int category_index, double current_height)
+        {
+            var result_list = new List<object>();
+
+            var choosed_category = categories[category_index];
+
+            foreach (KeyValuePair<(string, string), DataTable> item in conditions)
+                if (item.Key.Item1.Equals(choosed_category))
+                {
+                    result_list.Add(new System.Windows.Controls.Label() { Content = item.Key.Item2 });
+
+                    var used_data = item.Value;
+
+                    var segmented_data = used_data.Clone();
+
+                    for (int j = years.Count; j > 0; j--)
+                        segmented_data.ImportRow(used_data.Rows[used_data.Rows.Count - j]);
+
+                    roundDataTable(segmented_data, 2);
+                    result_list.Add(new System.Windows.Controls.DataGrid() { ItemsSource = segmented_data.AsDataView() });
+
+                    result_list.Add(getGraph(used_data, current_height));
+                }
+
+            return result_list;
+        }
+
+        private CartesianChart getGraph(DataTable data, double current_height)
+        {
+            CartesianChart chart = new CartesianChart();
+
+            string[] year_labels = new string[data.Rows.Count];
+            for (int i = 0; i < year_labels.Length; i++)
+                year_labels[i] = data.Rows[i].Field<string>(0);
+
+            chart.AxisX.Add(new Axis() { Title = "Годы", Labels = year_labels });
+            chart.AxisY.Add(new Axis() { Title = "руб.", MinValue = 0 });
+
+            ChartValues<double> real_price = new ChartValues<double>();
+
+            for (int i = 0; i < data.Rows.Count; i++)
+                real_price.Add(data.Rows[i].Field<double>(1));
+
+            chart.Series.Add(new LineSeries() { Values = real_price, Title = "Инерционный сценарий" });
+
+            for (int i = 1; i < scenario_name.Count; i++)
+            {
+                ChartValues<double> scenario_price = new ChartValues<double>();
+
+                for (int index = 0; index < data.Rows.Count; index++)
+                    scenario_price.Add(data.Rows[index].Field<double>(i + 1));
+
+                chart.Series.Add(new LineSeries() { Values = scenario_price, Title = data.Columns[1 + i].ColumnName });
+
+            }
+
+            chart.Height = current_height / 1.8;
+
+            return chart;
+        }
+
         private async Task asyncFragmentizeScenario(DataTable table)        //Выделение таблиц и заполнение словарей
         {
             CultureInfo cult_info = new CultureInfo("ru-RU", false);
@@ -64,6 +133,8 @@ namespace EcoSys.Entities
                             break;
                         }
                     }
+
+                categories.Add(condition_name);
 
                 int row_step = 2, column_step = 8, current_column = 0;
 
@@ -147,7 +218,7 @@ namespace EcoSys.Entities
                 for (int i = 0; i < 5; i++)
                 {
                     var temp = table.Rows[row_start + index].Field<double?>(col_start + i);
-                    if (temp != null) row[i + 1] = temp;
+                    if (temp != null) row[i + 1] = temp; else row[i + 1] = row[1];
                 }
 
                 result_table.Rows.Add(row);

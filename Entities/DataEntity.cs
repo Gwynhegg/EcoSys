@@ -87,13 +87,6 @@ namespace EcoSys.Entities
             return result_table;
         }
 
-        private void roundDataTable(DataTable table, int num_of_symb)      //Метод для задания количества знаков после запятой
-        {
-            for (int i = 0; i < table.Rows.Count; i++)
-                for (int j = 1; j < table.Columns.Count; j++)
-                    table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
-        }
-
         private DataTable summarizeDataTables(DataTable first_table, DataTable second_table)        //Метод для суммирования ячеек таблицы данных
         {
             for (int i = 0; i < first_table.Rows.Count; i++)

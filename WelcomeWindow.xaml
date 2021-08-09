@@ -3,26 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:EcoSys"
         mc:Ignorable="d"
-        Title="" Height="353" Width="600" SizeToContent="Manual" ResizeMode="NoResize">
+        Title="" Height="353" Width="600" SizeToContent="Manual" ResizeMode="CanResize" MaxHeight="700" MaxWidth="1200" MinWidth="500" MinHeight="300">
+    <Window.Background>
+        <ImageBrush ImageSource="Resources/background.png" Stretch="UniformToFill" TileMode="None"/>
+    </Window.Background>
     <Grid x:Name="starting_page">
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="2*" MaxHeight="15"></RowDefinition>
             <RowDefinition Height="8*"></RowDefinition>
+            <RowDefinition Height="2*" MaxHeight="15"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="6*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="2*"></RowDefinition>
-            <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="6*"></RowDefinition>
+            <RowDefinition Height="2*" MaxHeight="15"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"></ColumnDefinition>
@@ -31,21 +35,29 @@
             <ColumnDefinition Width="7*"></ColumnDefinition>
             <ColumnDefinition Width="5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+
+        <Label Content="Приветственный экран" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"/>
+        <Button x:Name="ImportButton" Content="Новый Excel-файл" Grid.Row="3" Grid.Column="1" Click="ImportButton_Click" HorizontalContentAlignment="Center" FontSize="14"/>
+        <Button x:Name="OpenLastButton" Content="Загрузить последний использованный файл" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Click="OpenLastButton_Click" FontSize="14"/>
+        <TextBox x:Name="LastPath" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Text="" TextWrapping="Wrap"  IsEnabled="False" BorderBrush="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="12"/>
+        <Button x:Name="ImportJSON" Content="JSON-файл" Grid.Row="3" Grid.Column="3" Click="ImportJSON_Click" FontSize="14"/>
+        <Border BorderThickness="1,1,1,3" BorderBrush="Black" Grid.Column="1" Grid.Row="3" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
+        <Button x:Name="ScenarioImportButton" Content="Новый Excel-файл" Grid.Column="1" Grid.Row="9" Click="ImportButton_Click" FontSize="14"/>
+        <Button x:Name="ScenarioJsonButton" Content="JSON-файл" Grid.Column="3" Grid.Row="9" Click="ImportJSON_Click" FontSize="14"/>
+        <Button x:Name="ScenarioLastButton" Content="Загрузить последний использованный файл" Grid.Column="1" Grid.Row="11" Grid.ColumnSpan="3" Click="OpenLastButton_Click" FontSize="14"/>
+        <TextBox x:Name="LastScenarioPath" Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="3" Text="" TextWrapping="Wrap"  IsEnabled="False" BorderBrush="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="14"/>
+        <Border BorderThickness="1,1,1,3" BorderBrush="Black" Grid.Column="1" Grid.Row="9" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
+
+        <Grid x:Name="FirstIsOK" Grid.Row="3" Grid.Column="1" Grid.RowSpan="5" Grid.ColumnSpan="3"  Visibility="Hidden" Background="White" MouseDown="FirstIsOK_MouseDown" ToolTip="Нажмите для выбора другого файла">
+            <Image x:Name="GifOK1" gif:ImageBehavior.AnimatedSource="Resources/ok.gif"/>
+        </Grid>
+        <Grid x:Name="SecondIsOK" Grid.Column="1" Grid.Row="9" Grid.RowSpan="5" Grid.ColumnSpan="3"  Visibility="Hidden" Background="White" MouseDown="SecondIsOK_MouseDown" ToolTip="Нажмите для выбора другого файла">
+            <Image x:Name="GifOK2" gif:ImageBehavior.AnimatedSource="Resources/ok.gif"/>
+        </Grid>
+
+        <Grid x:Name="LoadScreen" Background="White" Opacity="0.9" Grid.Row="0" Grid.Column="0" Grid.RowSpan="15" Grid.ColumnSpan="5"  Visibility="Hidden">
+            <Image gif:ImageBehavior.AnimatedSource="Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
+        </Grid>
         
-
-        <Label Content="Приветственный экран" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <Button x:Name="ImportButton" Content="Новый Excel-файл" Grid.Row="3" Grid.Column="1" Click="ImportButton_Click" HorizontalContentAlignment="Center"/>
-        <Button x:Name="OpenLastButton" Content="Загрузить последний использованный файл" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Click="OpenLastButton_Click"/>
-        <TextBox x:Name="LastPath" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Text="" TextWrapping="Wrap"  IsEnabled="False" BorderBrush="White" HorizontalAlignment="Center"/>
-        <Button x:Name="ImportJSON" Content="JSON-файл" Grid.Row="3" Grid.Column="3" Click="ImportJSON_Click"/>
-        <Border BorderThickness="1" BorderBrush="Black" Grid.Column="1" Grid.Row="3" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
-        <Button x:Name="ScenarioImportButton" Content="Новый Excel-файл" Grid.Column="1" Grid.Row="9" Click="ImportButton_Click"/>
-        <Button x:Name="ScenarioJsonButton" Content="JSON-файл" Grid.Column="3" Grid.Row="9" Click="ImportJSON_Click"/>
-        <Button x:Name="ScenarioLastButton" Content="Загрузить последний использованный файл" Grid.Column="1" Grid.Row="11" Grid.ColumnSpan="3" Click="OpenLastButton_Click"/>
-        <TextBox x:Name="LastScenarioPath" Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="3" Text="" TextWrapping="Wrap"  IsEnabled="False" BorderBrush="White" HorizontalAlignment="Center"/>
-        <Border BorderThickness="1" BorderBrush="Black" Grid.Column="1" Grid.Row="9" Grid.RowSpan="5" Grid.ColumnSpan="3"/>
-        <Button x:Name="FirstIsOK" Content="OK" Background="Green" Grid.Row="3" Grid.Column="1" Grid.RowSpan="5" Grid.ColumnSpan="3"  Visibility="Hidden"/>
-        <Button x:Name="SecondIsOK" Content="OK" Background="Green" Grid.Column="1" Grid.Row="9" Grid.RowSpan="5" Grid.ColumnSpan="3"  Visibility="Hidden"/>
-
     </Grid>
 </Window>

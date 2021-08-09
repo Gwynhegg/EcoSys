@@ -25,7 +25,6 @@ namespace EcoSys
     /// </summary>
     public partial class WelcomeWindow : Window
     {
-        private StreamWriter writer;        //объект для записи кэша и сохранения пути файлов
         private string data_last_path = String.Empty, scenario_last_path = String.Empty;     //переменная для запоминания последнего пути файла с данными МДФП
         private Entities.DataEntity data_entity;     //объект для хранения данных МДФП
         private Entities.ScenarioEntity scenario_entity;        //Объект для хранения сценариев ДФП
@@ -117,6 +116,7 @@ namespace EcoSys
             {
                 data_entity = new Entities.DataEntity();
 
+                LoadScreen.Visibility = Visibility.Visible;
                 await Task.Run(() => data_entity.createTables(dataset));     //Начинаем асинхронное заполнение таблиц на основе датасета
 
                 data_last_path = file_path;
@@ -127,6 +127,7 @@ namespace EcoSys
             {
                 scenario_entity = new Entities.ScenarioEntity();
 
+                LoadScreen.Visibility = Visibility.Visible;
                 await Task.Run(() => scenario_entity.createTables(dataset));
 
                 scenario_last_path = file_path;
@@ -134,16 +135,19 @@ namespace EcoSys
                 secondOK();
             }
 
+            LoadScreen.Visibility = Visibility.Hidden;
+
         }
 
-        private void importingJsonData(string file_path, string type)      //Десериализация json-файла
+        private async void importingJsonData(string file_path, string type)      //Десериализация json-файла
         {
             System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //ИСпользование кастомного конвертера
             try
             {
+                LoadScreen.Visibility = Visibility.Visible;
                 if (type == "Data")
                 {
-                    data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path));
+                    await Task.Run(() => data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path)));
 
                     data_last_path = file_path;
 
@@ -153,12 +157,15 @@ namespace EcoSys
                 {
                     System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TripletConverter<string, string, string>)));        //ИСпользование кастомного конвертера
 
-                    scenario_entity = JsonConvert.DeserializeObject<Entities.ScenarioEntity>(File.ReadAllText(file_path));
+                    await Task.Run(() => scenario_entity = JsonConvert.DeserializeObject<Entities.ScenarioEntity>(File.ReadAllText(file_path)));
 
                     scenario_last_path = file_path;
 
                     secondOK();
                 }
+
+                LoadScreen.Visibility = Visibility.Hidden;
+
             }
             catch
             {
@@ -216,6 +223,16 @@ namespace EcoSys
                 work_window.Show();
                 this.Close();
             }
+        }
+
+        private void FirstIsOK_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            FirstIsOK.Visibility = Visibility.Hidden;
+        }
+
+        private void SecondIsOK_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SecondIsOK.Visibility = Visibility.Hidden;
         }
 
         private void firstOK()

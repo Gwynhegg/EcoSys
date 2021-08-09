@@ -8,24 +8,24 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="2*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
+            <RowDefinition Height="2*" MaxHeight="40"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="15"></RowDefinition>
             <RowDefinition Height="10*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="15"></ColumnDefinition>
             <ColumnDefinition Width="10*"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MaxWidth="15"></ColumnDefinition>
             <ColumnDefinition Width="7*"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MaxWidth="15"></ColumnDefinition>
             <ColumnDefinition Width="3*"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="15"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="regions_box" Grid.Row="1" Grid.Column="1" SelectionChanged="regions_box_SelectionChanged"></ComboBox>
-        <ComboBox x:Name="years_box" Grid.Row="1" Grid.Column="3" SelectionChanged="years_box_SelectionChanged"></ComboBox>
-        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="5"></Button>
-        <TabControl x:Name="tab_grid" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5"></TabControl>
+        <ComboBox x:Name="regions_box" Grid.Row="1" Grid.Column="1" SelectionChanged="regions_box_SelectionChanged" FontSize="14"></ComboBox>
+        <ComboBox x:Name="years_box" Grid.Row="1" Grid.Column="3" SelectionChanged="years_box_SelectionChanged" FontSize="14"></ComboBox>
+        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="5" FontSize="14"></Button>
+        <TabControl x:Name="tab_grid" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" FontSize="14"></TabControl>
     </Grid>
 </UserControl>

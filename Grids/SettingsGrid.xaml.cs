@@ -53,14 +53,15 @@ namespace EcoSys.Grids
                 try
                 {
                     var writer = File.CreateText(save_filedialog.FileName);
+
+                    System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //использование кастомного конвертера
+
                     if (((Button)sender).Name == "JSONButton")
                     {
-                        System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //использование кастомного конвертера
                         writer.Write(JsonConvert.SerializeObject(data));        //Сериализуем объект с помощью Newtonsoft
                     }
                     else
                     {
-                        System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //использование кастомного конвертера
                         System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TripletConverter<string, string, string>)));        //использование кастомного конвертера
                         writer.Write(JsonConvert.SerializeObject(scenarios));        //Сериализуем объект с помощью Newtonsoft
                     }
