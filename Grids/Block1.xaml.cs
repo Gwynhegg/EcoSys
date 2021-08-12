@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace EcoSys.Grids
 {
@@ -119,6 +120,7 @@ namespace EcoSys.Grids
             if (year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
                 getData();
 
+
         }
 
         private void year_choose_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -129,26 +131,31 @@ namespace EcoSys.Grids
 
         private void regions_text_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (matrix_type.SelectedIndex != -1 && year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "") getData();
+            if (matrix_type.SelectedIndex != -1 && year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
+                getData();
         }
 
-        private void getData()      //привязка к выбранному типу матрицы и отправление соответствующих запросов
+        private async void getData()      //привязка к выбранному типу матрицы и отправление соответствующих запросов
         {
+            loading.Visibility = Visibility.Visible;
+
             int selected_index = matrix_type.SelectedIndex;
             string selected_year = ((ComboBoxItem)year_choose.SelectedItem).Content.ToString();
 
             switch (selected_index)
             {
                 case 0:
-                    this.current_table = data.getPassiveData(region_query, selected_year);
+                    await Task.Run(() => this.current_table = data.getPassiveData(region_query, selected_year));
                     break;
                 case 1:
-                    this.current_table = data.getActiveData(region_query, selected_year);
+                    await Task.Run(() => this.current_table = data.getActiveData(region_query, selected_year));
                     break;
                 case 2:
-                    this.current_table = data.getBalanceData(region_query, selected_year);
+                    await Task.Run(() => this.current_table = data.getBalanceData(region_query, selected_year));
                     break;
             }
+
+            loading.Visibility = Visibility.Hidden;
 
             this.data_field.ItemsSource = current_table.AsDataView();        //устанавливаем полученную через словарь таблицу в качестве представления
             this.data_field.Visibility = Visibility.Visible;

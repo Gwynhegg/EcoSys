@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -63,8 +64,6 @@ namespace EcoSys.Grids
 
         private void getData()
         {
-            tab_grid.Visibility = Visibility.Visible;
-
             int selected_region = regions_box.SelectedIndex;
             int selected_year = years_box.SelectedIndex;
 
@@ -74,6 +73,7 @@ namespace EcoSys.Grids
                 data_grid.ItemsSource = scenarios_entity.getScenarioData(selected_year, selected_region, scenario.Header.ToString()).AsDataView();
                 scenario.Content = data_grid;
             }
+            tab_grid.Visibility = Visibility.Visible;
         }
 
         ~Block3()
@@ -81,14 +81,21 @@ namespace EcoSys.Grids
             GC.Collect();
         }
 
-        private void regions_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void regions_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (years_box.SelectedIndex != -1) getData();
+            if (years_box.SelectedIndex != -1)
+            {
+                loading.Visibility = Visibility.Visible;
+                await Task.Run(() => getData());
+                loading.Visibility = Visibility.Hidden;
+
+            }
         }
 
         private void years_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (regions_box.SelectedIndex != -1) getData();
+            if (regions_box.SelectedIndex != -1)
+                getData();
         }
     }
 }

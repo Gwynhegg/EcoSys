@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -39,13 +40,25 @@ namespace EcoSys.Grids
             getData();
         }
 
-        private void getData()
+        private async void getData()
         {
+            loading.Visibility = Visibility.Visible;
+
             int selected_category = categories_box.SelectedIndex;
+            List<object> response_bundle = null;
 
-            List<object> response_bundle = scenarios.getCategoriesData(selected_category, tables_list.ActualHeight);
+            await Task.Run(() =>  Dispatcher.Invoke(() => response_bundle = scenarios.getCategoriesData(selected_category, tables_list.ActualHeight)));
 
-            tables_list.ItemsSource = response_bundle;
+            try
+            {
+                tables_list.ItemsSource = response_bundle;
+
+            }
+            catch
+            {
+                MessageBox.Show("Не удалось составить набор ответных данных", "Ошибка", MessageBoxButton.OK);
+            }
+            loading.Visibility = Visibility.Hidden;
         }
 
         public void hideGrid()
