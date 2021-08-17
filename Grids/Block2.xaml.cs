@@ -120,21 +120,30 @@ namespace EcoSys.Grids
         private void matrix_type_SelectionChanged(object sender, SelectionChangedEventArgs e)       //Было принято решение о динамической загрузке таблицы
         {
             if (year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
+            {
                 getData();
+                this.data_field.Visibility = Visibility.Visible;
+            }
 
-                
+
         }
 
         private void year_choose_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (matrix_type.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
+            {
                 getData();
+                this.data_field.Visibility = Visibility.Visible;
+            }
         }
 
         private void regions_text_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (matrix_type.SelectedIndex != -1 && year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
+            {
                 getData();
+                this.data_field.Visibility = Visibility.Visible;
+            }
         }
 
         private async void getData()      //привязка к выбранному типу матрицы и отправление соответствующих запросов
@@ -159,7 +168,6 @@ namespace EcoSys.Grids
             loading.Visibility = Visibility.Hidden;
 
             this.data_field.ItemsSource = current_table.AsDataView();        //устанавливаем полученную через словарь таблицу в качестве представления
-            this.data_field.Visibility = Visibility.Visible;
         }
 
         private void r2_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)        //Кастомный метод для правильного отображения заголовков

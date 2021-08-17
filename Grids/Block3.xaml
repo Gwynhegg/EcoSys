@@ -24,10 +24,9 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
             <ColumnDefinition Width="15"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="regions_box" Grid.Row="1" Grid.Column="1" SelectionChanged="regions_box_SelectionChanged" FontSize="14"></ComboBox>
-        <ComboBox x:Name="years_box" Grid.Row="1" Grid.Column="3" SelectionChanged="years_box_SelectionChanged" FontSize="14"></ComboBox>
-        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="5" FontSize="14"></Button>
-        <TabControl x:Name="tab_grid" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" FontSize="14"></TabControl>
+        <ComboBox x:Name="regions_box" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" SelectionChanged="regions_box_SelectionChanged" FontSize="14"></ComboBox>
+        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="5" FontSize="14" Content="Экспорт"></Button>
+        <DataGrid x:Name="data_grid" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" FontSize="14" Visibility="Hidden" CanUserAddRows="False" CanUserDeleteRows="False"></DataGrid>
 
         <Grid x:Name="loading" Background="White" Opacity="0.9" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5"  Visibility="Hidden">
             <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>

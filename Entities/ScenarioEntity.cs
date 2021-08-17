@@ -14,15 +14,15 @@ namespace EcoSys.Entities
     {
         public Dictionary<(string, string, string), DataTable> scenarios { get; set; } = new Dictionary<(string, string, string), DataTable>();     //Dictionary для хранения сценариев по годам, регионам и типам сценариев (ГОД, РЕГИОН, СЦЕНАРИЙ), DataTable
         public Dictionary<(string, string), DataTable> conditions { get; set; } = new Dictionary<(string, string), DataTable>();        //Dictionary для хранения сценарных условий с делением на подкатегории
+        public Dictionary<string, DataTable> scenario_models { get; set; } = new Dictionary<string, DataTable>();       //Dictionary для хранения сценарных моделей
         public HashSet<string> regions { get; } = new HashSet<string>();
         public List<string> years { get; } = new List<string>();
         public List<string> scenario_name { get; } = new List<string>();
 
         public List<string> categories { get; } = new List<string>();
 
-        public DataTable getScenarioData(int year_index, int region_index, string scenario_name)
+        public DataTable getScenarioData(int year_index, string region, string scenario_name)
         {
-            var region = regions.ElementAt(region_index);
             var year = years[year_index];
 
             var result = scenarios[(year, region, scenario_name)];
@@ -31,7 +31,14 @@ namespace EcoSys.Entities
             return result;
         }
 
-        public List<object> getCategoriesData(int category_index, double current_height)
+        public DataTable getScenarioModels(int region_index)
+        {
+            var region = regions.ElementAt(region_index);
+
+            return scenario_models[region];
+        }
+
+        public List<object> getCategoriesData(int category_index, double current_height, double current_width)
         {
             var result_list = new List<object>();
 
@@ -52,13 +59,13 @@ namespace EcoSys.Entities
                     roundDataTable(segmented_data, 2);
                     result_list.Add(new System.Windows.Controls.DataGrid() { ItemsSource = segmented_data.AsDataView() });
 
-                    result_list.Add(getGraph(used_data, current_height));
+                    result_list.Add(getGraph(used_data, current_height, current_width));
                 }
 
             return result_list;
         }
 
-        private CartesianChart getGraph(DataTable data, double current_height)
+        private CartesianChart getGraph(DataTable data, double current_height, double current_width)
         {
             CartesianChart chart = new CartesianChart();
 
@@ -87,7 +94,8 @@ namespace EcoSys.Entities
 
             }
 
-            chart.Height = current_height / 1.8;
+            chart.Height = current_height / 2.2;
+            chart.Width = current_width / 1.1;
 
             return chart;
         }
@@ -113,6 +121,28 @@ namespace EcoSys.Entities
                     scenarios.Add((year, region, scenario_name[scen_index / 20]), pickOutData(table, vert_index, scen_index, 1, 4));
                 }
             }
+        }
+
+        private async Task asyncFragmentizeModels(DataTable table)
+        {
+            CultureInfo cult_info = new CultureInfo("ru-RU", false);
+            TextInfo text_info = cult_info.TextInfo;
+
+            int index = 0;
+
+            string region = table.Rows[index].Field<string>(0);
+            region = text_info.ToTitleCase(region.ToLower());       //Решение для обеспечения однообразия названий
+
+
+            while (region != null)
+            {
+                scenario_models.Add(region, pickModels(table, index, 0));
+
+                index += 18;
+                if (index < table.Rows.Count) region = table.Rows[index].Field<string>(0); else break;
+                region = text_info.ToTitleCase(region.ToLower());       //Решение для обеспечения однообразия названий
+            }
+
         }
 
         private async Task asyncFragmentizeConditions(DataTable table)      //Выделение сценарных условий с делением по категориям
@@ -168,7 +198,11 @@ namespace EcoSys.Entities
             }
 
             Task conditions_task = asyncFragmentizeConditions(dataset.Tables[4]);       //Добавление задачи для считывания сценарных условий с листа
+
+            Task models_task = asyncFragmentizeModels(dataset.Tables[5]);
+
             scenarios_tasks.Add(conditions_task);
+            scenarios_tasks.Add(models_task);
 
             await Task.WhenAll(scenarios_tasks);
         }
@@ -184,6 +218,51 @@ namespace EcoSys.Entities
                 starting_index += 20;
                 step++;
             }
+        }
+
+        private DataTable pickModels(DataTable table, int row_start, int col_start)
+        {
+            col_start += 1;
+            row_start += 3;
+
+            var result_table = new DataTable();
+
+            var lines_col = new DataColumn();
+            lines_col.ColumnName = "Сценарные условия";
+            lines_col.DataType = System.Type.GetType("System.String");
+
+            result_table.Columns.Add(lines_col);
+
+            for (int i = 0; i < 5; i++)
+            {
+                var data_col = new DataColumn();
+
+                data_col.ColumnName = table.Rows[row_start - 2].Field<string>(col_start + i);
+                var combined_name = table.Rows[row_start - 1].Field<string>(col_start + i);
+
+                if (combined_name != null) data_col.ColumnName += "." + combined_name;
+
+                data_col.DataType = System.Type.GetType("System.String");
+                data_col.AllowDBNull = true;
+
+                result_table.Columns.Add(data_col);
+            }
+
+            for (int index = 0; index < lines.Count - 1; index++)
+            {
+                var row = result_table.NewRow();
+
+                row[0] = lines[index];
+
+                for (int i = 0; i < result_table.Columns.Count - 1; i++)
+                {
+                    var temp = table.Rows[row_start + index].Field<string?>(col_start + i);
+                    if (temp != null) row[i + 1] = temp; else row[i + 1] = "";
+                }
+
+                result_table.Rows.Add(row);
+            }
+            return result_table;
         }
 
         private DataTable pickConditions(DataTable table, int row_start, int col_start)

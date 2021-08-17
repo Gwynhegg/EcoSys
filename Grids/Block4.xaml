@@ -10,21 +10,54 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"></RowDefinition>
-            <RowDefinition Height="2*" MaxHeight="50"></RowDefinition>
-            <RowDefinition Height="1*" MaxHeight="15"></RowDefinition>
-            <RowDefinition Height="10*"></RowDefinition>
-            <RowDefinition Height="1"></RowDefinition>
+            <RowDefinition Height="55*" MaxHeight="50"></RowDefinition>
+            <RowDefinition Height="11*" MaxHeight="15"></RowDefinition>
+            <RowDefinition Height="55*" MaxHeight="50"></RowDefinition>
+            <RowDefinition Height="11*" MaxHeight="15"></RowDefinition>
+            <RowDefinition Height="274*" MinHeight="200"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
+            <RowDefinition Height="40*" MaxHeight="40"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15"></ColumnDefinition>
-            <ColumnDefinition Width="15*"></ColumnDefinition>
+            <ColumnDefinition Width="368*" MinWidth="300"></ColumnDefinition>
+            <ColumnDefinition Width="30*"></ColumnDefinition>
+            <ColumnDefinition Width="150*" MinWidth="150"></ColumnDefinition>
+            <ColumnDefinition Width="14*" MaxWidth="15"></ColumnDefinition>
+            <ColumnDefinition Width="71*" MaxWidth="100"></ColumnDefinition>
             <ColumnDefinition Width="15"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="categories_box" Grid.Row="1" Grid.Column="1" SelectionChanged="categories_box_SelectionChanged" FontSize="14"></ComboBox>
-        <ListBox x:Name="tables_list" Grid.Row="3" Grid.Column="1" HorizontalContentAlignment="Stretch" FontSize="14"></ListBox>
-
-        <Grid x:Name="loading" Background="White" Opacity="0.9" Grid.Row="3" Grid.Column="1"  Visibility="Hidden">
+        <Button x:Name="change_picture" Content="Перейти к графикам" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="5" MaxWidth="200" Visibility="Hidden" Click="change_picture_Click"></Button>
+        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="3" FontSize="14"></Button>
+        <Button x:Name ="show_hide" Content="Показать" Grid.Column="5" Grid.Row="1" FontSize="14" Click="show_hide_Click"/>
+        <ComboBox x:Name="categories_box" Grid.Row="3" Grid.Column="1" Text="Нажмите для выбора категорий..." SelectionChanged="categories_box_SelectionChanged_1"></ComboBox>
+        <ComboBox x:Name="years_box" Grid.Row="3" Grid.Column="3" Text="Нажмите для выбора года..." SelectionChanged="years_box_SelectionChanged"></ComboBox>
+        <TextBox x:Name="regions_text" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Text="Нажмите на кнопку справа для выбора регионов..." TextWrapping="Wrap" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="False" TextChanged="regions_text_TextChanged"/>
+        <TabControl x:Name="scenarios_tab" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="5" Visibility="Hidden"></TabControl>
+        <Grid x:Name="loading" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="5" Grid.RowSpan="2">
             <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
         </Grid>
+
+        <Grid x:Name="graphs_grid" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="5" Visibility="Hidden">
+            <ListView x:Name="graphs_list" Grid.Row="0" Grid.Column="0"></ListView>
+            <Grid x:Name="loading_graphs" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="0" Grid.Row="0">
+                <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="region_grid" Visibility="Hidden" Grid.ColumnSpan="3" Grid.Column="2" Grid.Row="1" Grid.RowSpan="6" Background="#FF747474">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10*"></RowDefinition>
+                <RowDefinition Height="0.2*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.2*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="0.2*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TreeView x:Name="categories" Grid.Column="1" Grid.Row="0"/>
+        </Grid>
+        
     </Grid>
 </UserControl>

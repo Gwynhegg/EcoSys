@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15"></ColumnDefinition>
-            <ColumnDefinition Width="368*" MinWidth="300"></ColumnDefinition>
+            <ColumnDefinition Width="200*" MinWidth="200"></ColumnDefinition>
             <ColumnDefinition Width="30*"></ColumnDefinition>
             <ColumnDefinition Width="283*" MinWidth="300"></ColumnDefinition>
             <ColumnDefinition Width="14*" MaxWidth="15"></ColumnDefinition>
@@ -28,14 +28,14 @@
             <ColumnDefinition Width="15"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Button x:Name ="show_hide" Content="Показать" Grid.Column="5" Grid.Row="1" Click="Button_Click" FontSize="14"/>
-        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="6" Click="export_to_exc_Click" FontSize="14"></Button>
+        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="3" Click="export_to_exc_Click" FontSize="14"></Button>
         <ComboBox x:Name="year_choose" Grid.Column="1" Grid.Row="3"  Text="Выберите год..." SelectionChanged="year_choose_SelectionChanged" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="14"/>
-        <ComboBox x:Name="matrix_type" Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="3" SelectionChanged="matrix_type_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" FontSize="14">
+        <ComboBox x:Name="matrix_type" Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" SelectionChanged="matrix_type_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" FontSize="14">
             <ComboBoxItem Content="Пассивная часть матрицы движения банковского капитала между секторами" ToolTip="Матрица формирования инвестиционного потенциала банковского сектора экономики " ></ComboBoxItem>
             <ComboBoxItem Content="Активная часть матрицы движения банковского капитала между секторами" ToolTip="Матрица использования инвестиционного потенциала банковского сектора экономики " ></ComboBoxItem>
             <ComboBoxItem Content="Сальдированная матрица движения банковского капитала между секторами" ToolTip="Матрица воспроизводства инвестиционного потенциала банковского сектора экономики " ></ComboBoxItem>
         </ComboBox>
-        <DataGrid x:Name="data_field" Grid.Column="1" Grid.Row="5" Grid.RowSpan="2" Grid.ColumnSpan="3" Visibility="Hidden" AutoGeneratingColumn="r2_AutoGeneratingColumn" CanUserAddRows="False" CanUserDeleteRows="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+        <DataGrid x:Name="data_field" Grid.Column="1" Grid.Row="5" Grid.RowSpan="2" Grid.ColumnSpan="5" Visibility="Hidden" AutoGeneratingColumn="r2_AutoGeneratingColumn" CanUserAddRows="False" CanUserDeleteRows="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
         <TextBox x:Name="regions_text" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Text="Нажмите на кнопку справа для выбора регионов..." TextWrapping="Wrap" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="False" TextChanged="regions_text_TextChanged" FontSize="14" />
         <Grid x:Name="region_grid" Visibility="Hidden" Grid.ColumnSpan="3" Grid.Column="2" Grid.Row="1" Grid.RowSpan="6" Background="#FF747474">
             <Grid.RowDefinitions>

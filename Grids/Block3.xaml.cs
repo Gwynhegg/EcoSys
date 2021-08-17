@@ -22,6 +22,9 @@ namespace EcoSys.Grids
     {
 
         private Entities.ScenarioEntity scenarios_entity;
+
+        private DataTable current_table = null;
+
         public Block3(Entities.ScenarioEntity scenarios)
         {
             InitializeComponent();
@@ -29,28 +32,16 @@ namespace EcoSys.Grids
             this.scenarios_entity = scenarios;
 
             getAllRegions();
-            getYears();
-            getScenarioNames();
-            
+           
         }
 
-        private void getScenarioNames()
-        {
-            foreach (string scenario in scenarios_entity.scenario_name)
-                tab_grid.Items.Add(new TabItem() { Header = scenario });
-            tab_grid.Visibility = Visibility.Hidden;
-        }
+
         private void getAllRegions()
         {
             foreach (string region in scenarios_entity.regions)
                 regions_box.Items.Add(new ComboBoxItem() { Content = region });
         }
 
-        private void getYears()
-        {
-            foreach (string year in scenarios_entity.years)
-                years_box.Items.Add(new ComboBoxItem() { Content = year });
-        }
 
         public void hideGrid()
         {
@@ -62,18 +53,17 @@ namespace EcoSys.Grids
             this.Visibility = Visibility.Visible;
         }
 
-        private void getData()
+        private async void getData()
         {
-            int selected_region = regions_box.SelectedIndex;
-            int selected_year = years_box.SelectedIndex;
+            loading.Visibility = Visibility.Visible;
 
-            foreach (TabItem scenario in tab_grid.Items)
-            {
-                var data_grid = new DataGrid();
-                data_grid.ItemsSource = scenarios_entity.getScenarioData(selected_year, selected_region, scenario.Header.ToString()).AsDataView();
-                scenario.Content = data_grid;
-            }
-            tab_grid.Visibility = Visibility.Visible;
+            int selected_index = regions_box.SelectedIndex;
+
+            await Task.Run(() => current_table = scenarios_entity.getScenarioModels(selected_index));
+            data_grid.ItemsSource = current_table.AsDataView();
+
+            loading.Visibility = Visibility.Hidden;
+
         }
 
         ~Block3()
@@ -81,21 +71,10 @@ namespace EcoSys.Grids
             GC.Collect();
         }
 
-        private async void regions_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void regions_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (years_box.SelectedIndex != -1)
-            {
-                loading.Visibility = Visibility.Visible;
-                await Task.Run(() => getData());
-                loading.Visibility = Visibility.Hidden;
-
-            }
-        }
-
-        private void years_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (regions_box.SelectedIndex != -1)
-                getData();
+            getData();
+            data_grid.Visibility = Visibility.Visible;
         }
     }
 }
