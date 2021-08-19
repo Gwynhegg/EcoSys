@@ -81,7 +81,7 @@ namespace EcoSys.Entities
             for (int i = 0; i < data.Rows.Count; i++)
                 real_price.Add(data.Rows[i].Field<double>(1));
 
-            chart.Series.Add(new LineSeries() { Values = real_price, Title = "Инерционный сценарий" });
+            chart.Series.Add(new LineSeries() { Values = real_price, Title = "Инерционный сценарий"});
 
             for (int i = 1; i < scenario_name.Count; i++)
             {
@@ -184,7 +184,7 @@ namespace EcoSys.Entities
             }
             
         }
-        public async void createTables(DataSet dataset)       //Метод для создания таблиц со сценариями (асинхронный)
+        public async Task createTables(DataSet dataset)       //Метод для создания таблиц со сценариями (асинхронный)
         {
             createLinesAndColumns(dataset.Tables[0], 4, 6, 19);
 
@@ -303,6 +303,12 @@ namespace EcoSys.Entities
                 result_table.Rows.Add(row);
             }
             return result_table;
+        }
+
+        public bool checkCorrectness()
+        {
+            List<int> data_fullness = new List<int> { scenarios.Count, scenario_models.Count, scenario_name.Count, regions.Count, years.Count, scenario_name.Count, categories.Count };
+            if (data_fullness.Any(item => item == 0)) return false; else return true;
         }
     }
 }

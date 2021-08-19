@@ -10,6 +10,7 @@
     <None Remove="Resources\background.png" />
     <None Remove="Resources\loading.gif" />
     <None Remove="Resources\ok.gif" />
+    <None Remove="Resources\Regions.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +37,9 @@
 
   <ItemGroup>
     <Resource Include="Resources\background.png" />
+    <Content Include="Resources\Regions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\loading.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

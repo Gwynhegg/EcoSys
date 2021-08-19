@@ -23,14 +23,15 @@ namespace EcoSys.Grids
         Entities.ScenarioEntity scenarios;
 
         private HashSet<string> region_query;
+        Dictionary<string, List<string>> regions;
 
-
-        public Block4(Entities.ScenarioEntity scenarios)
+        public Block4(Entities.ScenarioEntity scenarios, Dictionary<string, List<string>> regions)
         {
             InitializeComponent();
 
             this.scenarios = scenarios;
             region_query = new HashSet<string>();
+            this.regions = regions;
 
             getAllRegions();
             getCategories();
@@ -112,6 +113,7 @@ namespace EcoSys.Grids
             {
                 var item = new TabItem();
                 item.Header = scenario_name;
+                item.Background = Auxiliary.ColorsStructure.getColor(scenario_name);
 
                 var data_grid = new DataGrid();
 

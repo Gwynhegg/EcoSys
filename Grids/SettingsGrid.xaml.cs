@@ -23,15 +23,21 @@ namespace EcoSys.Grids
     {
         Entities.DataEntity data;
         Entities.ScenarioEntity scenarios;
+        System.Windows.Controls.Primitives.Popup pop;
+
 
         WorkWindow parent_window;
 
-        public SettingsGrid(Entities.DataEntity data, Entities.ScenarioEntity scenarios, WorkWindow parent)
+        public SettingsGrid(Entities.DataEntity data, Entities.ScenarioEntity scenarios, WorkWindow parent, bool auto)
         {
             InitializeComponent();
             this.data = data;
             this.scenarios = scenarios;
             parent_window = parent;
+
+            if (auto) auto_launch.IsChecked = true;
+            pop = new System.Windows.Controls.Primitives.Popup() { Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse, Child = new TextBlock() { Text = "Скопировано в буфер обмена", Background = Brushes.White, FontSize = 14, Padding = new Thickness(2, 2, 2, 2) } };
+
         }
 
         ~SettingsGrid()
@@ -103,5 +109,20 @@ namespace EcoSys.Grids
             this.Visibility = Visibility.Visible;
         }
 
+        public bool isAutolaunchActive()
+        {
+            if (auto_launch.IsChecked == true) return true; else return false;
+        }
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetData(DataFormats.Text, "itchepurov@yandex.ru");
+            pop.IsOpen = true;
+        }
+
+        private void Hyperlink_MouseLeave(object sender, MouseEventArgs e)
+        {
+            pop.IsOpen = false;
+        }
     }
 }

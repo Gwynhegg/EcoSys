@@ -23,16 +23,17 @@ namespace EcoSys.Grids
     {
 
         private HashSet<string> region_query;
-
         private Entities.DataEntity data;
-
         private DataTable current_table = null;
+        Dictionary<string, List<string>> regions;
 
-        public Block2(Entities.DataEntity data)
+
+        public Block2(Entities.DataEntity data, Dictionary<string, List<string>> regions)
         {
             InitializeComponent();
             this.data = data;
             region_query = new HashSet<string>();
+            this.regions = regions;
 
             getAllRegions();
             getYears();
