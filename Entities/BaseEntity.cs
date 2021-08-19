@@ -37,7 +37,7 @@ namespace EcoSys.Entities
             {
                 var data_col = new DataColumn();
                 data_col.ColumnName = column;
-                data_col.DataType = System.Type.GetType("System.Double");
+                data_col.DataType = System.Type.GetType("System.Decimal");
                 data_col.AllowDBNull = true;
 
                 result_table.Columns.Add(data_col);
@@ -50,7 +50,7 @@ namespace EcoSys.Entities
                 row[0] = lines[i];
                 for (int j = 1; j <= columns.Count; j++)
                 {
-                    var temp = table.Rows[row_start + i].Field<double?>(col_start + (j - 1));       //заполнение таблицы согласно отступам в документе
+                    var temp = ((decimal?)(table.Rows[row_start + i].Field<double?>(col_start + (j - 1))));       //заполнение таблицы согласно отступам в документе
                     if (temp != null) row[result_table.Columns[j]] = temp;
                 }
 
@@ -63,7 +63,7 @@ namespace EcoSys.Entities
         {
             for (int i = 0; i < table.Rows.Count; i++)
                 for (int j = 1; j < table.Columns.Count; j++)
-                        if (table.Rows[i].Field<double?>(j) != null) table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
+                        if (table.Rows[i].Field<decimal?>(j) != null) table.Rows[i].SetField<decimal>(j, Math.Round(table.Rows[i].Field<decimal>(j), num_of_symb));
         }
 
         private protected void createLinesAndColumns(DataTable table, int col_names_index, int row_names_index, int num_of_rows)

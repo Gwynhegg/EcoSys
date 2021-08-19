@@ -89,10 +89,20 @@ namespace EcoSys.Entities
 
         private DataTable summarizeDataTables(DataTable first_table, DataTable second_table)        //Метод для суммирования ячеек таблицы данных
         {
+            var result_table = first_table.Clone();
             for (int i = 0; i < first_table.Rows.Count; i++)
+            {
+                var row = result_table.NewRow();
+                row[0] = first_table.Rows[0].Field<string>(0);
+
                 for (int j = 1; j < first_table.Columns.Count; j++)
-                    first_table.Rows[i].SetField<double>(j, first_table.Rows[i].Field<double>(j) + second_table.Rows[i].Field<double>(j));
+                    row[j] = first_table.Rows[i].Field<decimal>(j) + second_table.Rows[i].Field<decimal>(j);
+
+                result_table.Rows.Add(row);
+            }
             return first_table;
+
+
         }
         private async Task asyncFragmentizeData(Dictionary<(string, string), DataTable> used_dict, DataTable table)
         {

@@ -56,20 +56,30 @@ namespace EcoSys.Grids
         
         private void getAllRegions()        //метод для отображения списка всех регионов
         {
-            TreeViewItem item = new TreeViewItem() { Header = String.Format("Все регионы ({0})",data.regions.Count)};
+            TreeViewItem item = new TreeViewItem() { Header = String.Format("Все регионы и округа ({0})", data.regions.Count) };      //Отображение будет происходит с помощью TreeViewItem
 
             item.IsExpanded = true;
 
-            foreach (string region in data.regions)     //заполняем лист необходимыми чекбоксами
+            foreach (KeyValuePair<string, List<string>> pair in regions)        //Для каждого округа и принадлежащих ему регионов...
             {
-                CheckBox cb = new CheckBox();
-                cb.Content = region;
-                cb.Checked += checkRegion;      //настраиваем обработчики событий для изменения состояния флажка
-                cb.Unchecked += checkRegion;
-                item.Items.Add(cb);
+                TreeViewItem constitution = new TreeViewItem() { Header = String.Format("{0} ({1})", pair.Key, pair.Value.Count) };     //Создаем заголовок, содержащий название округа
+
+                constitution.IsExpanded = true;
+
+                foreach (string region in pair.Value)       //Для каждого региона из данного округа...
+                {
+                    CheckBox cb = new CheckBox();       //Создаем новывй CheckBox объект
+                    cb.Content = region;        //Отображаем на нем название региона
+                    cb.Checked += checkRegion;      //настраиваем обработчики событий для изменения состояния флажка
+                    cb.Unchecked += checkRegion;
+                    constitution.Items.Add(cb);     //Добавляем в контейнер CheckBox с регионом
+                }
+
+                item.Items.Add(constitution);       //Добавляем в контейнер уровнем выше каждый округ
             }
-            categories.Items.Add(item);
-           
+
+            categories.Items.Add(item);     //Добавляем в изначальный контейнер получившуюся структуру
+
         }
 
         private void getYears()     //добавление списка всех годов, встреченных в файле
