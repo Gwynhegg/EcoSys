@@ -24,7 +24,7 @@ namespace EcoSys.Entities
             foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
                 if (result_table == null) result_table = balance[(region, year)]; else result_table = summarizeDataTables(result_table, balance[(region, year)]);
 
-            roundDataTable(result_table, 3);
+            roundDataTable(result_table, 2);
 
             return result_table;
         }
@@ -36,7 +36,7 @@ namespace EcoSys.Entities
                 for (int i = 0; i < year; i++)
                     if (result_table == null) result_table = balance[(region, years.ElementAt(i))]; else result_table = summarizeDataTables(result_table, balance[(region, years.ElementAt(i))]);
 
-            roundDataTable(result_table, 3);
+            roundDataTable(result_table, 2);
 
             return result_table;
         }
@@ -47,7 +47,7 @@ namespace EcoSys.Entities
             foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
                 if (result_table == null) result_table = passive[(region, year)]; else result_table = summarizeDataTables(result_table, passive[(region, year)]);
 
-            roundDataTable(result_table, 3);
+            roundDataTable(result_table, 2);
 
             return result_table;
         }
@@ -59,7 +59,7 @@ namespace EcoSys.Entities
                 for (int i = 0; i < year; i++)
                     if (result_table == null) result_table = passive[(region, years.ElementAt(i))]; else result_table = summarizeDataTables(result_table, passive[(region, years.ElementAt(i))]);
 
-            roundDataTable(result_table, 3);
+            roundDataTable(result_table, 2);
 
             return result_table;
         }
@@ -70,7 +70,7 @@ namespace EcoSys.Entities
             foreach (string region in regions)      //По каждому из регионов получаем соответствующий словарь, после чего суммируем ячейки (при необходимости)
                 if (result_table == null) result_table = active[(region, year)]; else result_table = summarizeDataTables(result_table, active[(region, year)]);
 
-            roundDataTable(result_table, 3);
+            roundDataTable(result_table, 2);
 
             return result_table;
         }
@@ -82,18 +82,11 @@ namespace EcoSys.Entities
                 for (int i = 0; i < year; i++)
                     if (result_table == null) result_table = active[(region, years.ElementAt(i))]; else result_table = summarizeDataTables(result_table, active[(region, years.ElementAt(i))]);
 
-            roundDataTable(result_table, 3);
+            roundDataTable(result_table, 2);
 
             return result_table;
         }
 
-        private DataTable summarizeDataTables(DataTable first_table, DataTable second_table)        //Метод для суммирования ячеек таблицы данных
-        {
-            for (int i = 0; i < first_table.Rows.Count; i++)
-                for (int j = 1; j < first_table.Columns.Count; j++)
-                    first_table.Rows[i].SetField<double>(j, first_table.Rows[i].Field<double>(j) + second_table.Rows[i].Field<double>(j));
-            return first_table;
-        }
         private async Task asyncFragmentizeData(Dictionary<(string, string), DataTable> used_dict, DataTable table)
         {
             CultureInfo cult_info = new CultureInfo("ru-RU", false);
@@ -117,17 +110,23 @@ namespace EcoSys.Entities
             }
         } 
 
-        public async void createTables(DataSet dataset)     //В данном методе асинхронно заполяются все три словаря
+        public async Task createTables(DataSet dataset)     //В данном методе асинхронно заполяются все три словаря
         {
-            createLinesAndColumns(dataset.Tables[0], 3, 4, 31);   //создаем заголовки строк и столбцов
+                createLinesAndColumns(dataset.Tables[0], 3, 4, 31);   //создаем заголовки строк и столбцов
 
-            Task import_balance = asyncFragmentizeData(balance, dataset.Tables[0]);
-            Task import_actives = asyncFragmentizeData(active, dataset.Tables[1]);
-            Task import_passives = asyncFragmentizeData(passive, dataset.Tables[2]);
+                Task import_balance = asyncFragmentizeData(balance, dataset.Tables[0]);     //Создаем задачи по заполнению каждой из необходимых таблиц
+                Task import_actives = asyncFragmentizeData(active, dataset.Tables[1]);
+                Task import_passives = asyncFragmentizeData(passive, dataset.Tables[2]);
 
-            var complete_tasks = new List<Task>() {import_balance, import_actives, import_passives};
+                var complete_tasks = new List<Task>() { import_balance, import_actives, import_passives };      //Группируем лист задач
 
-            await Task.WhenAll(complete_tasks);
+                await Task.WhenAll(complete_tasks);    //Дожидаемся выполнения всего списка задач
+        }
+
+        public bool checkCorrectness()      //Проверка данных на корректность при импортировании. Самый простой способ - проверить, что все словари и наборы данных не пустые
+        {
+            List<int> data_fullness = new List<int> { balance.Count, passive.Count, active.Count, regions.Count, years.Count };
+            if (data_fullness.Any(item => item == 0)) return false; else return true;
         }
     }
 }

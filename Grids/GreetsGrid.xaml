@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="EcoSys.Grids.GreetsGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EcoSys.Grids"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" MaxWidth="50"></ColumnDefinition>
+            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MaxWidth="50"></ColumnDefinition>
+
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" FontStretch="Normal" FontSize="18" LineStackingStrategy="MaxHeight" TextAlignment="Justify" FontStyle="Normal" FontWeight="DemiBold" Margin="0,0,0,0" IsManipulationEnabled="True" Padding="10,0,10,0">
+            Добро пожаловать! Данное краткое руководство позволит вам ознакомиться с функционалом программы
+            <LineBreak></LineBreak>
+            <LineBreak></LineBreak>
+            Для начала работы в системе необходимо нажать на <Bold>стрелку в верхнем левом углу экрана</Bold>. С помощью нажатий на кнопки меню можно совершать переходы между функциональными блоками
+            <LineBreak></LineBreak>
+            Обратите внимание, что в пункте <Italic>Настройки </Italic> можно <Bold>создать JSON-файлы</Bold> для каждого из загруженных Excel-файлов (настоятельно рекомендуется сделать это для файла МДФП, поскольку это значительно ускоряет время загрузки), выйти на экран загрузки или установить параметр автозапуска (при входе в программу автоматически будут загружены последние файлы)
+            <LineBreak></LineBreak>
+            <LineBreak></LineBreak>
+            При возникновении вопросов или ошибок можете связаться с разработчиком напрямую по почте: <Hyperlink Cursor="Hand" Click="Hyperlink_Click" MouseLeave="Hyperlink_MouseLeave">itchepurov@yandex.ru</Hyperlink> 
+            <LineBreak></LineBreak>
+            <LineBreak></LineBreak>
+            Приятного использования!
+        </TextBlock>
+    </Grid>
+</UserControl>

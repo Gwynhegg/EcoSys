@@ -20,56 +20,46 @@ namespace EcoSys
     {
         Entities.DataEntity data;
         Entities.ScenarioEntity scenarios;
+        private bool auto_launch;
 
-        public WorkWindow(Entities.DataEntity data, Entities.ScenarioEntity scenario)
+        public WorkWindow(Entities.DataEntity data, Entities.ScenarioEntity scenario, bool auto_launch)
         {
             InitializeComponent();
 
-            this.data = data;
+            this.auto_launch = auto_launch;
+            this.data = data;       //передаем созданные объекты в рабочую область
             this.scenarios = scenario;
+
+            var grid = new Grids.GreetsGrid();      //добавляем Grid приветственного экрана с отображение подсказок по работе с системой. В дальнейшем данный экран будет скрыт
+            Grid.SetColumn(grid, 0);
+            Grid.SetColumnSpan(grid, 2);
+            Grid.SetRow(grid, 1);
+            main_grid.Children.Insert(0, grid);
+
         }
 
+
         ~WorkWindow()
-        {
+        {    
             GC.Collect();
         }
 
 
-        private void Settings_Click_1(object sender, RoutedEventArgs e)
-        {
-            if (!alreadyExist<Grids.SettingsGrid>())        //Если элемента нет - создаем его
-            createNewGrid(new Grids.SettingsGrid(data, scenarios, this));
-
-            main_menu.IsExpanded = false;
-        }
-
-        private void Block1Btn_Click(object sender, RoutedEventArgs e)
-        {
-            if (!alreadyExist<Grids.Block1>())
-                createNewGrid(new Grids.Block1(data));
-
-            main_menu.IsExpanded = false;
-        }
-
-        private void Block2Btn_Click(object sender, RoutedEventArgs e)
-        {
-            if (!alreadyExist<Grids.Block2>())
-                createNewGrid(new Grids.Block2(data));
-
-            main_menu.IsExpanded = false;
-        }
-
-        private void BlockBtnClick(object sender, RoutedEventArgs e)
+        private void BlockBtnClick(object sender, RoutedEventArgs e)        //Обработчик события нажатия на кнопки (нужный метод определяется по имени кнопки-отправителя)
         {
             switch (((Button)sender).Name)
             {
+                case "Settings":
+                    if (!alreadyExist<Grids.SettingsGrid>())        //Проверка на существование указанного элемента Grid   
+                        createNewGrid(new Grids.SettingsGrid(data, scenarios, this, auto_launch));       //Если элемента нет - переходим к функции его создания
+                    break;
                 case "Block1Btn":
                     if (!alreadyExist<Grids.Block1>())
-                        createNewGrid(new Grids.Block1(data));
+                        createNewGrid(new Grids.Block1(data, Auxiliary.Regions.createConstituencies(data.regions)));
                     break;
                 case "Block2Btn":
                     if (!alreadyExist<Grids.Block2>())
-                        createNewGrid(new Grids.Block2(data));
+                        createNewGrid(new Grids.Block2(data, Auxiliary.Regions.createConstituencies(data.regions)));
                     break;
                 case "Block3Btn":
                     if (!alreadyExist<Grids.Block3>())
@@ -77,11 +67,11 @@ namespace EcoSys
                     break;
                 case "Block4Btn":
                     if (!alreadyExist<Grids.Block4>())
-                        createNewGrid(new Grids.Block4(scenarios));
+                        createNewGrid(new Grids.Block4(scenarios, Auxiliary.Regions.createConstituencies(scenarios.regions)));
                     break;
             }
 
-            main_menu.IsExpanded = false;
+            main_menu.IsExpanded = false;       //Скрываем меню
 
         }
 
@@ -102,6 +92,15 @@ namespace EcoSys
             main_grid.Children.Insert(0, grid);
         }
 
-
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            foreach (object grid in main_grid.Children)
+                if (grid is Grids.SettingsGrid)
+                {
+                    var writer = new System.IO.StreamWriter("settings");
+                    writer.Write("auto_launch=" + ((Grids.SettingsGrid)grid).isAutolaunchActive());
+                    writer.Close();
+                }
+        }
     }
 }

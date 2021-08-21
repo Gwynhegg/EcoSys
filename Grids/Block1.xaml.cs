@@ -22,18 +22,18 @@ namespace EcoSys.Grids
     public partial class Block1 : UserControl, IGrid
     {
 
-        private HashSet<string> region_query;
+        private HashSet<string> region_query;       //Строка запроса, содержащая перечисление регионов, по которым будет происходить выборка
+        private Entities.DataEntity data;       //Передаваемый data-объект
+        private DataTable current_table = null;     //ВСпомогательный DataTable, посредник между Data и интерфейсом
+        private Dictionary<string, List<string>> regions;       //Словарь округов и принадлежащих к ним регионов
 
-        private Entities.DataEntity data;
 
-
-        private DataTable current_table = null;
-
-        public Block1(Entities.DataEntity data)
+        public Block1(Entities.DataEntity data, Dictionary<string, List<string>> regions)
         {
             InitializeComponent();
             this.data = data;
             region_query = new HashSet<string>();
+            this.regions = regions;
 
             getAllRegions();
             getYears();
@@ -54,31 +54,55 @@ namespace EcoSys.Grids
             this.Visibility = Visibility.Visible;
         }
         
-        private void getAllRegions()        //метод для отображения списка всех регионов
+        private void getAllRegions()        //Метод для отображения списка всех регионов в обозначенном Grid
         {
-            TreeViewItem item = new TreeViewItem() { Header = String.Format("Все регионы ({0})",data.regions.Count)};
+            TreeViewItem item = new TreeViewItem() { Header = String.Format("Все регионы и округа ({0})",data.regions.Count)};      //Отображение будет происходит с помощью TreeViewItem
 
             item.IsExpanded = true;
 
-            foreach (string region in data.regions)     //заполняем лист необходимыми чекбоксами
+            foreach (KeyValuePair<string, List<string>> pair in regions)        //Для каждого округа и принадлежащих ему регионов...
             {
-                CheckBox cb = new CheckBox();
-                cb.Content = region;
-                cb.Checked += checkRegion;      //настраиваем обработчики событий для изменения состояния флажка
-                cb.Unchecked += checkRegion;
-                item.Items.Add(cb);
+                TreeViewItem constitution = new TreeViewItem() { Header = String.Format("{0} ({1})", pair.Key, pair.Value.Count) };     //Создаем заголовок, содержащий название округа
+
+                constitution.IsExpanded = true;
+
+                foreach (string region in pair.Value)       //Для каждого региона из данного округа...
+                {
+                    CheckBox cb = new CheckBox();       //Создаем новывй CheckBox объект
+                    cb.Content = region;        //Отображаем на нем название региона
+                    cb.Checked += checkRegion;      //настраиваем обработчики событий для изменения состояния флажка
+                    cb.Unchecked += checkRegion;
+                    constitution.Items.Add(cb);     //Добавляем в контейнер CheckBox с регионом
+                }
+
+                item.Items.Add(constitution);       //Добавляем в контейнер уровнем выше каждый округ
             }
-            categories.Items.Add(item);
+
+            categories.Items.Add(item);     //Добавляем в изначальный контейнер получившуюся структуру
            
         }
+
+        //Блок для возможной доработки функции "Выбрать все внутри округа"
+        //private void checkAllChildren(object sender, RoutedEventArgs e)
+        //{
+        //    var checkbox = (CheckBox)sender;
+        //    var tree = (TreeViewItem)categories.Items[0];
+        //    if (checkbox.IsChecked == true)
+        //        foreach (object item in tree.Items)
+        //        {
+        //            int a = 0;
+        //            if (item is CheckBox) ((CheckBox)item).IsChecked = true;
+
+        //        }
+        //}
 
         private void getYears()     //добавление списка всех годов, встреченных в файле
         {
             foreach (string year in data.years)
-                year_choose.Items.Add(new ComboBoxItem() { Content = year });
+                year_choose.Items.Add(new ComboBoxItem() { Content = year });       //Для каждого года создаем свой комбобокс, помещаем его в необходимый контейнер
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)     //Обработчик события нажатия мыши на кнопку "Скрыть/Показать". Делает с Grid регионов то, из-за чего так и названа
         {
             if (region_grid.Visibility == Visibility.Hidden)
             {
@@ -91,14 +115,14 @@ namespace EcoSys.Grids
             }
         }
 
-        private void checkRegion(object sender, RoutedEventArgs e)      //обработчик события нажатия флажка напротив региона
+        private void checkRegion(object sender, RoutedEventArgs e)      //обработчик события изменения параметра IsChecked у CheckBox регионов
         {
             var checkbox = (CheckBox)sender;
             string content = checkbox.Content.ToString();
             if (checkbox.IsChecked == true) try
                 {
-                    region_query.Add(content);
-                    regions_text.Text = String.Join(", ", region_query);
+                    region_query.Add(content);      //Если данный объект выбран, то регион добавляет в массив запросов
+                    regions_text.Text = String.Join(", ", region_query);        //Элементы обновленного массива отображаются на форме
                 }
                 catch (Exception exc)
                 {
@@ -139,10 +163,10 @@ namespace EcoSys.Grids
         {
             loading.Visibility = Visibility.Visible;
 
-            int selected_index = matrix_type.SelectedIndex;
-            string selected_year = ((ComboBoxItem)year_choose.SelectedItem).Content.ToString();
+            int selected_index = matrix_type.SelectedIndex;     //Считываем значения показателя "Тип матрицы"
+            string selected_year = ((ComboBoxItem)year_choose.SelectedItem).Content.ToString();     //Считываем значения показателя "Год"
 
-            switch (selected_index)
+            switch (selected_index)     //В соответствии с выбранным типом матрицы вызываем соответствующую функцию объекта data, передавая вышеуказанные аргументы
             {
                 case 0:
                     await Task.Run(() => this.current_table = data.getPassiveData(region_query, selected_year));
@@ -157,7 +181,7 @@ namespace EcoSys.Grids
 
             loading.Visibility = Visibility.Hidden;
 
-            this.data_field.ItemsSource = current_table.AsDataView();        //устанавливаем полученную через словарь таблицу в качестве представления
+            this.data_field.ItemsSource = current_table.AsDataView();        //устанавливаем полученную через словарь таблицу в качестве представления данных
             this.data_field.Visibility = Visibility.Visible;
         }
 

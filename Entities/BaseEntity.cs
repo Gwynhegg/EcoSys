@@ -8,8 +8,8 @@ namespace EcoSys.Entities
 {
     public class BaseEntity
     {
-        protected List<string> lines { get; } = new List<string>();
-        protected List<string> columns { get; } = new List<string>();
+        public List<string> lines { get; } = new List<string>();
+        public List<string> columns { get; } = new List<string>();
 
         /// <summary>
         /// 
@@ -37,7 +37,7 @@ namespace EcoSys.Entities
             {
                 var data_col = new DataColumn();
                 data_col.ColumnName = column;
-                data_col.DataType = System.Type.GetType("System.Double");
+                data_col.DataType = System.Type.GetType("System.Double");       //НА ДАННЫЙ МОМЕНТ ТИП ДАННЫХ - Double, НО МОЖЕТ ПРИГОДИТСЯ ПЕРЕРАБОТКА
                 data_col.AllowDBNull = true;
 
                 result_table.Columns.Add(data_col);
@@ -66,17 +66,52 @@ namespace EcoSys.Entities
                         if (table.Rows[i].Field<double?>(j) != null) table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
         }
 
-        private protected void createLinesAndColumns(DataTable table, int col_names_index, int row_names_index, int num_of_rows)
+        private protected void createLinesAndColumns(DataTable table, int col_names_index, int row_names_index, int num_of_rows)        //Метод для создания столбцов и заголовков таблиц
         {
             //Создание заголовков столбцов для датасета
             for (int i = 1; i < 4; i++)
-                columns.Add("Финансовые корпорации. " + table.Rows[col_names_index].Field<string>(i));
+            {
+                var temp = "Финансовые корпорации: " + table.Rows[col_names_index].Field<string>(i);
+                if (temp.Contains("фин.")) 
+                    temp = temp.Replace("фин.", "финансовые");
+                if (temp.EndsWith(' ')) temp = temp.Remove(temp.Length - 1);
+                columns.Add(temp);
+            }
+
             for (int i = 4; i < 8; i++)
-                columns.Add(table.Rows[col_names_index - 1].Field<string>(i));
+            {
+                var temp = table.Rows[col_names_index - 1].Field<string>(i);
+                if (temp.Contains("Гос.")) 
+                    temp = temp.Replace("Гос.", "Государственные");
+                columns.Add(temp);
+            }
 
             //Создание заголовков строк для датасета
             for (int i = row_names_index; i < num_of_rows; i++)
                 lines.Add(table.Rows[i].Field<string>(0));
+        }
+
+
+        private protected DataTable summarizeDataTables(DataTable first_table, DataTable second_table)        //Метод для суммирования ячеек таблицы данных
+        {
+            var result_table = first_table.Clone();     //В целях предотвращения багов было принято решение клонировать структуру одной из таблиц, а не суммировать в нее сразу
+            for (int i = 0; i < first_table.Rows.Count; i++)
+            {
+                var row = result_table.NewRow();
+                row[0] = first_table.Rows[i].Field<string>(0);
+
+                for (int j = 1; j < first_table.Columns.Count; j++)
+                    try
+                    {
+                        row[j] = first_table.Rows[i].Field<double>(j) + second_table.Rows[i].Field<double>(j);
+                    }
+                    catch
+                    {
+                    }
+
+                result_table.Rows.Add(row);
+            }
+            return result_table;
         }
     }
 }

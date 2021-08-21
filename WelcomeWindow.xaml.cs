@@ -28,26 +28,72 @@ namespace EcoSys
         private string data_last_path = String.Empty, scenario_last_path = String.Empty;     //переменная для запоминания последнего пути файла с данными МДФП
         private Entities.DataEntity data_entity;     //объект для хранения данных МДФП
         private Entities.ScenarioEntity scenario_entity;        //Объект для хранения сценариев ДФП
+        private bool autolaunch_available = false;      //Переменная, задающая параметр автозапуска
+
 
         private bool first_condition = false, second_condition = false;     //Переменные, отображающие готовность перехода в рабочую область
+
+
         public WelcomeWindow()
         {
             InitializeComponent();
 
-            StreamReader reader = new StreamReader("cache");        //проверка на наличие кэша и отображение последнего пути
+            System.Threading.Thread.Sleep(1000);
 
-            tryToFindLastFile(reader, ref data_last_path, OpenLastButton, LastPath);
-            tryToFindLastFile(reader, ref scenario_last_path, ScenarioLastButton, LastScenarioPath);
+            try
+            {
+                StreamReader autolaunch = new StreamReader("settings");
 
-            reader.Close();
+                string is_auto = autolaunch.ReadLine().Split('=')[1];
+
+                if (is_auto.Equals("True")) autolaunch_available = true;
+            }
+            catch
+            {
+                Console.WriteLine("Файл автозагрузки не найден или был поврежден");
+            }
+
+            try
+            {
+                StreamReader reader = new StreamReader("cache");        //проверка на наличие кэша и отображение последнего пути
+
+                tryToFindLastFile(reader, ref data_last_path, OpenLastButton, LastPath);        //производим парсинг строки, содержащей адрес последнего файла данных
+                tryToFindLastFile(reader, ref scenario_last_path, ScenarioLastButton, LastScenarioPath);        //то же самое для файла сценариев
+
+                reader.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Файл кэша не найден. Убедитесь в его наличии");
+
+                OpenLastButton.IsEnabled = false;       //Если файл кэша не найден, блокируем кнопки запуска последних используемых файлов
+                ScenarioLastButton.IsEnabled = false;
+
+                return;
+            }
+            
+            if (autolaunch_available)
+            {
+                OpenLastButton_Click(OpenLastButton, new RoutedEventArgs());
+
+                OpenLastButton_Click(ScenarioLastButton, new RoutedEventArgs());
+            }
         }
 
+
+        /// <summary>
+        /// Метод для автоматической загрузки кэша и поиска двух последних путей успешно открытых файлов данных и сценариев
+        /// </summary>
+        /// <param name="reader">Reader, с помощью которого осуществляется обращение к файлу кэша</param>
+        /// <param name="param">Ссылка на строку, определяющую тип считываемого значения - данные или сценарии</param>
+        /// <param name="button">Одна из двух кнопок, на которую будет "повешен" обработчик нажатия кнопки мыши</param>
+        /// <param name="text_box">Указание UI компонента TextBox, с помощью которого будет выведен путь до файла</param>
         private void tryToFindLastFile(StreamReader reader, ref string param, Button button, TextBox text_box)
         {
             try
             {
-                string input = reader.ReadLine();
-                param = input.Split(' ')[0];        //запоминаем путь в переменной
+                string input = reader.ReadLine();       //парсим строку, содержащую путь к файлу и дату последнего использования
+                param = input.Split(' ')[0];        //запоминаем путь в переменной для дальнейшего открытия
                 text_box.Text = input;
             }
             catch (System.IO.FileNotFoundException exc)
@@ -59,7 +105,9 @@ namespace EcoSys
                 button.IsEnabled = false;
             }
         }
-        private void ImportButton_Click(object sender, RoutedEventArgs e)       //Событие при нажатии на кнопку импорта данных
+
+
+        private void ImportButton_Click(object sender, RoutedEventArgs e)       //Событие при нажатии на кнопку импорта данных (обработчик клика лежит на двух кнопках сразу. Для этого добавлена проверка имени кнопки)
         {
             string file_path = string.Empty;
 
@@ -69,44 +117,41 @@ namespace EcoSys
 
             if (file_dialog.ShowDialog() == true)
                 file_path = file_dialog.FileName;
-            if (file_path == string.Empty) return;      //Получение пути файла
+            if (file_path == string.Empty) return;      //Если файл не выбран, прерываем процедуру импортирования
 
             try
             {
-                if (((Button)sender).Name == "ImportButton") importingExcelData(file_path, "Data"); else importingExcelData(file_path, "Scenario");
+                if (((Button)sender).Name == "ImportButton") importingExcelData(file_path, "Data"); else importingExcelData(file_path, "Scenario");     //В зависимости от типа данных, выбираем соответствующий параметр для функции
             }
             catch (IOException exc)
             {
                 var dialog_result = MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;
             }
-
         }
 
-        private void createLogFile()        //Метод для создания/переписывания лог-файла
-        {
-            var writer = new StreamWriter("cache");
 
-            writer.WriteLine(String.Join(' ', data_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
-            writer.WriteLine(String.Join(' ', scenario_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
-
-            writer.Close();
-        }
-
+        /// <summary>
+        /// Метод для асинхронного считывания Excel-файла
+        /// </summary>
+        /// <param name="file_path">Путь к Excel-файлу</param>
+        /// <param name="type">Тип файла, который мы собираемся открыть - данные или сценарии</param>
         private async void importingExcelData(string file_path, string type)        //Метод для импорта данных. Использование асинхронных методов
         {
             FileStream stream;
+
             try
             {
                 stream = File.OpenRead(file_path);      //Попытка открытия файла для чтения данных
             }
             catch
             {
-                Console.WriteLine("Не удалось открыть файл. Возможно, он открыт в другом приложении");
+                MessageBox.Show("Не удалось открыть файл. Убедитесь, что он не открыт в другом приложении");
                 return;
             }
+
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            var reader = ExcelReaderFactory.CreateReader(stream, new ExcelReaderConfiguration() { FallbackEncoding = Encoding.GetEncoding(1252) });
+            var reader = ExcelReaderFactory.CreateReader(stream, new ExcelReaderConfiguration() { FallbackEncoding = Encoding.GetEncoding(1252) });     //С помощью библиотеки ExcelReader считываем датасет файла Excel
             var dataset = reader.AsDataSet();
 
             stream.Close();     //Закрываем считываемые потоки
@@ -114,54 +159,106 @@ namespace EcoSys
 
             if (type == "Data")
             {
-                data_entity = new Entities.DataEntity();
+                data_entity = new Entities.DataEntity();        //Создаем новый экземпляр класса "объекта данных"
 
                 LoadScreen.Visibility = Visibility.Visible;
-                await Task.Run(() => data_entity.createTables(dataset));     //Начинаем асинхронное заполнение таблиц на основе датасета
 
-                data_last_path = file_path;
+                try
+                {
+                    await Task.Run(() => data_entity.createTables(dataset));     //Начинаем асинхронное заполнение таблиц на основе датасета
+                }
+                catch
+                {
+                    LoadScreen.Visibility = Visibility.Hidden;
+                    MessageBox.Show("Файл не соответствует необходимой структуре. Убедитесь в правильности выбора файла");
+                    return;
+                }
 
-                firstOK();
+                data_last_path = file_path;     //Запоминаем путь к последнему успешно открытому файлу
+
+                firstOK();      //Подтверждаем, что загрузка первого файла прошла успешно
             }
             else if (type == "Scenario")
             {
-                scenario_entity = new Entities.ScenarioEntity();
+                scenario_entity = new Entities.ScenarioEntity();        //Создаем новый экземпляр класса "файла сценариев"
 
                 LoadScreen.Visibility = Visibility.Visible;
-                await Task.Run(() => scenario_entity.createTables(dataset));
 
-                scenario_last_path = file_path;
+                try
+                {
+                    await Task.Run(() => scenario_entity.createTables(dataset));
+                }
+                catch
+                {
+                    LoadScreen.Visibility = Visibility.Hidden;
+                    MessageBox.Show("Файл не соответствует необходимой структуре. Убедитесь в правильности выбора файла");
+                    return;
+                }
 
-                secondOK();
+                scenario_last_path = file_path;     //Запоминаем путь к последнему успешно импортированному файлу сценариев
+
+                secondOK();     //Подтверждаем, что загрузка второго файла прошла без проблем
             }
 
             LoadScreen.Visibility = Visibility.Hidden;
-
         }
 
+
+        private void ImportJSON_Click(object sender, RoutedEventArgs e)     //обработка события нажатия на кнопку "Импортировать JSON"
+        {
+            string file_path = string.Empty;
+
+            var file_dialog = new Microsoft.Win32.OpenFileDialog();
+            file_dialog.Filter = "JSON file (.json)|*.json";     //фильтруем только JSON файлы
+
+            if (file_dialog.ShowDialog() == true)
+                file_path = file_dialog.FileName;
+            if (file_path == string.Empty) return;      //Проверка корректности имени выбранного файла
+
+            try
+            {
+                if (((Button)sender).Name == "ImportJSON") importingJsonData(file_path, "Data"); else importingJsonData(file_path, "Scenario");     //проверяем имя кнопки и вызываем соответствующую функцию
+            }
+            catch (IOException exc)
+            {
+                var dialog_result = MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
+                if (dialog_result == MessageBoxResult.OK) return;
+            }
+        }
+
+
+        /// <summary>
+        /// Метод для считывания Json-файла (десериализации)
+        /// </summary>
+        /// <param name="file_path">Путь к Excel-файлу</param>
+        /// <param name="type">Тип файла, который мы собираемся открыть - данные или сценарии</param>
         private async void importingJsonData(string file_path, string type)      //Десериализация json-файла
         {
             System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //ИСпользование кастомного конвертера
             try
             {
                 LoadScreen.Visibility = Visibility.Visible;
+
                 if (type == "Data")
                 {
-                    await Task.Run(() => data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path)));
+                    await Task.Run(() => data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path)));        //Десериализуем Json-объект
 
+                    if (!data_entity.checkCorrectness()) throw new Exception();     //проверяем корректность (полноту заполнения данных)
                     data_last_path = file_path;
 
-                    firstOK();
+                    firstOK();      //Подтверждаем, что загрузка первого файла прошла успешно
                 }
                 else if (type == "Scenario")
                 {
                     System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TripletConverter<string, string, string>)));        //ИСпользование кастомного конвертера
 
-                    await Task.Run(() => scenario_entity = JsonConvert.DeserializeObject<Entities.ScenarioEntity>(File.ReadAllText(file_path)));
+                    await Task.Run(() => scenario_entity = JsonConvert.DeserializeObject<Entities.ScenarioEntity>(File.ReadAllText(file_path)));        //Десериализуем Json-объект
 
+                    if (!scenario_entity.checkCorrectness()) throw new Exception();      //проверяем корректность (полноту заполнения данных)
+                    data_last_path = file_path;
                     scenario_last_path = file_path;
 
-                    secondOK();
+                    secondOK();     //Подтверждаем, что загрузка второго файла прошла успешно
                 }
 
                 LoadScreen.Visibility = Visibility.Hidden;
@@ -169,17 +266,19 @@ namespace EcoSys
             }
             catch
             {
-                MessageBox.Show("Не удалось открыть файл для чтения. Возможно, он уже открыт в другом приложении", "Ошибка импортирования", MessageBoxButton.OK);
+                LoadScreen.Visibility = Visibility.Hidden;
+                MessageBox.Show("Не удалось открыть файл для чтения. Проверьте корректность Json файла", "Ошибка импортирования", MessageBoxButton.OK);
                 return;
             }
         }
 
-        private void OpenLastButton_Click(object sender, RoutedEventArgs e)     //открытие последнего использованного файла
+
+        private void OpenLastButton_Click(object sender, RoutedEventArgs e)     //Обработчик события открытия последнего использованного файла
         {
             try
             {
-                if (((Button)sender).Name == "OpenLastButton")
-                    if (data_last_path.Contains(".json")) importingJsonData(data_last_path, "Data"); else importingExcelData(data_last_path, "Data");      //Проверка на формат последнего файла
+                if (((Button)sender).Name == "OpenLastButton")      //Обработчик клика лежит одновременно на двух кнопках, поскольку функционал дублируется. Для этого добавлена проверка имени кнопки
+                    if (data_last_path.Contains(".json")) importingJsonData(data_last_path, "Data"); else importingExcelData(data_last_path, "Data");      //Проверка на формат последнего файла и вызов соответствующей функции импортирования
                 else
                     if (scenario_last_path.Contains(".json")) importingJsonData(scenario_last_path, "Scenario"); else importingExcelData(scenario_last_path, "Scenario");
             }
@@ -190,59 +289,52 @@ namespace EcoSys
             }
         }
 
-        private void ImportJSON_Click(object sender, RoutedEventArgs e)     //открытие JSON-файла
+
+        private void checkConditions()      //проверка условия перехода в рабочую область программы
         {
-            string file_path = string.Empty;
-
-            var file_dialog = new Microsoft.Win32.OpenFileDialog();
-            file_dialog.Filter = "JSON file (.json)|*.json";     //фильтруем только JSON файлы
-
-            if (file_dialog.ShowDialog() == true)
-                file_path = file_dialog.FileName;
-            if (file_path == string.Empty) return;      //Получение пути файла
-
-            try
+            if (first_condition && second_condition)        //Если условия соблюдены, то...
             {
-                if (((Button)sender).Name == "ImportJSON") importingJsonData(file_path, "Data"); else importingJsonData(file_path, "Scenario");
-            }
-            catch (IOException exc)
-            {
-                var dialog_result = MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
-                if (dialog_result == MessageBoxResult.OK) return;
-            }
-        }
+                createLogFile();        //Создаем лог-файл
 
-        private void checkConditions()
-        {
-            if (first_condition && second_condition)
-            {
-
-                createLogFile();
-
-                WorkWindow work_window = new WorkWindow(data_entity, scenario_entity);
+                WorkWindow work_window = new WorkWindow(data_entity, scenario_entity, autolaunch_available);      //Передаем данные в рабочую область
                 work_window.Show();
-                this.Close();
+                this.Close();       //закрываем это окно
             }
         }
+
+
+        private void createLogFile()        //Метод для создания/переписывания лог-файла
+        {
+            var writer = new StreamWriter("cache");     //Создание/открытие файла кэша
+
+            writer.WriteLine(String.Join(' ', data_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));        //Записываем в кэш путь последних успешно загруженных файлов
+            writer.WriteLine(String.Join(' ', scenario_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
+
+            writer.Close();
+        }
+
 
         private void FirstIsOK_MouseDown(object sender, MouseButtonEventArgs e)
         {
             FirstIsOK.Visibility = Visibility.Hidden;
         }
 
+
         private void SecondIsOK_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SecondIsOK.Visibility = Visibility.Hidden;
         }
 
-        private void firstOK()
+
+        private void firstOK()      //Метод для смены состояния готовности первого файла и проверки состояний
         {
             FirstIsOK.Visibility = Visibility.Visible;
             first_condition = true;
             checkConditions();
         }
 
-        private void secondOK()
+
+        private void secondOK()     //аналогично для второго файла. Еее, хардкод
         {
             SecondIsOK.Visibility = Visibility.Visible;
             second_condition = true;

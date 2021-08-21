@@ -18,13 +18,13 @@
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="1"></RowDefinition>
             <RowDefinition Height="6*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="*" MaxHeight="1"></RowDefinition>
             <RowDefinition Height="6*"></RowDefinition>
             <RowDefinition Height="2*" MaxHeight="15"></RowDefinition>
         </Grid.RowDefinitions>

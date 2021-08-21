@@ -41,22 +41,16 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"></RowDefinition>
                 <RowDefinition Height="0.2*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="0.2*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="0.2*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.2*"></ColumnDefinition>
                 <ColumnDefinition Width="20*"></ColumnDefinition>
                 <ColumnDefinition Width="0.2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Content="Создать категорию" Grid.Column="1" Grid.Row="2" />
-            <Button Content="Удалить категорию" Grid.Column="1" Grid.Row="4" />
-            <TreeView x:Name="categories" Grid.Column="1"/>
+            <TreeView x:Name="categories" Grid.Column="1" Grid.Row="0"/>
         </Grid>
 
-        <Grid x:Name="loading" Background="White" Opacity="0.9" Grid.Column="1" Grid.Row="5" Grid.RowSpan="2" Grid.ColumnSpan="3"  Visibility="Hidden">
+        <Grid x:Name="loading" Background="White" Opacity="0.9" Grid.Column="1" Grid.Row="5" Grid.RowSpan="2" Grid.ColumnSpan="5"  Visibility="Hidden">
             <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
         </Grid>
         
