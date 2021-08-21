@@ -21,14 +21,18 @@ namespace EcoSys.Entities
 
         public List<string> categories { get; } = new List<string>();
 
-        public DataTable getScenarioData(int year_index, string region, string scenario_name)
+        public DataTable getScenarioData(int year_index, HashSet<string> regions, string scenario_name)
         {
+            DataTable result_table = null;
+
             var year = years[year_index];
 
-            var result = scenarios[(year, region, scenario_name)];
-            roundDataTable(result, 2);
+            foreach (string region in regions)
+                if (result_table == null) result_table = scenarios[(year, region, scenario_name)]; else result_table = summarizeDataTables(result_table, scenarios[(year, region, scenario_name)]);
 
-            return result;
+            roundDataTable(result_table, 2);
+
+            return result_table;
         }
 
         public DataTable getScenarioModels(int region_index)
@@ -233,15 +237,18 @@ namespace EcoSys.Entities
 
             result_table.Columns.Add(lines_col);
 
-            for (int i = 0; i < 5; i++)
+            var data_col = new DataColumn();
+            data_col.ColumnName = columns[0];
+            data_col.DataType = System.Type.GetType("System.String");
+            data_col.AllowDBNull = true;
+
+            result_table.Columns.Add(data_col);
+
+
+            for (int i = 2; i < 6; i++)
             {
-                var data_col = new DataColumn();
-
-                data_col.ColumnName = table.Rows[row_start - 2].Field<string>(col_start + i);
-                var combined_name = table.Rows[row_start - 1].Field<string>(col_start + i);
-
-                if (combined_name != null) data_col.ColumnName += "." + combined_name;
-
+                data_col = new DataColumn();
+                data_col.ColumnName = columns[i];
                 data_col.DataType = System.Type.GetType("System.String");
                 data_col.AllowDBNull = true;
 
@@ -282,7 +289,7 @@ namespace EcoSys.Entities
             {
                 var data_col = new DataColumn();
                 data_col.ColumnName = table.Rows[row_start - 1].Field<string>(col_start + i);
-                data_col.DataType = System.Type.GetType("System.Decimal");
+                data_col.DataType = System.Type.GetType("System.Double");
                 data_col.AllowDBNull = true;
 
                 result_table.Columns.Add(data_col);
@@ -296,7 +303,7 @@ namespace EcoSys.Entities
 
                 for (int i = 0; i < 5; i++)
                 {
-                    var temp = ((decimal?)(table.Rows[row_start + index].Field<double?>(col_start + i)));
+                    var temp = (table.Rows[row_start + index].Field<double?>(col_start + i));
                     if (temp != null) row[i + 1] = temp; else row[i + 1] = row[1];
                 }
 

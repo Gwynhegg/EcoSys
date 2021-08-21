@@ -21,7 +21,6 @@ namespace EcoSys
         Entities.DataEntity data;
         Entities.ScenarioEntity scenarios;
         private bool auto_launch;
-        private Dictionary<string, List<string>> regions;
 
         public WorkWindow(Entities.DataEntity data, Entities.ScenarioEntity scenario, bool auto_launch)
         {
@@ -37,7 +36,6 @@ namespace EcoSys
             Grid.SetRow(grid, 1);
             main_grid.Children.Insert(0, grid);
 
-            regions = Auxiliary.Regions.createConstituencies(data.regions);
         }
 
 
@@ -57,11 +55,11 @@ namespace EcoSys
                     break;
                 case "Block1Btn":
                     if (!alreadyExist<Grids.Block1>())
-                        createNewGrid(new Grids.Block1(data, regions));
+                        createNewGrid(new Grids.Block1(data, Auxiliary.Regions.createConstituencies(data.regions)));
                     break;
                 case "Block2Btn":
                     if (!alreadyExist<Grids.Block2>())
-                        createNewGrid(new Grids.Block2(data, regions));
+                        createNewGrid(new Grids.Block2(data, Auxiliary.Regions.createConstituencies(data.regions)));
                     break;
                 case "Block3Btn":
                     if (!alreadyExist<Grids.Block3>())
@@ -69,7 +67,7 @@ namespace EcoSys
                     break;
                 case "Block4Btn":
                     if (!alreadyExist<Grids.Block4>())
-                        createNewGrid(new Grids.Block4(scenarios, regions));
+                        createNewGrid(new Grids.Block4(scenarios, Auxiliary.Regions.createConstituencies(scenarios.regions)));
                     break;
             }
 
