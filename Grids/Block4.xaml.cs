@@ -25,6 +25,7 @@ namespace EcoSys.Grids
         private HashSet<string> region_query;
         Dictionary<string, List<string>> regions;
         private DataTable current_table = null;
+        private List<object> response_bundle = null;
 
         public Block4(Entities.ScenarioEntity scenarios, Dictionary<string, List<string>> regions)
         {
@@ -208,7 +209,7 @@ namespace EcoSys.Grids
             double height = this.ActualHeight;
             double width = graphs_grid.ActualWidth;
 
-            var response_bundle = new List<object>();
+            response_bundle = new List<object>();
             await Task.Run(() => Dispatcher.Invoke(() => response_bundle = scenarios.getCategoriesData(selected_index, height, width)));
 
             loading_graphs.Visibility = Visibility.Hidden;
@@ -235,6 +236,27 @@ namespace EcoSys.Grids
                 change_picture.Content = "Перейти к прогнозам";
                 graphs_grid.Visibility = Visibility.Visible;
                 scenarios_tab.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void export_to_exc_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (current_table == null || response_bundle == null) throw new ArgumentNullException();
+
+                Entities.ExcelRecorder.writeToExcel(response_bundle, scenarios_tab.Items, region_query, categories_box.Text, years_box.Text);
+
+            }
+            catch (ArgumentNullException exc)
+            {
+                var dialog_result = MessageBox.Show("Часть данных, необходимых для импортирования, отсутствует. Убедитесь, что все поля выбраны", "", MessageBoxButton.OK);
+                if (dialog_result == MessageBoxResult.OK) return;
+            }
+            catch (Exception exc)
+            {
+                var dialog_result = MessageBox.Show("Проблема при инициализации работы с Excel (допустимо несоответствие версий)", "", MessageBoxButton.OK);
+                if (dialog_result == MessageBoxResult.OK) return;
             }
         }
     }

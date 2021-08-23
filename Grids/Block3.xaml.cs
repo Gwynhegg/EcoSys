@@ -76,5 +76,26 @@ namespace EcoSys.Grids
             getData();
             data_grid.Visibility = Visibility.Visible;
         }
+
+        private void export_to_exc_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (current_table == null) throw new ArgumentNullException();
+
+                Entities.ExcelRecorder.writeToExcel(current_table, regions_box.Text);
+
+            }
+            catch (ArgumentNullException exc)
+            {
+                var dialog_result = MessageBox.Show("Не выбрана таблица для импортирования", "", MessageBoxButton.OK);
+                if (dialog_result == MessageBoxResult.OK) return;
+            }
+            catch (Exception exc)
+            {
+                var dialog_result = MessageBox.Show("Проблема при инициализации работы с Excel (допустимо несоответствие версий)", "", MessageBoxButton.OK);
+                if (dialog_result == MessageBoxResult.OK) return;
+            }
+        }
     }
 }

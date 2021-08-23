@@ -194,9 +194,28 @@ namespace EcoSys.Grids
         {
             try
             {
-                Entities.ExcelRecorder.writeToExcel(current_table, region_query, year_choose.Text, matrix_type.Text);
+                if (current_table == null) throw new ArgumentNullException();
+                var result = MessageBox.Show("Вы собираетесь импортировать текущую таблицу в Excel. Импортировать также остальные типы матрицы?", "Импорт таблицы", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.No)
+                    Entities.ExcelRecorder.writeToExcel(current_table, region_query, year_choose.Text, matrix_type.Text);
+                else if (result == MessageBoxResult.Yes)
+                {
+                    var selected_year = ((ComboBoxItem)year_choose.SelectedItem).Content.ToString();
+
+                    List<DataTable> output_tables = new List<DataTable>() { data.getPassiveData(region_query, selected_year), data.getActiveData(region_query, selected_year), data.getBalanceData(region_query, selected_year) };
+
+                    Entities.ExcelRecorder.writeToExcel(output_tables, region_query, year_choose.Text);
+                }
+                else return;
+
             }
-            catch
+            catch (ArgumentNullException exc)
+            {
+                var dialog_result = MessageBox.Show("Не выбрана таблица для импортирования", "", MessageBoxButton.OK);
+                if (dialog_result == MessageBoxResult.OK) return;
+            }
+            catch (Exception exc)
             {
                 var dialog_result = MessageBox.Show("Проблема при инициализации работы с Excel (допустимо несоответствие версий)", "", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;

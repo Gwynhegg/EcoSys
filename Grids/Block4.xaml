@@ -29,7 +29,7 @@
             <ColumnDefinition Width="15"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Button x:Name="change_picture" Content="Перейти к графикам" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="5" MaxWidth="200" Visibility="Hidden" Click="change_picture_Click"></Button>
-        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="3" FontSize="14"></Button>
+        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="3" FontSize="14" Click="export_to_exc_Click"></Button>
         <Button x:Name ="show_hide" Content="Показать" Grid.Column="5" Grid.Row="1" FontSize="14" Click="show_hide_Click"/>
         <ComboBox x:Name="categories_box" Grid.Row="3" Grid.Column="1" Text="Нажмите для выбора категорий..." SelectionChanged="categories_box_SelectionChanged_1"></ComboBox>
         <ComboBox x:Name="years_box" Grid.Row="3" Grid.Column="3" Text="Нажмите для выбора года..." SelectionChanged="years_box_SelectionChanged"></ComboBox>
