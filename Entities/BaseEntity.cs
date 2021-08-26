@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Reflection;
-using System.Text;
 
 namespace EcoSys.Entities
 {
@@ -63,7 +61,7 @@ namespace EcoSys.Entities
         {
             for (int i = 0; i < table.Rows.Count; i++)
                 for (int j = 1; j < table.Columns.Count; j++)
-                        if (table.Rows[i].Field<double?>(j) != null) table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
+                    if (table.Rows[i].Field<double?>(j) != null) table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
         }
 
         private protected void createLinesAndColumns(DataTable table, int col_names_index, int row_names_index, int num_of_rows)        //Метод для создания столбцов и заголовков таблиц
@@ -72,7 +70,7 @@ namespace EcoSys.Entities
             for (int i = 1; i < 4; i++)
             {
                 var temp = "Финансовые корпорации: " + table.Rows[col_names_index].Field<string>(i);
-                if (temp.Contains("фин.")) 
+                if (temp.Contains("фин."))
                     temp = temp.Replace("фин.", "финансовые");
                 if (temp.EndsWith(' ')) temp = temp.Remove(temp.Length - 1);
                 columns.Add(temp);
@@ -81,7 +79,7 @@ namespace EcoSys.Entities
             for (int i = 4; i < 8; i++)
             {
                 var temp = table.Rows[col_names_index - 1].Field<string>(i);
-                if (temp.Contains("Гос.")) 
+                if (temp.Contains("Гос."))
                     temp = temp.Replace("Гос.", "Государственные");
                 columns.Add(temp);
             }
@@ -101,7 +99,7 @@ namespace EcoSys.Entities
                 row[0] = first_table.Rows[i].Field<string>(0);
 
                 for (int j = 1; j < first_table.Columns.Count; j++)
-                        row[j] = sumValues(first_table.Rows[i].Field<double?>(j), second_table.Rows[i].Field<double?>(j));
+                    row[j] = sumValues(first_table.Rows[i].Field<double?>(j), second_table.Rows[i].Field<double?>(j));
 
                 result_table.Rows.Add(row);
             }

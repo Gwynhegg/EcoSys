@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EcoSys.Grids
+﻿namespace EcoSys.Grids
 {
     interface IGrid
     {

@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+using System.Data;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Data;
-using System.Threading.Tasks;
 
 namespace EcoSys.Grids
 {
@@ -53,10 +45,10 @@ namespace EcoSys.Grids
         {
             this.Visibility = Visibility.Visible;
         }
-        
+
         private void getAllRegions()        //Метод для отображения списка всех регионов в обозначенном Grid
         {
-            TreeViewItem item = new TreeViewItem() { Header = String.Format("Все регионы и округа ({0})",data.regions.Count)};      //Отображение будет происходит с помощью TreeViewItem
+            TreeViewItem item = new TreeViewItem() { Header = String.Format("Все регионы и округа ({0})", data.regions.Count) };      //Отображение будет происходит с помощью TreeViewItem
 
             item.IsExpanded = true;
 
@@ -79,7 +71,7 @@ namespace EcoSys.Grids
             }
 
             categories.Items.Add(item);     //Добавляем в изначальный контейнер получившуюся структуру
-           
+
         }
 
         //Блок для возможной доработки функции "Выбрать все внутри округа"
@@ -108,7 +100,8 @@ namespace EcoSys.Grids
             {
                 region_grid.Visibility = Visibility.Visible;
                 show_hide.Content = "Скрыть";
-            } else
+            }
+            else
             {
                 region_grid.Visibility = Visibility.Hidden;
                 show_hide.Content = "Показать";

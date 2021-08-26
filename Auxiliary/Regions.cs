@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text;
 
 namespace EcoSys.Auxiliary
 {
@@ -23,13 +21,13 @@ namespace EcoSys.Auxiliary
                 Region needed_region = regions.Find(x => x.Name == region);
                 if (needed_region != null)
                     if (constituencies.ContainsKey(needed_region.FederalDistrictName))
-                        if (constituencies[needed_region.FederalDistrictName] != null) constituencies[needed_region.FederalDistrictName].Add(region); 
-                        else 
-                        { 
+                        if (constituencies[needed_region.FederalDistrictName] != null) constituencies[needed_region.FederalDistrictName].Add(region);
+                        else
+                        {
                             constituencies[needed_region.FederalDistrictName] = new List<string>();
                             constituencies[needed_region.FederalDistrictName].Add(region);
                         }
-                    else constituencies.Add(needed_region.FederalDistrictName, new List<string>() { region});
+                    else constituencies.Add(needed_region.FederalDistrictName, new List<string>() { region });
             }
             return constituencies;
         }

@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EcoSys
 {
@@ -40,7 +32,7 @@ namespace EcoSys
 
 
         ~WorkWindow()
-        {    
+        {
             GC.Collect();
         }
 
@@ -77,9 +69,9 @@ namespace EcoSys
 
         private bool alreadyExist<T>()      //Проверка существования с использованием обобщенного типа
         {
-                foreach (object grid in main_grid.Children)     //Пробегаем по всем дочерним элементам главного окна
-                    if (grid is Grids.IGrid)        //Поскольку мы работаем только с кастомными гридами, не затрагиваем все остальное
-                        if (grid is T) ((Grids.IGrid)grid).showGrid(); else ((Grids.IGrid)grid).hideGrid();     //Если грид найден, то показываем его, скрывая остальные. Работает даже в случаях, когда грида еще нет
+            foreach (object grid in main_grid.Children)     //Пробегаем по всем дочерним элементам главного окна
+                if (grid is Grids.IGrid)        //Поскольку мы работаем только с кастомными гридами, не затрагиваем все остальное
+                    if (grid is T) ((Grids.IGrid)grid).showGrid(); else ((Grids.IGrid)grid).hideGrid();     //Если грид найден, то показываем его, скрывая остальные. Работает даже в случаях, когда грида еще нет
             if (main_grid.Children.OfType<T>().Any()) return true; else return false;       //говорим о необходимости создавать новый грид
         }
 

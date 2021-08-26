@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Media;
-using System.Text;
 
 namespace EcoSys.Auxiliary
 {

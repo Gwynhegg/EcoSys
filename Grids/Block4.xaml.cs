@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace EcoSys.Grids
 {
@@ -109,7 +102,7 @@ namespace EcoSys.Grids
         }
 
         private async void getData(int year_request)
-        {            
+        {
             foreach (string scenario_name in scenarios.scenario_name)
             {
                 var item = new TabItem();

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Data;
+﻿using ClosedXML.Excel;
 using Microsoft.Win32;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.IO;
-using ClosedXML.Excel;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace EcoSys.Entities
@@ -30,7 +26,7 @@ namespace EcoSys.Entities
 
                     IXLWorksheet worksheet = workbook.Worksheets.Add("Таблица 1");
 
-                    worksheet.Cell(1, 1).Value = String.Format("Задействованные регионы: {0}",  String.Join(',', regions));
+                    worksheet.Cell(1, 1).Value = String.Format("Задействованные регионы: {0}", String.Join(',', regions));
                     worksheet.Cell(2, 1).Value = String.Format("Год выборки: {0}", year);
                     worksheet.Cell(3, 1).Value = String.Format("Тип матрицы: {0}", type);
 

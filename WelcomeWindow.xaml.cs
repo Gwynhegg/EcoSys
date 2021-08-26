@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ExcelDataReader;
+using Newtonsoft.Json;
+using System;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using ExcelDataReader;
-using System.IO;
-using System.Globalization;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Data;
-using Newtonsoft.Json;
 
 namespace EcoSys
 {
@@ -68,7 +59,7 @@ namespace EcoSys
 
                 return;
             }
-            
+
             if (autolaunch_available)
             {
                 OpenLastButton_Click(OpenLastButton, new RoutedEventArgs());
@@ -125,9 +116,9 @@ namespace EcoSys
                     await Task.Run(() => importingExcelData(file_path, "Data"));
                     firstOK();
                 }
-                else 
+                else
                 {
-                    await Task .Run(() => importingExcelData(file_path, "Scenario"));     //В зависимости от типа данных, выбираем соответствующий параметр для функции
+                    await Task.Run(() => importingExcelData(file_path, "Scenario"));     //В зависимости от типа данных, выбираем соответствующий параметр для функции
                     secondOK();
                 }
             }
@@ -263,7 +254,7 @@ namespace EcoSys
 
                 if (((Button)sender).Name == "OpenLastButton")
                 {
-                    if (data_last_path.Contains(".json"))  await Task.Run(() => importingJsonData(data_last_path)); else await Task.Run(() => importingExcelData(data_last_path, "Data"));      //Проверка на формат последнего файла и вызов соответствующей функции импортирования
+                    if (data_last_path.Contains(".json")) await Task.Run(() => importingJsonData(data_last_path)); else await Task.Run(() => importingExcelData(data_last_path, "Data"));      //Проверка на формат последнего файла и вызов соответствующей функции импортирования
                     firstOK();
                 }
                 //Обработчик клика лежит одновременно на двух кнопках, поскольку функционал дублируется. Для этого добавлена проверка имени кнопки

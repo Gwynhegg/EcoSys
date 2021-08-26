@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
+using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.IO;
-using Newtonsoft.Json;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.Win32;
 
 namespace EcoSys.Grids
 {
@@ -72,9 +65,9 @@ namespace EcoSys.Grids
                     var dialog_result = MessageBox.Show("Возникла ошибка при создании файла. Попробуйте еще раз", "Ошибка сохранения", MessageBoxButton.OK);
                     if (dialog_result == MessageBoxResult.OK) return;
                 }
-                    
+
             }
-            
+
         }
 
 

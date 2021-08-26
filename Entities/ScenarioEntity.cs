@@ -1,12 +1,11 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using System.Threading.Tasks;
 using System.Globalization;
 using System.Linq;
-using LiveCharts.Wpf;
-using LiveCharts;
+using System.Threading.Tasks;
 
 namespace EcoSys.Entities
 {
@@ -85,7 +84,7 @@ namespace EcoSys.Entities
             for (int i = 0; i < data.Rows.Count; i++)
                 real_price.Add(data.Rows[i].Field<double>(1));
 
-            chart.Series.Add(new LineSeries() { Values = real_price, Title = "Инерционный сценарий"});
+            chart.Series.Add(new LineSeries() { Values = real_price, Title = "Инерционный сценарий" });
 
             for (int i = 1; i < scenario_name.Count; i++)
             {
@@ -186,7 +185,7 @@ namespace EcoSys.Entities
                 }
                 Console.WriteLine();
             }
-            
+
         }
         public async Task createTables(DataSet dataset)       //Метод для создания таблиц со сценариями (асинхронный)
         {

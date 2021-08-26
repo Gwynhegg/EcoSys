@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EcoSys.Entities
 {
@@ -108,19 +104,19 @@ namespace EcoSys.Entities
                     used_dict.Add((region, year), pickOutData(table, vert_index, hor_index, 1, 2));   //добавление таблицы-выборки в словарь
                 }
             }
-        } 
+        }
 
         public async Task createTables(DataSet dataset)     //В данном методе асинхронно заполяются все три словаря
         {
-                createLinesAndColumns(dataset.Tables[0], 3, 4, 31);   //создаем заголовки строк и столбцов
+            createLinesAndColumns(dataset.Tables[0], 3, 4, 31);   //создаем заголовки строк и столбцов
 
-                Task import_balance = asyncFragmentizeData(balance, dataset.Tables[0]);     //Создаем задачи по заполнению каждой из необходимых таблиц
-                Task import_actives = asyncFragmentizeData(active, dataset.Tables[1]);
-                Task import_passives = asyncFragmentizeData(passive, dataset.Tables[2]);
+            Task import_balance = asyncFragmentizeData(balance, dataset.Tables[0]);     //Создаем задачи по заполнению каждой из необходимых таблиц
+            Task import_actives = asyncFragmentizeData(active, dataset.Tables[1]);
+            Task import_passives = asyncFragmentizeData(passive, dataset.Tables[2]);
 
-                var complete_tasks = new List<Task>() { import_balance, import_actives, import_passives };      //Группируем лист задач
+            var complete_tasks = new List<Task>() { import_balance, import_actives, import_passives };      //Группируем лист задач
 
-                await Task.WhenAll(complete_tasks);    //Дожидаемся выполнения всего списка задач
+            await Task.WhenAll(complete_tasks);    //Дожидаемся выполнения всего списка задач
         }
 
         public bool checkCorrectness()      //Проверка данных на корректность при импортировании. Самый простой способ - проверить, что все словари и наборы данных не пустые
