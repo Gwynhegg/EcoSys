@@ -60,7 +60,10 @@ namespace EcoSys.Entities
                         segmented_data.ImportRow(used_data.Rows[used_data.Rows.Count - j]);
 
                     roundDataTable(segmented_data, 2);
-                    result_list.Add(new System.Windows.Controls.DataGrid() { ItemsSource = segmented_data.AsDataView() });
+
+                    System.Windows.Controls.DataGrid grid = new System.Windows.Controls.DataGrid() { ItemsSource = segmented_data.AsDataView() };
+                    Auxiliary.GridStandard.standardizeGrid(grid);
+                    result_list.Add(grid);
 
                     result_list.Add(getGraph(used_data, current_height, current_width));
                 }

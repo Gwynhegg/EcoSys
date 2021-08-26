@@ -116,6 +116,7 @@ namespace EcoSys.Grids
 
                 data_grid.AutoGeneratingColumn += r2_AutoGeneratingColumn;
                 data_grid.ItemsSource = current_table.AsDataView();
+                Auxiliary.GridStandard.standardizeGrid(data_grid);
 
                 item.Content = data_grid;
 
@@ -167,6 +168,7 @@ namespace EcoSys.Grids
         {
             loading_graphs.Visibility = Visibility.Visible;
             await Task.Run(() => Dispatcher.Invoke(() => createGraphs(categories_box.SelectedIndex, this.ActualHeight, graphs_grid.ActualWidth)));
+            if (current_table == null) await Task.Run(() => Dispatcher.Invoke(() => getData(years_box.SelectedIndex)));
             loading_graphs.Visibility = Visibility.Hidden;
 
         }

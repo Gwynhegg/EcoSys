@@ -178,6 +178,7 @@ namespace EcoSys.Grids
             }
             this.data_field.ItemsSource = current_table.AsDataView();        //устанавливаем полученную через словарь таблицу в качестве представления данных
             this.data_field.Visibility = Visibility.Visible;
+            Auxiliary.GridStandard.standardizeGrid(this.data_field);
         }
 
         private void r2_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)        //Кастомный метод для правильного отображения заголовков

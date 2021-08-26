@@ -50,6 +50,7 @@ namespace EcoSys.Grids
 
             data_grid.ItemsSource = current_table.AsDataView();
             data_grid.Visibility = Visibility.Visible;
+            Auxiliary.GridStandard.standardizeGrid(this.data_grid);
         }
 
         ~Block3()
