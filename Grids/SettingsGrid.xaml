@@ -3,19 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:gif="http://wpfanimatedgif.codeplex.com"
              xmlns:local="clr-namespace:EcoSys.Grids"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="2*" MaxHeight="200"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="2*" MaxHeight="200"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="2*" MaxHeight="200"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="2*" MaxHeight="200"></RowDefinition>
+            <RowDefinition Height="2*" MaxHeight="50"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="20"></RowDefinition>
+            <RowDefinition Height="2*" MaxHeight="50"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="20"></RowDefinition>
+            <RowDefinition Height="2*" MaxHeight="50"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -24,12 +23,15 @@
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Button x:Name="JSONButton" Content="Создать JSON-файл для файла МДФП" Grid.Row="1" Grid.Column="1" Click="JSONButton_Click" FontSize="14"/>
-        <Button x:Name="JSONButton1" Content="Создать JSON-файл для файла сценариев" Grid.Row="3" Grid.Column="1" Click="JSONButton_Click" FontSize="14"/>
-        <Button x:Name="BackToChoose" Content="На экран выбора файла" Grid.Row="5" Grid.Column="1" Click="BackToChoose_Click" FontSize="14"/>
-        <Border BorderThickness="1,1,1,3" BorderBrush="Black" Grid.Column="1" Grid.Row="7"/>
-        <CheckBox Grid.Row="7" Grid.Column="1"  x:Name="auto_launch" Content="Разрешить автозапуск последних использованных файлов" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" Margin="10,0,10,0"></CheckBox>
-        <TextBlock Grid.Row="8" Grid.Column="2" TextWrapping="WrapWithOverflow" Margin="5,2,5,2" HorizontalAlignment="Right" VerticalAlignment="Stretch">Контакты: 
+        <Button x:Name="BackToChoose" Content="На экран выбора файла" Grid.Row="3" Grid.Column="1" Click="BackToChoose_Click" FontSize="14"/>
+        <Border BorderThickness="1,1,1,3" BorderBrush="Black" Grid.Column="1" Grid.Row="5"/>
+        <CheckBox Grid.Row="5" Grid.Column="1"  x:Name="auto_launch" Content="Разрешить автозапуск последних использованных файлов" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" Padding="0,0,0,0" Margin="10,0,10,0"></CheckBox>
+        <TextBlock Grid.Row="7" Grid.Column="2" TextWrapping="WrapWithOverflow" Margin="5,2,5,2" HorizontalAlignment="Left" VerticalAlignment="Center">Контакты: 
             <LineBreak></LineBreak>
             <Hyperlink Cursor="Hand" Click="Hyperlink_Click" MouseLeave="Hyperlink_MouseLeave">itchepurov@yandex.ru</Hyperlink></TextBlock>
+
+        <Grid x:Name="LoadScreen" Background="White" Opacity="0.9" Grid.Row="0" Grid.Column="0" Grid.RowSpan="7" Grid.ColumnSpan="3"  Visibility="Hidden">
+            <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
+        </Grid>
     </Grid>
 </UserControl>

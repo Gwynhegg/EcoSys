@@ -108,19 +108,8 @@ namespace EcoSys.Grids
                 years_box.Items.Add(new ComboBoxItem() { Content = String.Format("Прогноз на {0} год", year) });
         }
 
-        private void categories_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            getData();
-        }
-
-        private async void getData()
-        {
-            loading.Visibility = Visibility.Visible;
-
-            scenarios_tab.Items.Clear();
-
-            int year_request = years_box.SelectedIndex;
-            
+        private async void getData(int year_request)
+        {            
             foreach (string scenario_name in scenarios.scenario_name)
             {
                 var item = new TabItem();
@@ -140,7 +129,6 @@ namespace EcoSys.Grids
                 scenarios_tab.Items.Add(item);
             }
 
-            loading.Visibility = Visibility.Hidden;
             graphs_grid.Visibility = Visibility.Hidden;
             change_picture.Content = "Перейти к графикам";
 
@@ -182,37 +170,42 @@ namespace EcoSys.Grids
             }
         }
 
-        private void categories_box_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-        {
-            createGraphs();
-            if (regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "" && years_box.SelectedIndex != -1)
-                getData();
-        }
-
-        private void years_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "" && categories_box.SelectedIndex != -1)
-                getData();
-        }
-
-        private void regions_text_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (categories_box.SelectedIndex != -1 && years_box.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
-                getData();
-        }
-
-        private async void createGraphs()
+        private async void categories_box_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
             loading_graphs.Visibility = Visibility.Visible;
+            await Task.Run(() => Dispatcher.Invoke(() => createGraphs(categories_box.SelectedIndex, this.ActualHeight, graphs_grid.ActualWidth)));
+            loading_graphs.Visibility = Visibility.Hidden;
 
-            int selected_index = categories_box.SelectedIndex;
-            double height = this.ActualHeight;
-            double width = graphs_grid.ActualWidth;
+        }
 
+        private async void years_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "" && categories_box.SelectedIndex != -1)
+            {
+                loading.Visibility = Visibility.Visible;
+
+                scenarios_tab.Items.Clear();
+                await Task.Run(() => Dispatcher.Invoke(() => getData(years_box.SelectedIndex)));
+                loading.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private async void regions_text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (categories_box.SelectedIndex != -1 && years_box.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
+            {
+                loading.Visibility = Visibility.Visible;
+
+                scenarios_tab.Items.Clear();
+                await Task.Run(() => Dispatcher.Invoke(() => getData(years_box.SelectedIndex)));
+                loading.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private async void createGraphs(int selected_index, double height, double width)
+        {
             response_bundle = new List<object>();
             await Task.Run(() => Dispatcher.Invoke(() => response_bundle = scenarios.getCategoriesData(selected_index, height, width)));
-
-            loading_graphs.Visibility = Visibility.Hidden;
 
             graphs_list.ItemsSource = response_bundle;
             graphs_grid.Visibility = Visibility.Visible;
@@ -239,13 +232,14 @@ namespace EcoSys.Grids
             }
         }
 
-        private void export_to_exc_Click(object sender, RoutedEventArgs e)
+        private async void export_to_exc_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (current_table == null || response_bundle == null) throw new ArgumentNullException();
 
-                Entities.ExcelRecorder.writeToExcel(response_bundle, scenarios_tab.Items, region_query, categories_box.Text, years_box.Text);
+                loading.Visibility = Visibility.Visible;
+                await Task.Run(() => Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(response_bundle, scenarios_tab.Items, region_query, categories_box.Text, years_box.Text)));
 
             }
             catch (ArgumentNullException exc)
@@ -257,6 +251,10 @@ namespace EcoSys.Grids
             {
                 var dialog_result = MessageBox.Show("Проблема при инициализации работы с Excel (допустимо несоответствие версий)", "", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;
+            }
+            finally
+            {
+                loading.Visibility = Visibility.Hidden;
             }
         }
     }

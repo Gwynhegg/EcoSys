@@ -62,17 +62,9 @@ namespace EcoSys.Grids
 
                     System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //использование кастомного конвертера
 
-                    if (((Button)sender).Name == "JSONButton")
-                    {
-                        writer.Write(JsonConvert.SerializeObject(data));        //Сериализуем объект с помощью Newtonsoft
-                    }
-                    else
-                    {
-                        System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TripletConverter<string, string, string>)));        //использование кастомного конвертера
-                        writer.Write(JsonConvert.SerializeObject(scenarios));        //Сериализуем объект с помощью Newtonsoft
-                    }
-
+                    writer.Write(JsonConvert.SerializeObject(data));        //Сериализуем объект с помощью Newtonsoft
                     writer.Close();
+
                     MessageBox.Show("Файл успешно создан!", "", MessageBoxButton.OK);
                 }
                 catch (Exception exc)
@@ -92,7 +84,7 @@ namespace EcoSys.Grids
 
             if (result == MessageBoxResult.Yes)
             {
-                WelcomeWindow welcome_window = new WelcomeWindow();
+                WelcomeWindow welcome_window = new WelcomeWindow(true);
                 welcome_window.Show();
                 GC.Collect();
                 parent_window.Close();

@@ -101,17 +101,18 @@ namespace EcoSys.Entities
                 row[0] = first_table.Rows[i].Field<string>(0);
 
                 for (int j = 1; j < first_table.Columns.Count; j++)
-                    try
-                    {
-                        row[j] = first_table.Rows[i].Field<double>(j) + second_table.Rows[i].Field<double>(j);
-                    }
-                    catch
-                    {
-                    }
+                        row[j] = sumValues(first_table.Rows[i].Field<double?>(j), second_table.Rows[i].Field<double?>(j));
 
                 result_table.Rows.Add(row);
             }
             return result_table;
+        }
+
+        private protected object sumValues(double? first, double? second)
+        {
+            if (first == null) first = 0;
+            if (second == null) second = 0;
+            return first + second;
         }
     }
 }

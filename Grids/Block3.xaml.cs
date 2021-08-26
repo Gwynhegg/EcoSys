@@ -53,17 +53,12 @@ namespace EcoSys.Grids
             this.Visibility = Visibility.Visible;
         }
 
-        private async void getData()
+        private async void getData(int selected_index)
         {
-            loading.Visibility = Visibility.Visible;
-
-            int selected_index = regions_box.SelectedIndex;
-
             await Task.Run(() => current_table = scenarios_entity.getScenarioModels(selected_index));
+
             data_grid.ItemsSource = current_table.AsDataView();
-
-            loading.Visibility = Visibility.Hidden;
-
+            data_grid.Visibility = Visibility.Visible;
         }
 
         ~Block3()
@@ -71,20 +66,21 @@ namespace EcoSys.Grids
             GC.Collect();
         }
 
-        private void regions_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void regions_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            getData();
-            data_grid.Visibility = Visibility.Visible;
+            loading.Visibility = Visibility.Visible;
+            await Task.Run(() => Dispatcher.Invoke(() => getData(regions_box.SelectedIndex)));
+            loading.Visibility = Visibility.Hidden;
         }
 
-        private void export_to_exc_Click(object sender, RoutedEventArgs e)
+        private async void export_to_exc_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (current_table == null) throw new ArgumentNullException();
 
-                Entities.ExcelRecorder.writeToExcel(current_table, regions_box.Text);
-
+                loading.Visibility = Visibility.Visible;
+                await Task.Run(() => Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(current_table, regions_box.Text)));
             }
             catch (ArgumentNullException exc)
             {
@@ -95,6 +91,10 @@ namespace EcoSys.Grids
             {
                 var dialog_result = MessageBox.Show("Проблема при инициализации работы с Excel (допустимо несоответствие версий)", "", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;
+            }
+            finally
+            {
+                loading.Visibility = Visibility.Hidden;
             }
         }
     }

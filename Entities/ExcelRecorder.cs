@@ -14,7 +14,7 @@ namespace EcoSys.Entities
 {
     public static class ExcelRecorder
     {
-        public static void writeToExcel(DataTable table, HashSet<string> regions, string year, string type)
+        public static async void writeToExcel(DataTable table, HashSet<string> regions, string year, string type)
         {
             var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
 
@@ -51,7 +51,7 @@ namespace EcoSys.Entities
             }
         }
 
-        public static void writeToExcel(List<DataTable> tables, HashSet<string> regions, string year)
+        public static async void writeToExcel(List<DataTable> tables, HashSet<string> regions, string year)
         {
             var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
 
@@ -96,7 +96,7 @@ namespace EcoSys.Entities
             }
         }
 
-        public static void writeToExcel(DataTable table, string region)
+        public static async void writeToExcel(DataTable table, string region)
         {
             var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
 
@@ -133,7 +133,7 @@ namespace EcoSys.Entities
             }
         }
 
-        public static void writeToExcel(List<object> bundle, ItemCollection tables, HashSet<string> region, string category, string year)
+        public static async void writeToExcel(List<object> bundle, ItemCollection tables, HashSet<string> region, string category, string year)
         {
             var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
 

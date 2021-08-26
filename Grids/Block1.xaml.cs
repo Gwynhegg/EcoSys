@@ -139,33 +139,38 @@ namespace EcoSys.Grids
                 }
         }
 
-        private void matrix_type_SelectionChanged(object sender, SelectionChangedEventArgs e)       //Было принято решение о динамической загрузке таблицы
+        private async void matrix_type_SelectionChanged(object sender, SelectionChangedEventArgs e)       //Было принято решение о динамической загрузке таблицы
         {
             if (year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
-                getData();
-
-
+            {
+                loading.Visibility = Visibility.Visible;
+                await Task.Run(() => Dispatcher.Invoke(() => getData(matrix_type.SelectedIndex, ((ComboBoxItem)year_choose.SelectedItem).Content.ToString())));
+                loading.Visibility = Visibility.Hidden;
+            }
         }
 
-        private void year_choose_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void year_choose_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (matrix_type.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
-                getData();
+            {
+                loading.Visibility = Visibility.Visible;
+                await Task.Run(() => Dispatcher.Invoke(() => getData(matrix_type.SelectedIndex, ((ComboBoxItem)year_choose.SelectedItem).Content.ToString())));
+                loading.Visibility = Visibility.Hidden;
+            }
         }
 
-        private void regions_text_TextChanged(object sender, TextChangedEventArgs e)
+        private async void regions_text_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (matrix_type.SelectedIndex != -1 && year_choose.SelectedIndex != -1 && regions_text.Text != "Нажмите на кнопку справа для выбора регионов..." && regions_text.Text != "")
-                getData();
+            {
+                loading.Visibility = Visibility.Visible;
+                await Task.Run(() => Dispatcher.Invoke(() => getData(matrix_type.SelectedIndex, ((ComboBoxItem)year_choose.SelectedItem).Content.ToString())));
+                loading.Visibility = Visibility.Hidden;
+            }
         }
 
-        private async void getData()      //привязка к выбранному типу матрицы и отправление соответствующих запросов
+        private async void getData(int selected_index, string selected_year)      //привязка к выбранному типу матрицы и отправление соответствующих запросов
         {
-            loading.Visibility = Visibility.Visible;
-
-            int selected_index = matrix_type.SelectedIndex;     //Считываем значения показателя "Тип матрицы"
-            string selected_year = ((ComboBoxItem)year_choose.SelectedItem).Content.ToString();     //Считываем значения показателя "Год"
-
             switch (selected_index)     //В соответствии с выбранным типом матрицы вызываем соответствующую функцию объекта data, передавая вышеуказанные аргументы
             {
                 case 0:
@@ -178,9 +183,6 @@ namespace EcoSys.Grids
                     await Task.Run(() => this.current_table = data.getBalanceData(region_query, selected_year));
                     break;
             }
-
-            loading.Visibility = Visibility.Hidden;
-
             this.data_field.ItemsSource = current_table.AsDataView();        //устанавливаем полученную через словарь таблицу в качестве представления данных
             this.data_field.Visibility = Visibility.Visible;
         }
@@ -194,7 +196,7 @@ namespace EcoSys.Grids
             }
         }
 
-        private void export_to_exc_Click(object sender, RoutedEventArgs e)      //экспорт полученного DataTable в Excel
+        private async void export_to_exc_Click(object sender, RoutedEventArgs e)      //экспорт полученного DataTable в Excel
         {
             try
             {
@@ -202,14 +204,20 @@ namespace EcoSys.Grids
                 var result = MessageBox.Show("Вы собираетесь импортировать текущую таблицу в Excel. Импортировать также остальные типы матрицы?", "Импорт таблицы", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.No)
-                    Entities.ExcelRecorder.writeToExcel(current_table, region_query, year_choose.Text, matrix_type.Text);
+                {
+                    loading.Visibility = Visibility.Visible;
+                    await Task.Run(() => Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(current_table, region_query, year_choose.Text, matrix_type.Text)));
+                }
                 else if (result == MessageBoxResult.Yes)
                 {
                     var selected_year = ((ComboBoxItem)year_choose.SelectedItem).Content.ToString();
 
-                    List<DataTable> output_tables = new List<DataTable>() { data.getPassiveData(region_query, selected_year), data.getActiveData(region_query, selected_year), data.getBalanceData(region_query, selected_year) };
+                    List<DataTable> output_tables = null;
 
-                    Entities.ExcelRecorder.writeToExcel(output_tables, region_query, year_choose.Text);
+                    loading.Visibility = Visibility.Visible;
+                    await Task.Run(() => output_tables = new List<DataTable>() { data.getPassiveData(region_query, selected_year), data.getActiveData(region_query, selected_year), data.getBalanceData(region_query, selected_year) });
+
+                    await Task.Run(() => Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(output_tables, region_query, year_choose.Text)));
                 }
                 else return;
 
@@ -223,6 +231,10 @@ namespace EcoSys.Grids
             {
                 var dialog_result = MessageBox.Show("Проблема при инициализации работы с Excel (допустимо несоответствие версий)", "", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;
+            }
+            finally
+            {
+                loading.Visibility = Visibility.Hidden;
             }
         }
     }

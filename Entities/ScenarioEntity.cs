@@ -303,7 +303,7 @@ namespace EcoSys.Entities
 
                 for (int i = 0; i < 5; i++)
                 {
-                    var temp = (table.Rows[row_start + index].Field<double?>(col_start + i));
+                    var temp = table.Rows[row_start + index].Field<double?>(col_start + i);
                     if (temp != null) row[i + 1] = temp; else row[i + 1] = row[1];
                 }
 

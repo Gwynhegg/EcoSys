@@ -28,13 +28,10 @@ namespace EcoSys
         private string data_last_path = String.Empty, scenario_last_path = String.Empty;     //переменная для запоминания последнего пути файла с данными МДФП
         private Entities.DataEntity data_entity;     //объект для хранения данных МДФП
         private Entities.ScenarioEntity scenario_entity;        //Объект для хранения сценариев ДФП
-        private bool autolaunch_available = false;      //Переменная, задающая параметр автозапуска
-
-
+        private bool autolaunch_available = false;    //Переменная, задающая параметр автозапуска
         private bool first_condition = false, second_condition = false;     //Переменные, отображающие готовность перехода в рабочую область
 
-
-        public WelcomeWindow()
+        public WelcomeWindow(bool already_initialized)
         {
             InitializeComponent();
 
@@ -46,7 +43,7 @@ namespace EcoSys
 
                 string is_auto = autolaunch.ReadLine().Split('=')[1];
 
-                if (is_auto.Equals("True")) autolaunch_available = true;
+                if (is_auto.Equals("True") && !already_initialized) autolaunch_available = true;
             }
             catch
             {
@@ -107,7 +104,7 @@ namespace EcoSys
         }
 
 
-        private void ImportButton_Click(object sender, RoutedEventArgs e)       //Событие при нажатии на кнопку импорта данных (обработчик клика лежит на двух кнопках сразу. Для этого добавлена проверка имени кнопки)
+        private async void ImportButton_Click(object sender, RoutedEventArgs e)       //Событие при нажатии на кнопку импорта данных (обработчик клика лежит на двух кнопках сразу. Для этого добавлена проверка имени кнопки)
         {
             string file_path = string.Empty;
 
@@ -121,12 +118,27 @@ namespace EcoSys
 
             try
             {
-                if (((Button)sender).Name == "ImportButton") importingExcelData(file_path, "Data"); else importingExcelData(file_path, "Scenario");     //В зависимости от типа данных, выбираем соответствующий параметр для функции
+                LoadScreen.Visibility = Visibility.Visible;
+
+                if (((Button)sender).Name == "ImportButton")
+                {
+                    await Task.Run(() => importingExcelData(file_path, "Data"));
+                    firstOK();
+                }
+                else 
+                {
+                    await Task .Run(() => importingExcelData(file_path, "Scenario"));     //В зависимости от типа данных, выбираем соответствующий параметр для функции
+                    secondOK();
+                }
             }
             catch (IOException exc)
             {
                 var dialog_result = MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;
+            }
+            finally
+            {
+                LoadScreen.Visibility = Visibility.Hidden;
             }
         }
 
@@ -161,28 +173,21 @@ namespace EcoSys
             {
                 data_entity = new Entities.DataEntity();        //Создаем новый экземпляр класса "объекта данных"
 
-                LoadScreen.Visibility = Visibility.Visible;
-
                 try
                 {
                     await Task.Run(() => data_entity.createTables(dataset));     //Начинаем асинхронное заполнение таблиц на основе датасета
                 }
                 catch
                 {
-                    LoadScreen.Visibility = Visibility.Hidden;
                     MessageBox.Show("Файл не соответствует необходимой структуре. Убедитесь в правильности выбора файла");
                     return;
                 }
 
                 data_last_path = file_path;     //Запоминаем путь к последнему успешно открытому файлу
-
-                firstOK();      //Подтверждаем, что загрузка первого файла прошла успешно
             }
             else if (type == "Scenario")
             {
                 scenario_entity = new Entities.ScenarioEntity();        //Создаем новый экземпляр класса "файла сценариев"
-
-                LoadScreen.Visibility = Visibility.Visible;
 
                 try
                 {
@@ -190,21 +195,16 @@ namespace EcoSys
                 }
                 catch
                 {
-                    LoadScreen.Visibility = Visibility.Hidden;
                     MessageBox.Show("Файл не соответствует необходимой структуре. Убедитесь в правильности выбора файла");
                     return;
                 }
 
                 scenario_last_path = file_path;     //Запоминаем путь к последнему успешно импортированному файлу сценариев
-
-                secondOK();     //Подтверждаем, что загрузка второго файла прошла без проблем
             }
-
-            LoadScreen.Visibility = Visibility.Hidden;
         }
 
 
-        private void ImportJSON_Click(object sender, RoutedEventArgs e)     //обработка события нажатия на кнопку "Импортировать JSON"
+        private async void ImportJSON_Click(object sender, RoutedEventArgs e)     //обработка события нажатия на кнопку "Импортировать JSON"
         {
             string file_path = string.Empty;
 
@@ -217,12 +217,18 @@ namespace EcoSys
 
             try
             {
-                if (((Button)sender).Name == "ImportJSON") importingJsonData(file_path, "Data"); else importingJsonData(file_path, "Scenario");     //проверяем имя кнопки и вызываем соответствующую функцию
+                LoadScreen.Visibility = Visibility.Visible;
+                await Task.Run(() => importingJsonData(file_path));       //вызываем соответствующую функцию
+                firstOK();
             }
             catch (IOException exc)
             {
                 var dialog_result = MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;
+            }
+            finally
+            {
+                LoadScreen.Visibility = Visibility.Hidden;
             }
         }
 
@@ -231,61 +237,51 @@ namespace EcoSys
         /// Метод для считывания Json-файла (десериализации)
         /// </summary>
         /// <param name="file_path">Путь к Excel-файлу</param>
-        /// <param name="type">Тип файла, который мы собираемся открыть - данные или сценарии</param>
-        private async void importingJsonData(string file_path, string type)      //Десериализация json-файла
+        private async void importingJsonData(string file_path)      //Десериализация json-файла
         {
             System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //ИСпользование кастомного конвертера
             try
             {
-                LoadScreen.Visibility = Visibility.Visible;
+                await Task.Run(() => data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path)));        //Десериализуем Json-объект
 
-                if (type == "Data")
-                {
-                    await Task.Run(() => data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path)));        //Десериализуем Json-объект
-
-                    if (!data_entity.checkCorrectness()) throw new Exception();     //проверяем корректность (полноту заполнения данных)
-                    data_last_path = file_path;
-
-                    firstOK();      //Подтверждаем, что загрузка первого файла прошла успешно
-                }
-                else if (type == "Scenario")
-                {
-                    System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TripletConverter<string, string, string>)));        //ИСпользование кастомного конвертера
-
-                    await Task.Run(() => scenario_entity = JsonConvert.DeserializeObject<Entities.ScenarioEntity>(File.ReadAllText(file_path)));        //Десериализуем Json-объект
-
-                    if (!scenario_entity.checkCorrectness()) throw new Exception();      //проверяем корректность (полноту заполнения данных)
-                    data_last_path = file_path;
-                    scenario_last_path = file_path;
-
-                    secondOK();     //Подтверждаем, что загрузка второго файла прошла успешно
-                }
-
-                LoadScreen.Visibility = Visibility.Hidden;
-
+                if (!data_entity.checkCorrectness()) throw new Exception();     //проверяем корректность (полноту заполнения данных)
+                data_last_path = file_path;
             }
             catch
             {
-                LoadScreen.Visibility = Visibility.Hidden;
                 MessageBox.Show("Не удалось открыть файл для чтения. Проверьте корректность Json файла", "Ошибка импортирования", MessageBoxButton.OK);
                 return;
             }
         }
 
 
-        private void OpenLastButton_Click(object sender, RoutedEventArgs e)     //Обработчик события открытия последнего использованного файла
+        private async void OpenLastButton_Click(object sender, RoutedEventArgs e)     //Обработчик события открытия последнего использованного файла
         {
             try
             {
-                if (((Button)sender).Name == "OpenLastButton")      //Обработчик клика лежит одновременно на двух кнопках, поскольку функционал дублируется. Для этого добавлена проверка имени кнопки
-                    if (data_last_path.Contains(".json")) importingJsonData(data_last_path, "Data"); else importingExcelData(data_last_path, "Data");      //Проверка на формат последнего файла и вызов соответствующей функции импортирования
+                LoadScreen.Visibility = Visibility.Visible;
+
+                if (((Button)sender).Name == "OpenLastButton")
+                {
+                    if (data_last_path.Contains(".json"))  await Task.Run(() => importingJsonData(data_last_path)); else await Task.Run(() => importingExcelData(data_last_path, "Data"));      //Проверка на формат последнего файла и вызов соответствующей функции импортирования
+                    firstOK();
+                }
+                //Обработчик клика лежит одновременно на двух кнопках, поскольку функционал дублируется. Для этого добавлена проверка имени кнопки
                 else
-                    if (scenario_last_path.Contains(".json")) importingJsonData(scenario_last_path, "Scenario"); else importingExcelData(scenario_last_path, "Scenario");
+                {
+                    await Task.Run(() => importingExcelData(scenario_last_path, "Scenario"));
+                    secondOK();
+                }
+
             }
             catch (IOException exc)
             {
                 var dialog_result = MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
                 if (dialog_result == MessageBoxResult.OK) return;
+            }
+            finally
+            {
+                LoadScreen.Visibility = Visibility.Hidden;
             }
         }
 
