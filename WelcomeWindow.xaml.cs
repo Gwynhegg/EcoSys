@@ -171,7 +171,6 @@ namespace EcoSys
             if (type == "Data")
             {
                 data_entity = new Entities.DataEntity();        //Создаем новый экземпляр класса "объекта данных"
-
                 try
                 {
                     await Task.Run(() => data_entity.createTables(dataset));     //Начинаем асинхронное заполнение таблиц на основе датасета
@@ -185,7 +184,6 @@ namespace EcoSys
             else if (type == "Scenario")
             {
                 scenario_entity = new Entities.ScenarioEntity();        //Создаем новый экземпляр класса "файла сценариев"
-
                 try
                 {
                     await Task.Run(() => scenario_entity.createTables(dataset));
@@ -253,32 +251,15 @@ namespace EcoSys
 
         private async void OpenLastButton_Click(object sender, RoutedEventArgs e)     //Обработчик события открытия последнего использованного файла
         {
-            try
-            {
+
                 LoadScreen.Visibility = Visibility.Visible;
 
                 if (((Button)sender).Name == "OpenLastButton")
-                {
                     if (data_last_path.Contains(".json")) await Task.Run(() => importingJsonData(data_last_path)); else await Task.Run(() => importingExcelData(data_last_path, "Data"));      //Проверка на формат последнего файла и вызов соответствующей функции импортирования
-                    firstOK();
-                }
                 //Обработчик клика лежит одновременно на двух кнопках, поскольку функционал дублируется. Для этого добавлена проверка имени кнопки
                 else
-                {
                     await Task.Run(() => importingExcelData(scenario_last_path, "Scenario"));
-                    secondOK();
-                }
-
-            }
-            catch (IOException exc)
-            {
-                MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
-                return;
-            }
-            finally
-            {
                 LoadScreen.Visibility = Visibility.Hidden;
-            }
         }
 
         private async Task OpenLastButton_Click(object sender, RoutedEventArgs e, bool t)     //Обработчик события открытия последнего использованного файла
@@ -286,19 +267,12 @@ namespace EcoSys
             try
             {
                 if (((Button)sender).Name == "OpenLastButton")
-                {
                     if (data_last_path.Contains(".json")) await Task.Run(() => importingJsonData(data_last_path)); else await Task.Run(() => importingExcelData(data_last_path, "Data"));      //Проверка на формат последнего файла и вызов соответствующей функции импортирования
-                    firstOK();
-                }
                 //Обработчик клика лежит одновременно на двух кнопках, поскольку функционал дублируется. Для этого добавлена проверка имени кнопки
                 else
-                {
                     await Task.Run(() => importingExcelData(scenario_last_path, "Scenario"));
-                    secondOK();
-                }
-
             }
-            catch (IOException exc)
+            catch (Exception exc)
             {
                 MessageBox.Show("Возникла ошибка при считывании. Пожалуйста, убедитесь, что файл не используется другими процессами", "Ошибка импортирования", MessageBoxButton.OK);
                 return;

@@ -156,19 +156,11 @@ namespace EcoSys.Entities
             CultureInfo cult_info = new CultureInfo("ru-RU", false);
             TextInfo text_info = cult_info.TextInfo;
 
-            for (int hor_index = 0; hor_index < table.Rows.Count; hor_index += 50)
+            string condition_name;
+
+            for (int hor_index = 0; hor_index < 205; hor_index += 33)
             {
-                string condition_name = String.Empty;       //Строка для хранения названия главного сценария
-                for (int i = hor_index - 1; i < hor_index + 2; i++)
-                    if (i >= 0)
-                    {
-                        condition_name = table.Rows[i].Field<string>(0);
-                        if (condition_name != null)
-                        {
-                            hor_index = i;
-                            break;
-                        }
-                    }
+                condition_name = table.Rows[hor_index].Field<string>(0); ;       //Строка для хранения названия главного сценария
 
                 categories.Add(condition_name);
 
@@ -186,26 +178,66 @@ namespace EcoSys.Entities
                     else
                         break;
                 }
-                Console.WriteLine();
             }
 
+
+            //Расчеты граф 8-12 придеться проводить отдельно, так как структура файла сильно нарушена
+            condition_name = table.Rows[231].Field<string>(0); ;       //Строка для хранения названия главного сценария
+            categories.Add(condition_name);
+            pickConditionKeys(condition_name, conditions, 233, 300, table);
+
+            condition_name = table.Rows[300].Field<string>(0); ;       //Строка для хранения названия главного сценария
+            categories.Add(condition_name);
+            pickConditionKeys(condition_name, conditions, 302, 467, table);
+
+            condition_name = table.Rows[467].Field<string>(0); ;       //Строка для хранения названия главного сценария
+            categories.Add(condition_name);
+            pickConditionKeys(condition_name, conditions, 469, 568, table);
+
+            condition_name = table.Rows[568].Field<string>(0); ;       //Строка для хранения названия главного сценария
+            categories.Add(condition_name);
+            pickConditionKeys(condition_name, conditions, 570, 669, table);
+
+            condition_name = table.Rows[669].Field<string>(0); ;       //Строка для хранения названия главного сценария
+            categories.Add(condition_name);
+            pickConditionKeys(condition_name, conditions, 671, table.Rows.Count, table);
         }
+
+        private void pickConditionKeys(string condition_name, Dictionary<(string, string), DataTable> conditions, int start_row, int end_row, DataTable table)
+        {
+            CultureInfo cult_info = new CultureInfo("ru-RU", false);
+            TextInfo text_info = cult_info.TextInfo;
+            for (int index = start_row; index < end_row; index += 33)
+            {
+                for (int current_column = 0; current_column < table.Columns.Count; current_column += 8)
+                {
+                    if (table.Rows[index].Field<string>(current_column) != null)
+                    {
+                        string region = text_info.ToTitleCase(table.Rows[index].Field<string>(current_column).ToLower());
+                        string sub_condition = region + "." + table.Rows[index + 1].Field<string>(current_column);
+                        conditions.Add((condition_name, sub_condition), pickConditions(table, index + 1, current_column));
+                        Console.WriteLine();
+                    }
+                }
+            }
+        }
+
         public async Task createTables(DataSet dataset)       //Метод для создания таблиц со сценариями (асинхронный)
         {
-            createLinesAndColumns(dataset.Tables[0], 4, 6, 19);
+            createLinesAndColumns(dataset.Tables[1], 4, 6, 19);
 
-            createScenarioNames(dataset.Tables[0]);
+            createScenarioNames(dataset.Tables[1]);
 
             var scenarios_tasks = new List<Task>();
-            for (int i = 0; i < 4; i++)     //Добавление задач для считывания сценариев за 4 указанных года
+            for (int i = 1; i < 5; i++)     //Добавление задач для считывания сценариев за 4 указанных года
             {
                 Task table_task = asyncFragmentizeScenario(dataset.Tables[i]);
                 scenarios_tasks.Add(table_task);
             }
 
-            Task conditions_task = asyncFragmentizeConditions(dataset.Tables[4]);       //Добавление задачи для считывания сценарных условий с листа
+            Task conditions_task = asyncFragmentizeConditions(dataset.Tables[5]);       //Добавление задачи для считывания сценарных условий с листа
 
-            Task models_task = asyncFragmentizeModels(dataset.Tables[5]);
+            Task models_task = asyncFragmentizeModels(dataset.Tables[0]);
 
             scenarios_tasks.Add(conditions_task);
             scenarios_tasks.Add(models_task);
