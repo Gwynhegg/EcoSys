@@ -59,9 +59,12 @@
             <Image x:Name="GifOK2" gif:ImageBehavior.AnimatedSource="Resources/ok.gif"/>
         </Grid>
 
-        <Grid x:Name="LoadScreen" Background="White" Opacity="0.9" Grid.Row="0" Grid.Column="0" Grid.RowSpan="17" Grid.ColumnSpan="5"  Visibility="Hidden">
-            <Image gif:ImageBehavior.AnimatedSource="Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
+        <Grid x:Name="LoadScreen1" Background="White" Opacity="0.9" Grid.Column="1" Grid.Row="3" Grid.RowSpan="6" Grid.ColumnSpan="3"  Visibility="Hidden">
+            <Image gif:ImageBehavior.AnimatedSource="Resources/loading.gif" Stretch="Uniform" OverridesDefaultStyle="True" Opacity="1"></Image>
         </Grid>
-        
+
+        <Grid x:Name="LoadScreen2" Background="White" Opacity="0.9" Grid.Column="1" Grid.Row="10" Grid.RowSpan="6" Grid.ColumnSpan="3"  Visibility="Hidden">
+            <Image gif:ImageBehavior.AnimatedSource="Resources/loading.gif" Stretch="Uniform" OverridesDefaultStyle="True" Opacity="1"></Image>
+        </Grid>
     </Grid>
 </Window>

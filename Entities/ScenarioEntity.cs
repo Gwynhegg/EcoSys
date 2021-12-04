@@ -20,15 +20,23 @@ namespace EcoSys.Entities
 
         public List<string> categories { get; } = new List<string>();
 
-        public DataTable getScenarioData(int year_index, HashSet<string> regions, string scenario_name)
+        public DataTable getScenarioData(string region, int year_index, int current_step)
         {
-            DataTable result_table = null;
-
+            DataTable result_table = new DataTable();
             var year = years[year_index];
-
-            foreach (string region in regions)
-                if (result_table == null) result_table = scenarios[(year, region, scenario_name)]; else result_table = summarizeDataTables(result_table, scenarios[(year, region, scenario_name)]);
-
+            result_table = scenarios[(year, region, scenario_name[0])].Clone();
+            result_table.Columns[0].ColumnName = "Сценарии";
+            foreach (string scenario in scenario_name)
+            {
+                var row = result_table.NewRow();
+                row[0] = scenario;
+                for (int i = 1; i < columns.Count; i++)
+                {
+                    var temp = scenarios[(year, region, scenario)].Rows[current_step].Field<double?>(i);
+                    if (temp != null) row[i] = temp; else row[i] = 0;
+                }
+                result_table.Rows.Add(row);
+            }
             roundDataTable(result_table, 2);
 
             return result_table;

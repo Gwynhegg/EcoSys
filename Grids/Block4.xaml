@@ -16,7 +16,7 @@
             <RowDefinition Height="11*" MaxHeight="15"></RowDefinition>
             <RowDefinition Height="274*" MinHeight="200"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
-            <RowDefinition Height="40*" MaxHeight="40"></RowDefinition>
+            <RowDefinition Height="55*"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -28,36 +28,35 @@
             <ColumnDefinition Width="71*" MaxWidth="100"></ColumnDefinition>
             <ColumnDefinition Width="15"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Button x:Name="change_picture" Content="Перейти к графикам" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="5" MaxWidth="200" Visibility="Hidden" Click="change_picture_Click"></Button>
-        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="3" FontSize="14" Click="export_to_exc_Click"></Button>
-        <Button x:Name ="show_hide" Content="Показать" Grid.Column="5" Grid.Row="1" FontSize="14" Click="show_hide_Click"/>
-        <ComboBox x:Name="categories_box" Grid.Row="3" Grid.Column="1" Text="Нажмите для выбора категорий..." SelectionChanged="categories_box_SelectionChanged_1"></ComboBox>
-        <ComboBox x:Name="years_box" Grid.Row="3" Grid.Column="3" Text="Нажмите для выбора года..." SelectionChanged="years_box_SelectionChanged"></ComboBox>
-        <TextBox x:Name="regions_text" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Text="Нажмите на кнопку справа для выбора регионов..." TextWrapping="Wrap" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="False" TextChanged="regions_text_TextChanged"/>
-        <TabControl x:Name="scenarios_tab" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="5" Visibility="Hidden"></TabControl>
-        <Grid x:Name="loading" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="5" Grid.RowSpan="2">
+        <Grid x:Name="command_buttons" Grid.Column="5" Grid.Row="5" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="5*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="5*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="5*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="5*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Button x:Name="back_button" Grid.Row="0" Content="Назад" IsEnabled="False" Click="back_button_Click"></Button>
+            <Button x:Name="forward_button" Grid.Row="2" Content="Далее" IsEnabled="False" Click="forward_button_Click"></Button>
+            <Button x:Name="switch_grids" Grid.Row="4" Content="К графикам" IsEnabled="True" Click="switch_grids_Click"></Button>
+            <Button x:Name="clear_grids"  Grid.Row="6" Content="Очистить" IsEnabled="True" Click="clear_grids_Click"></Button>
+            <Button x:Name="show_final" Grid.Row="8" Content="Результат" IsEnabled="False" Click="show_final_Click"></Button>
+        </Grid>
+        <TextBlock x:Name="current_category" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="Hidden"></TextBlock>
+        <ComboBox x:Name="scenario_choose" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="3" Visibility="Hidden" SelectionChanged="scenario_choose_SelectionChanged"></ComboBox>
+        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="1" FontSize="14" Click="export_to_exc_Click"></Button>
+        <ComboBox x:Name="regions_box" Grid.Row="1" Grid.Column="1" Text="Нажмите для выбора категорий..." SelectionChanged="regions_box_SelectionChanged"></ComboBox>
+        <ComboBox x:Name="years_box" Grid.Row="1" Grid.Column="3" Text="Нажмите для выбора года..." SelectionChanged="years_box_SelectionChanged"></ComboBox>
+        <Grid x:Name="loading" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="5" Grid.RowSpan="2">
             <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
         </Grid>
-
-        <Grid x:Name="graphs_grid" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="5" Visibility="Hidden">
+        <DataGrid x:Name="scenarios_grid" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="3" Visibility="Hidden"></DataGrid>
+        <Grid x:Name="graphs_grid" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="3" Visibility="Hidden">
             <ListView x:Name="graphs_list" Grid.Row="0" Grid.Column="0"></ListView>
-            <Grid x:Name="loading_graphs" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="0" Grid.Row="0">
-                <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
-            </Grid>
         </Grid>
-
-        <Grid x:Name="region_grid" Visibility="Hidden" Grid.ColumnSpan="3" Grid.Column="2" Grid.Row="1" Grid.RowSpan="6" Background="#FF747474">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="10*"></RowDefinition>
-                <RowDefinition Height="0.2*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.2*"></ColumnDefinition>
-                <ColumnDefinition Width="20*"></ColumnDefinition>
-                <ColumnDefinition Width="0.2*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <TreeView x:Name="categories" Grid.Column="1" Grid.Row="0"/>
-        </Grid>
-        
     </Grid>
 </UserControl>
