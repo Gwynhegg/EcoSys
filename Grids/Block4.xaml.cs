@@ -196,7 +196,7 @@ namespace EcoSys.Grids
             final_table = null;
             scenarios_grid.ItemsSource = null;
             current_step = 0;
-            forward_button.IsEnabled = true;
+            forward_button.IsEnabled = false;
             show_final.IsEnabled = false;
             export_to_exc.IsEnabled = false;
         }

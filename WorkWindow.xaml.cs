@@ -12,15 +12,17 @@ namespace EcoSys
     {
         Entities.DataEntity data;
         Entities.ScenarioEntity scenarios;
+        Entities.ModelEntity model;
         private bool auto_launch;
 
-        public WorkWindow(Entities.DataEntity data, Entities.ScenarioEntity scenario, bool auto_launch)
+        public WorkWindow(Entities.DataEntity data, Entities.ScenarioEntity scenario, Entities.ModelEntity model, bool auto_launch)
         {
             InitializeComponent();
 
             this.auto_launch = auto_launch;
             this.data = data;       //передаем созданные объекты в рабочую область
             this.scenarios = scenario;
+            this.model = model;
 
             var grid = new Grids.GreetsGrid();      //добавляем Grid приветственного экрана с отображение подсказок по работе с системой. В дальнейшем данный экран будет скрыт
             Grid.SetColumn(grid, 0);
@@ -60,6 +62,10 @@ namespace EcoSys
                 case "Block4Btn":
                     if (!alreadyExist<Grids.Block4>())
                         createNewGrid(new Grids.Block4(scenarios, Auxiliary.Regions.createConstituencies(scenarios.regions)));
+                    break;
+                case "Block5Btn":
+                    if (!alreadyExist<Grids.Block5>())
+                        createNewGrid(new Grids.Block5(model, scenarios));
                     break;
             }
 

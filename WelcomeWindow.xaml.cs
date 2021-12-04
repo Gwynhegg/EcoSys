@@ -17,11 +17,12 @@ namespace EcoSys
     /// </summary>
     public partial class WelcomeWindow : Window
     {
-        private string data_last_path = String.Empty, scenario_last_path = String.Empty;     //переменная для запоминания последнего пути файла с данными МДФП
+        private string data_last_path = String.Empty, scenario_last_path = String.Empty, model_last_path = String.Empty;     //переменная для запоминания последнего пути файла с данными МДФП, сценариев и моделей
         private Entities.DataEntity data_entity;     //объект для хранения данных МДФП
         private Entities.ScenarioEntity scenario_entity;        //Объект для хранения сценариев ДФП
+        private Entities.ModelEntity model_entity;      //Объект для хранения моделей
         private bool autolaunch_available = false;    //Переменная, задающая параметр автозапуска
-        private bool first_condition = false, second_condition = false;     //Переменные, отображающие готовность перехода в рабочую область
+        private bool first_condition = false, second_condition = false, third_condition = false;     //Переменные, отображающие готовность перехода в рабочую область
 
         public WelcomeWindow(bool already_initialized)
         {
@@ -48,6 +49,7 @@ namespace EcoSys
 
                 tryToFindLastFile(reader, ref data_last_path, OpenLastButton, LastPath);        //производим парсинг строки, содержащей адрес последнего файла данных
                 tryToFindLastFile(reader, ref scenario_last_path, ScenarioLastButton, LastScenarioPath);        //то же самое для файла сценариев
+                tryToFindLastFile(reader, ref model_last_path, ModelLastButton, LastModelPath);
 
                 reader.Close();
             }
@@ -57,6 +59,7 @@ namespace EcoSys
 
                 OpenLastButton.IsEnabled = false;       //Если файл кэша не найден, блокируем кнопки запуска последних используемых файлов
                 ScenarioLastButton.IsEnabled = false;
+                ModelLastButton.IsEnabled = false;
 
                 return;
             }
@@ -65,6 +68,7 @@ namespace EcoSys
             {
                 OpenLastButton_Click(OpenLastButton, new RoutedEventArgs());
                 OpenLastButton_Click(ScenarioLastButton, new RoutedEventArgs());
+                OpenLastButton_Click(ModelLastButton, new RoutedEventArgs());
             }
         }
 
@@ -83,11 +87,7 @@ namespace EcoSys
                 text_box.Text = String.Join(' ',input.Split("[delimeter]", StringSplitOptions.None));
                 param = input.Split("[delimeter]", StringSplitOptions.None)[0];        //запоминаем путь в переменной для дальнейшего открытия
             }
-            catch (System.IO.FileNotFoundException exc)
-            {
-                button.IsEnabled = false;
-            }
-            catch (System.NullReferenceException exc1)
+            catch (Exception exc)
             {
                 button.IsEnabled = false;
             }
@@ -118,7 +118,7 @@ namespace EcoSys
                     if (first_condition) FirstIsOK.Visibility = Visibility.Visible;
                     checkConditions();
                 }
-                else
+                else if (((Button)sender).Name == "ScenarioImportButton")
                 {
                     LoadScreen2.Visibility = Visibility.Visible;
 
@@ -126,6 +126,16 @@ namespace EcoSys
 
                     LoadScreen2.Visibility = Visibility.Hidden;
                     if (second_condition) SecondIsOK.Visibility = Visibility.Visible;
+                    checkConditions();
+                }
+                else
+                {
+                    LoadScreen3.Visibility = Visibility.Visible;
+
+                    await Task.Run(() => importingExcelData(file_path, "Model"));
+
+                    LoadScreen3.Visibility = Visibility.Hidden;
+                    if (third_condition) ThirdIsOK.Visibility = Visibility.Visible;
                     checkConditions();
                 }
             }
@@ -188,6 +198,21 @@ namespace EcoSys
                     if (!scenario_entity.checkCorrectness()) throw new Exception();
                     scenario_last_path = file_path;     //Запоминаем путь к последнему успешно импортированному файлу сценариев
                     secondOK();
+                }
+                catch
+                {
+                    MessageBox.Show(String.Format("Файл {0} не соответствует необходимой структуре. Убедитесь в правильности выбора файла", type));
+                }
+            }
+            else if (type == "Model")
+            {
+                model_entity = new Entities.ModelEntity();        //Создаем новый экземпляр класса "файла сценариев"
+                try
+                {
+                    model_entity.createTables(dataset);
+                    if (!model_entity.checkCorrectness()) throw new Exception();
+                    model_last_path = file_path;     //Запоминаем путь к последнему успешно импортированному файлу сценариев
+                    thirdOK();
                 }
                 catch
                 {
@@ -265,7 +290,7 @@ namespace EcoSys
             }
 
             //Обработчик клика лежит одновременно на двух кнопках, поскольку функционал дублируется. Для этого добавлена проверка имени кнопки
-            else
+            else if (((Button)sender).Name == "ScenarioLastButton")
             {
                 LoadScreen2.Visibility = Visibility.Visible;
 
@@ -273,18 +298,26 @@ namespace EcoSys
 
                 LoadScreen2.Visibility = Visibility.Hidden;
                 if (second_condition) SecondIsOK.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                LoadScreen3.Visibility = Visibility.Visible;
 
+                await Task.Run(() => importingExcelData(model_last_path, "Model"));
+
+                LoadScreen3.Visibility = Visibility.Hidden;
+                if (third_condition) ThirdIsOK.Visibility = Visibility.Visible;
             }
             checkConditions();
         }
 
         private void checkConditions()      //проверка условия перехода в рабочую область программы
         {
-            if (first_condition && second_condition)        //Если условия соблюдены, то...
+            if (first_condition && second_condition && third_condition)        //Если условия соблюдены, то...
             {
                 createLogFile();        //Создаем лог-файл
 
-                WorkWindow work_window = new WorkWindow(data_entity, scenario_entity, autolaunch_available);      //Передаем данные в рабочую область
+                WorkWindow work_window = new WorkWindow(data_entity, scenario_entity, model_entity, autolaunch_available);      //Передаем данные в рабочую область
                 work_window.Show();
                 this.Close();       //закрываем это окно
             }
@@ -297,7 +330,7 @@ namespace EcoSys
 
             writer.WriteLine(String.Join("[delimeter]", data_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));        //Записываем в кэш путь последних успешно загруженных файлов
             writer.WriteLine(String.Join("[delimeter]", scenario_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
-
+            writer.WriteLine(String.Join("[delimeter]", model_last_path, DateTime.Now.ToString(new CultureInfo("ru-RU"))));
             writer.Close();
         }
 
@@ -313,6 +346,11 @@ namespace EcoSys
             SecondIsOK.Visibility = Visibility.Hidden;
         }
 
+        private void ThirdIsOK_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ThirdIsOK.Visibility = Visibility.Hidden;
+
+        }
 
         private void firstOK()      //Метод для смены состояния готовности первого файла и проверки состояний
         {
@@ -323,6 +361,11 @@ namespace EcoSys
         private void secondOK()     
         {
             second_condition = true;
+        }
+
+        private void thirdOK()
+        {
+            third_condition = true;
         }
     }
 }
