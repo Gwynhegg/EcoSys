@@ -128,56 +128,5 @@ namespace EcoSys.Entities
 
             }
         }
-
-        public static async void writeToExcel(List<object> bundle, ItemCollection tables, HashSet<string> region, string category, string year)
-        {
-            var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
-
-            save_filedialog.Filter = "Excel-Файл (*.xlsx)|*.xlsx|Excel-файл (*.xlsm)|*.xlsm";
-            save_filedialog.RestoreDirectory = true;
-
-            if (save_filedialog.ShowDialog() == true)
-            {
-                if (save_filedialog.FileName == string.Empty) throw new Exception();
-                try
-                {
-                    IXLWorkbook workbook = new XLWorkbook();
-
-                    IXLWorksheet graph_worksheet = workbook.Worksheets.Add("Сценарные условия");
-
-                    IXLWorksheet data_worksheet = workbook.Worksheets.Add("Прогнозные сценарии");
-
-                    data_worksheet.Cell(1, 1).Value = "Прогнозные сценарии движения банковского капитала";
-                    data_worksheet.Cell(3, 1).Value = String.Format("Выбранные регионы: {0}", String.Join(',', region));
-                    data_worksheet.Cell(4, 1).Value = String.Format("Год сценария: {0}", year);
-
-                    int starting_row = 6;
-                    foreach (var item in tables)
-                    {
-                        var instance = (TabItem)item;
-
-                        data_worksheet.Cell(starting_row++, 1).Value = instance.Header;
-
-                        DataTable temp = ((DataView)((DataGrid)instance.Content).ItemsSource).Table;
-                        data_worksheet.Cell(starting_row, 1).InsertTable(temp);
-
-                        starting_row += temp.Rows.Count + 1;
-                    }
-
-                    data_worksheet.Columns().AdjustToContents();
-
-
-                    workbook.SaveAs(save_filedialog.FileName);
-
-                    MessageBox.Show("Файл успешно создан!", "", MessageBoxButton.OK);
-                }
-                catch (Exception exc)
-                {
-                    var dialog_result = MessageBox.Show("Возникла ошибка при создании файла. Попробуйте еще раз", "Ошибка сохранения", MessageBoxButton.OK);
-                    if (dialog_result == MessageBoxResult.OK) return;
-                }
-
-            }
-        }
     }
 }

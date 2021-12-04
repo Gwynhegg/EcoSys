@@ -30,7 +30,6 @@ namespace EcoSys.Grids
 
             getAllRegions();
             getYears();
-            getScenarios();
         }
 
         ~Block4()
@@ -49,43 +48,34 @@ namespace EcoSys.Grids
                 }
         }
 
-        private void getScenarios()
-        {
-            foreach (string scenario in scenarios.scenario_name)
-            {
-                var cb = new ComboBoxItem();
-                cb.Content = scenario;
-                scenario_choose.Items.Add(cb);
-            }
-        }
-
-
         private void getYears()
         {
             for (int year = 2022; year < 2026; year++)
                 years_box.Items.Add(new ComboBoxItem() { Content = String.Format("Прогноз на {0} год", year) });
         }
 
-        private async void getData(string region_request, int year_request)
+        private void getData(string region_request, int year_request)
         {
             initializeComponents();
             displayCurrentStep();
                 //Auxiliary.ColorsStructure.getColor(scenario_name);
 
-            await Task.Run(() => Dispatcher.Invoke(() => this.current_table = scenarios.getScenarioData(region_request, year_request, current_step)));
+            this.current_table = scenarios.getScenarioData(region_request, year_request, current_step);
+
 
             if (final_table == null) 
             {
                 final_table = current_table.Clone();
+                final_table.Columns.Add(new DataColumn() { ColumnName = "Сценарий", DataType = System.Type.GetType("System.String") });
                 for (int i = 0; i < scenarios.lines.Count; i++)
                     final_table.Rows.Add();
             }
             scenarios_grid.AutoGeneratingColumn += r2_AutoGeneratingColumn;
             scenarios_grid.ItemsSource = current_table.AsDataView();
+
             Auxiliary.GridStandard.standardizeGrid(scenarios_grid);
             scenarios_grid.Visibility = Visibility.Visible;
-
-            await Task.Run(() => Dispatcher.Invoke(() => createGraphs(current_step, this.ActualHeight, graphs_grid.ActualWidth)));
+                createGraphs(current_step, this.ActualHeight, graphs_grid.ActualWidth);
         }
 
         private async void regions_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -120,15 +110,15 @@ namespace EcoSys.Grids
 
         private void displayCurrentStep()
         {
-            current_category.Text = scenarios.categories[current_step];
+            DropDownDataGrid.Header = scenarios.categories[current_step] + ": Выберите сценарий";
         }
 
         private void initializeComponents()
         {
             scenarios_grid.Visibility = Visibility.Visible;
-            current_category.Visibility = Visibility.Visible;
+            DropDownDataGrid.Visibility = Visibility.Visible;
             command_buttons.Visibility = Visibility.Visible;
-            scenario_choose.Visibility = Visibility.Visible;
+            graphs_grid.Visibility = Visibility.Visible;
         }
 
 
@@ -136,10 +126,10 @@ namespace EcoSys.Grids
         {
             try
             {
-                if (current_table == null || response_bundle == null) throw new ArgumentNullException();
+                if (final_table == null) throw new ArgumentNullException();
 
                 loading.Visibility = Visibility.Visible;
-               // await Task.Run(() => Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(response_bundle, scenarios_tab.Items, region_query, categories_box.Text, years_box.Text)));
+               await Task.Run(() => Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(final_table, regions_box.Text)));
 
             }
             catch (ArgumentNullException exc)
@@ -158,40 +148,10 @@ namespace EcoSys.Grids
             }
         }
 
-        private void scenario_choose_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (current_step > 0) back_button.IsEnabled = true;
-            if (current_step < 12) forward_button.IsEnabled = true;
-
-            if (scenario_choose.SelectedIndex != -1) 
-                for (int i = 0; i < scenarios.columns.Count; i++)
-                    final_table.Rows[current_step][i] = current_table.Rows[scenario_choose.SelectedIndex][i];
-
-            if (checkConditions()) show_final.IsEnabled = true;
-        }
-
-        private bool checkConditions()
-        {
-            for (int i = 0; i < scenarios.lines.Count; i++)
-                if (final_table.Rows[i][0] == null) return false;
-            return true;
-        }
-
-        private async void back_button_Click(object sender, RoutedEventArgs e)
-        {
-            scenario_choose.SelectedIndex = -1;
-            current_step--;
-            if (current_step > 0) back_button.IsEnabled = true; else back_button.IsEnabled = false;
-            loading.Visibility = Visibility.Visible;
-            await Task.Run(() => Dispatcher.Invoke(() => getData(regions_box.Text, years_box.SelectedIndex)));
-            loading.Visibility = Visibility.Hidden;
-        }
-
         private async void forward_button_Click(object sender, RoutedEventArgs e)
         {
-            scenario_choose.SelectedIndex = -1;
             current_step++;
-            if (current_step < 12) forward_button.IsEnabled = true; else forward_button.IsEnabled = false;
+            forward_button.IsEnabled = false;
             loading.Visibility = Visibility.Visible;
             await Task.Run(() => Dispatcher.Invoke(() => getData(regions_box.Text, years_box.SelectedIndex)));
             loading.Visibility = Visibility.Hidden;
@@ -216,42 +176,72 @@ namespace EcoSys.Grids
             this.Visibility = Visibility.Visible;
         }
 
-        private void switch_grids_Click(object sender, RoutedEventArgs e)
-        {
-            if (scenarios_grid.Visibility == Visibility.Visible)
-            {
-                scenarios_grid.Visibility = Visibility.Hidden;
-                graphs_grid.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                scenarios_grid.Visibility = Visibility.Visible;
-                graphs_grid.Visibility = Visibility.Hidden;
-            }
-        }
 
         private void show_final_Click(object sender, RoutedEventArgs e)
         {
-            scenarios_grid.ItemsSource = final_table.AsDataView();
-            scenarios_grid.Visibility = Visibility.Visible;
+            DropDownDataGrid.Visibility = Visibility.Hidden;
             graphs_grid.Visibility = Visibility.Hidden;
+
+            final_grid.AutoGeneratingColumn += r2_AutoGeneratingColumn;
+            final_grid.ItemsSource = final_table.AsDataView();
+
+            Auxiliary.GridStandard.standardizeGrid(final_grid);
+            final_grid.Visibility = Visibility.Visible;
+            export_to_exc.IsEnabled = true;
         }
 
         private void resetData()
         {
+            final_grid.Visibility = Visibility.Hidden;
             final_table = null;
             scenarios_grid.ItemsSource = null;
-            graphs_grid.Visibility = Visibility.Hidden;
             current_step = 0;
-            back_button.IsEnabled = false;
             forward_button.IsEnabled = true;
             show_final.IsEnabled = false;
-            scenario_choose.SelectedIndex = -1;
+            export_to_exc.IsEnabled = false;
         }
 
         private void clear_grids_Click(object sender, RoutedEventArgs e)
         {
             resetData();
+            getData(regions_box.Text, years_box.SelectedIndex);
+        }
+
+        private void scenarios_grid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DataGrid dataGrid = sender as DataGrid;
+            DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
+            if (row != null) 
+            {
+                if (current_step != 11) forward_button.IsEnabled = true;
+                row.IsSelected = true;
+                int index = row.GetIndex();
+                DropDownDataGrid.Header = String.Format("{0} : {1}", scenarios.categories[current_step], scenarios.scenario_name[index]);
+                var new_row = final_table.NewRow();
+                new_row[0] = scenarios.categories[current_step];
+                for (int i = 1; i < final_table.Columns.Count - 1; i++)
+                {
+                    var temp = current_table.Rows[index].Field<double?>(i);
+                    if (temp != null) new_row[i] = temp;
+                }
+                new_row[final_table.Columns.Count - 1] = scenarios.scenario_name[index];
+                final_table.Rows.RemoveAt(current_step);
+                final_table.Rows.InsertAt(new_row, current_step);
+
+                if (current_step == 11) show_final.IsEnabled = true;
+            }
+        }
+
+        private void DropDownDataGrid_Expanded(object sender, RoutedEventArgs e)
+        {
+            Grid.SetRow(graphs_grid, 6);
+            Grid.SetRowSpan(graphs_grid, 3);
+        }
+
+        private void DropDownDataGrid_Collapsed(object sender, RoutedEventArgs e)
+        {
+            Grid.SetRow(graphs_grid, 5);
+            Grid.SetRowSpan(graphs_grid, 4);
         }
     }
 }

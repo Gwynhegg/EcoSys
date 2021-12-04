@@ -30,10 +30,10 @@ namespace EcoSys.Entities
             {
                 var row = result_table.NewRow();
                 row[0] = scenario;
-                for (int i = 1; i < columns.Count; i++)
+                for (int i = 1; i < columns.Count + 1; i++)
                 {
                     var temp = scenarios[(year, region, scenario)].Rows[current_step].Field<double?>(i);
-                    if (temp != null) row[i] = temp; else row[i] = 0;
+                    if (temp != null) row[i] = temp;
                 }
                 result_table.Rows.Add(row);
             }

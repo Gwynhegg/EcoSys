@@ -169,10 +169,11 @@ namespace EcoSys
                 try
                 {
                     data_entity.createTables(dataset);     //Начинаем асинхронное заполнение таблиц на основе датасета
+                    if (!data_entity.checkCorrectness()) throw new Exception();
                     data_last_path = file_path;     //Запоминаем путь к последнему успешно открытому файлу
                     firstOK();
                 }
-                catch
+                catch (Exception exc)
                 {
                     MessageBox.Show(String.Format("Файл {0} не соответствует необходимой структуре. Убедитесь в правильности выбора файла", type));
                 }
@@ -184,6 +185,7 @@ namespace EcoSys
                 try
                 {
                     scenario_entity.createTables(dataset);
+                    if (!scenario_entity.checkCorrectness()) throw new Exception();
                     scenario_last_path = file_path;     //Запоминаем путь к последнему успешно импортированному файлу сценариев
                     secondOK();
                 }
