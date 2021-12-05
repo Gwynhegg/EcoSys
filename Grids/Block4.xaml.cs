@@ -75,7 +75,7 @@ namespace EcoSys.Grids
 
             Auxiliary.GridStandard.standardizeGrid(scenarios_grid);
             scenarios_grid.Visibility = Visibility.Visible;
-                createGraphs(current_step, this.ActualHeight, graphs_grid.ActualWidth);
+            createGraphs(current_step, this.ActualHeight, graphs_grid.ActualWidth);
         }
 
         private async void regions_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -236,12 +236,14 @@ namespace EcoSys.Grids
         {
             Grid.SetRow(graphs_grid, 6);
             Grid.SetRowSpan(graphs_grid, 3);
+            createGraphs(current_step, this.ActualHeight, graphs_grid.ActualWidth);
         }
 
         private void DropDownDataGrid_Collapsed(object sender, RoutedEventArgs e)
         {
             Grid.SetRow(graphs_grid, 5);
             Grid.SetRowSpan(graphs_grid, 4);
+            createGraphs(current_step, this.ActualHeight, graphs_grid.ActualWidth);
         }
     }
 }

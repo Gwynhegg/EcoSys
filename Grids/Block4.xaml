@@ -14,8 +14,8 @@
             <RowDefinition Height="11*" MaxHeight="15"></RowDefinition>
             <RowDefinition Height="55*" MaxHeight="50"></RowDefinition>
             <RowDefinition Height="11*" MaxHeight="15"></RowDefinition>
+            <RowDefinition Height="80*" MinHeight="100"></RowDefinition>
             <RowDefinition Height="150*" MinHeight="100"></RowDefinition>
-            <RowDefinition Height="124*" MinHeight="100"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
             <RowDefinition Height="55*"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
