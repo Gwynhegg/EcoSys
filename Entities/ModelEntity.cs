@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Globalization;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace EcoSys.Entities
 {
     public class ModelEntity
     {
         public Dictionary<(string, string), string> model_equations { get; set; } = new Dictionary<(string, string), string>();     //Dictionary для хранения моделей по типу (Регион, показатель) -> уравнение
-        public List<string> regions { get; set;} = new List<string>();        //HashSet для хранения наименований регионов
+        public List<string> regions { get; set; } = new List<string>();        //HashSet для хранения наименований регионов
         public List<string> categories { get; set; } = new List<string>();        //HashSet для хранения категорий - столбцов
         public Dictionary<string, List<string>> tips { get; set; } = new Dictionary<string, List<string>>();
 
@@ -27,10 +25,13 @@ namespace EcoSys.Entities
                 for (int j = 1; j < model.Columns.Count; j++)
                 {
                     var equation = model.Rows[i].Field<string>(j);
-                    if (equation != null && values[i] != null && !equation.Equals(String.Empty)) 
+                    if (equation != null && values[i] != null && !equation.Equals(String.Empty))
                     {
                         var temp = Math.Round((EasyEquationParser.getRatioFromString(equation) * (double)values[i]), 3).ToString();     //Использование парсера для выделения коэффицентов уравнения блока 4
-                        if (temp.Equals("-0")) row[j] = "0"; else row[j] = temp; 
+                        if (temp.Equals("-0"))
+                            row[j] = "0";
+                        else
+                            row[j] = temp;
                     }
                 }
                 result_table.Rows.Add(row);
@@ -62,8 +63,9 @@ namespace EcoSys.Entities
             {
                 string region = table.Rows[starting_index++].Field<string>(0);        //получение названия региона
                 region = text_info.ToTitleCase(region.ToLower());       //Решение для обеспечения однообразия названий
-                regions.Add(region);
-                if (table.Rows[starting_index].Field<string>(0) == null) ending_condition = true;
+                this.regions.Add(region);
+                if (table.Rows[starting_index].Field<string>(0) == null)
+                    ending_condition = true;
             }
         }
 
@@ -74,40 +76,49 @@ namespace EcoSys.Entities
             while (!ending_condition)
             {
                 string category = table.Rows[0].Field<string>(starting_index++);        //получение названия региона
-                categories.Add(category);
-                if (table.Rows[0].Field<string>(starting_index) == null) ending_condition = true;
+                this.categories.Add(category);
+                if (table.Rows[0].Field<string>(starting_index) == null)
+                    ending_condition = true;
             }
         }
 
         private async Task getModelEquations(DataTable table)       //Метод для считывания математического выражения для расчета значений
         {
-            for (int i = 1; i < regions.Count; i++)
-                for(int j = 1; j < categories.Count; j++)
+            for (int i = 1; i < this.regions.Count; i++)
+            {
+                for (int j = 1; j < this.categories.Count; j++)
                 {
                     string equation = table.Rows[i].Field<string?>(j);
-                    if (equation != null) model_equations.Add((regions[i - 1], categories[j - 1]), equation);
+                    if (equation != null)
+                        this.model_equations.Add((this.regions[i - 1], this.categories[j - 1]), equation);
                 }
+            }
         }
 
         private async Task getModelTips(DataTable table)        //Метод для считывания описаний используемых переменных
         {
-            for (int i = 1; i < categories.Count + 1; i++)
+            for (int i = 1; i < this.categories.Count + 1; i++)
             {
-                int starting_index = 2 + regions.Count;
+                int starting_index = 2 + this.regions.Count;
                 bool ending_condition = false;
-                tips.Add(categories[i - 1], new List<string>());
+                this.tips.Add(this.categories[i - 1], new List<string>());
                 while (!ending_condition)
                 {
                     var temp = table.Rows[starting_index++].Field<string?>(i);
-                        if (temp != null && starting_index < table.Rows.Count) tips[categories[i - 1]].Add(temp); else ending_condition = true;
-                   
+                    if (temp != null && starting_index < table.Rows.Count)
+                        this.tips[this.categories[i - 1]].Add(temp);
+                    else
+                        ending_condition = true;
                 }
             }
         }
 
         public bool checkCorrectness()
         {
-            if (model_equations.Count != 0 && regions.Count != 0 && categories.Count != 0 && tips.Count != 0) return true; else return false;
+            if (this.model_equations.Count != 0 && this.regions.Count != 0 && this.categories.Count != 0 && this.tips.Count != 0)
+                return true;
+            else
+                return false;
         }
     }
 }

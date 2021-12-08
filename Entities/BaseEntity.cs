@@ -25,31 +25,36 @@ namespace EcoSys.Entities
 
             var result_table = new DataTable();
 
-            var lines_col = new DataColumn();       //Добавление столбца для сохранения названий показателей
-            lines_col.ColumnName = "Показатели (млн. руб.)";
-            lines_col.DataType = System.Type.GetType("System.String");
+            var lines_col = new DataColumn
+            {
+                ColumnName = "Показатели (млн. руб.)",
+                DataType = System.Type.GetType("System.String")
+            };       //Добавление столбца для сохранения названий показателей
 
             result_table.Columns.Add(lines_col);
 
-            foreach (string column in columns)      //заполнение столбцов
+            foreach (string column in this.columns)      //заполнение столбцов
             {
-                var data_col = new DataColumn();
-                data_col.ColumnName = column;
-                data_col.DataType = System.Type.GetType("System.Double");       //НА ДАННЫЙ МОМЕНТ ТИП ДАННЫХ - Double, НО МОЖЕТ ПРИГОДИТСЯ ПЕРЕРАБОТКА
-                data_col.AllowDBNull = true;
+                var data_col = new DataColumn
+                {
+                    ColumnName = column,
+                    DataType = System.Type.GetType("System.Double"),       //НА ДАННЫЙ МОМЕНТ ТИП ДАННЫХ - Double, НО МОЖЕТ ПРИГОДИТСЯ ПЕРЕРАБОТКА
+                    AllowDBNull = true
+                };
 
                 result_table.Columns.Add(data_col);
             }
 
-            for (int i = 0; i < lines.Count; i++)
+            for (int i = 0; i < this.lines.Count; i++)
             {
                 var row = result_table.NewRow();        //создание строк
 
-                row[0] = lines[i];
-                for (int j = 1; j <= columns.Count; j++)
+                row[0] = this.lines[i];
+                for (int j = 1; j <= this.columns.Count; j++)
                 {
                     var temp = table.Rows[row_start + i].Field<double?>(col_start + (j - 1));       //заполнение таблицы согласно отступам в документе
-                    if (temp != null) row[result_table.Columns[j]] = temp;
+                    if (temp != null)
+                        row[result_table.Columns[j]] = temp;
                 }
 
                 result_table.Rows.Add(row);
@@ -60,8 +65,13 @@ namespace EcoSys.Entities
         private protected void roundDataTable(DataTable table, int num_of_symb)      //Метод для задания количества знаков после запятой
         {
             for (int i = 0; i < table.Rows.Count; i++)
+            {
                 for (int j = 1; j < table.Columns.Count; j++)
-                    if (table.Rows[i].Field<double?>(j) != null) table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
+                {
+                    if (table.Rows[i].Field<double?>(j) != null)
+                        table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
+                }
+            }
         }
 
         private protected void createLinesAndColumns(DataTable table, int col_names_index, int row_names_index, int num_of_rows)        //Метод для создания столбцов и заголовков таблиц
@@ -72,8 +82,11 @@ namespace EcoSys.Entities
                 var temp = "Финансовые корпорации: " + table.Rows[col_names_index].Field<string>(i);
                 if (temp.Contains("фин."))
                     temp = temp.Replace("фин.", "финансовые");
-                if (temp.EndsWith(' ')) temp = temp.Remove(temp.Length - 1);
-                columns.Add(temp);
+
+                if (temp.EndsWith(' '))
+                    temp = temp.Remove(temp.Length - 1);
+
+                this.columns.Add(temp);
             }
 
             for (int i = 4; i < 8; i++)
@@ -81,12 +94,13 @@ namespace EcoSys.Entities
                 var temp = table.Rows[col_names_index - 1].Field<string>(i);
                 if (temp.Contains("Гос."))
                     temp = temp.Replace("Гос.", "Государственные");
-                columns.Add(temp);
+
+                this.columns.Add(temp);
             }
 
             //Создание заголовков строк для датасета
             for (int i = row_names_index; i < num_of_rows; i++)
-                lines.Add(table.Rows[i].Field<string>(0));
+                this.lines.Add(table.Rows[i].Field<string>(0));
         }
 
 
@@ -99,7 +113,9 @@ namespace EcoSys.Entities
                 row[0] = first_table.Rows[i].Field<string>(0);
 
                 for (int j = 1; j < first_table.Columns.Count; j++)
+                {
                     row[j] = sumValues(first_table.Rows[i].Field<double?>(j), second_table.Rows[i].Field<double?>(j));
+                }
 
                 result_table.Rows.Add(row);
             }
@@ -108,8 +124,12 @@ namespace EcoSys.Entities
 
         private protected object sumValues(double? first, double? second)
         {
-            if (first == null) first = 0;
-            if (second == null) second = 0;
+            if (first == null)
+                first = 0;
+
+            if (second == null)
+                second = 0;
+
             return first + second;
         }
     }

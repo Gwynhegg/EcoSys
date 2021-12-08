@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace EcoSys.Auxiliary
 {
@@ -22,6 +19,6 @@ namespace EcoSys.Auxiliary
             grid.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
             grid.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
             grid.VerticalContentAlignment = System.Windows.VerticalAlignment.Stretch;
-        } 
+        }
     }
 }

@@ -23,17 +23,18 @@ namespace EcoSys.Entities
         public DataTable getScenarioData(string region, int year_index, int current_step)
         {
             DataTable result_table = new DataTable();
-            var year = years[year_index];
-            result_table = scenarios[(year, region, scenario_name[0])].Clone();
+            var year = this.years[year_index];
+            result_table = this.scenarios[(year, region, this.scenario_name[0])].Clone();
             result_table.Columns[0].ColumnName = "Сценарии";
-            foreach (string scenario in scenario_name)
+            foreach (string scenario in this.scenario_name)
             {
                 var row = result_table.NewRow();
                 row[0] = scenario;
-                for (int i = 1; i < columns.Count + 1; i++)
+                for (int i = 1; i < this.columns.Count + 1; i++)
                 {
-                    var temp = scenarios[(year, region, scenario)].Rows[current_step].Field<double?>(i);
-                    if (temp != null) row[i] = temp;
+                    var temp = this.scenarios[(year, region, scenario)].Rows[current_step].Field<double?>(i);
+                    if (temp != null)
+                        row[i] = temp;
                 }
                 result_table.Rows.Add(row);
             }
@@ -44,19 +45,20 @@ namespace EcoSys.Entities
 
         public DataTable getScenarioModels(int region_index)
         {
-            var region = regions.ElementAt(region_index);
+            var region = this.regions.ElementAt(region_index);
 
-            return scenario_models[region];
+            return this.scenario_models[region];
         }
 
         public List<object> getCategoriesData(int category_index, double current_height, double current_width)
         {
             var result_list = new List<object>();
 
-            var choosed_category = categories[category_index];
+            var choosed_category = this.categories[category_index];
 
-            var selective_bundle = conditions.Where(c => c.Key.Item1.Equals(choosed_category));
+            var selective_bundle = this.conditions.Where(c => c.Key.Item1.Equals(choosed_category));
             foreach (KeyValuePair<(string, string), DataTable> item in selective_bundle)
+            {
                 if (item.Key.Item1.Equals(choosed_category))
                 {
                     result_list.Add(new System.Windows.Controls.Label() { Content = item.Key.Item2 });
@@ -65,8 +67,10 @@ namespace EcoSys.Entities
 
                     var segmented_data = used_data.Clone();
 
-                    for (int j = years.Count; j > 0; j--)
+                    for (int j = this.years.Count; j > 0; j--)
+                    {
                         segmented_data.ImportRow(used_data.Rows[used_data.Rows.Count - j]);
+                    }
 
                     roundDataTable(segmented_data, 3);
 
@@ -76,6 +80,7 @@ namespace EcoSys.Entities
 
                     result_list.Add(getGraph(used_data, current_height, current_width));
                 }
+            }
 
             return result_list;
         }
@@ -84,10 +89,11 @@ namespace EcoSys.Entities
         {
             var result_list = new List<object>();
 
-            var choosed_category = categories[category_index];
+            var choosed_category = this.categories[category_index];
 
-            var selective_bundle = conditions.Where(c => c.Key.Item1.Equals(choosed_category) && c.Key.Item2.Split(". ")[0].Equals(current_region));
+            var selective_bundle = this.conditions.Where(c => c.Key.Item1.Equals(choosed_category) && c.Key.Item2.Split(". ")[0].Equals(current_region));
             foreach (KeyValuePair<(string, string), DataTable> item in selective_bundle)
+            {
                 if (item.Key.Item1.Equals(choosed_category))
                 {
                     result_list.Add(new System.Windows.Controls.Label() { Content = item.Key.Item2 });
@@ -95,8 +101,10 @@ namespace EcoSys.Entities
                     DataTable used_data = item.Value;
                     var segmented_data = used_data.Clone();
 
-                    for (int j = years.Count; j > 0; j--)
+                    for (int j = this.years.Count; j > 0; j--)
+                    {
                         segmented_data.ImportRow(used_data.Rows[used_data.Rows.Count - j]);
+                    }
 
                     roundDataTable(segmented_data, 2);
 
@@ -106,6 +114,7 @@ namespace EcoSys.Entities
 
                     result_list.Add(getGraph(used_data, current_height, current_width));
                 }
+            }
 
             return result_list;
         }
@@ -116,7 +125,9 @@ namespace EcoSys.Entities
 
             string[] year_labels = new string[data.Rows.Count];
             for (int i = 0; i < year_labels.Length; i++)
+            {
                 year_labels[i] = data.Rows[i].Field<string>(0);
+            }
 
             chart.AxisX.Add(new Axis() { Title = "Годы", Labels = year_labels });
             chart.AxisY.Add(new Axis() { Title = "руб.", MinValue = 0 });
@@ -124,16 +135,20 @@ namespace EcoSys.Entities
             ChartValues<double> real_price = new ChartValues<double>();
 
             for (int i = 0; i < data.Rows.Count; i++)
+            {
                 real_price.Add(data.Rows[i].Field<double>(1));
+            }
 
             chart.Series.Add(new LineSeries() { Values = real_price, Title = "Инерционный сценарий" });
 
-            for (int i = 1; i < scenario_name.Count; i++)
+            for (int i = 1; i < this.scenario_name.Count; i++)
             {
                 ChartValues<double> scenario_price = new ChartValues<double>();
 
                 for (int index = 0; index < data.Rows.Count; index++)
+                {
                     scenario_price.Add(data.Rows[index].Field<double>(i + 1));
+                }
 
                 chart.Series.Add(new LineSeries() { Values = scenario_price, Title = data.Columns[1 + i].ColumnName });
 
@@ -151,19 +166,21 @@ namespace EcoSys.Entities
             TextInfo text_info = cult_info.TextInfo;
 
             string year = table.TableName;
-            years.Add(year);     //Добавление года разбираемого сценария
+            this.years.Add(year);     //Добавление года разбираемого сценария
 
             for (int vert_index = 0; vert_index < table.Columns.Count; vert_index += 10)
             {
                 string region = table.Rows[0].Field<string>(vert_index);        //получение названия региона
 
-                if (region is null) break;
+                if (region is null)
+                    break;
+
                 region = text_info.ToTitleCase(region.ToLower());       //Решение для обеспечения однообразия названий
-                regions.Add(region);
+                this.regions.Add(region);
 
                 for (int scen_index = 2; scen_index < 85; scen_index += 20)
                 {
-                    scenarios.Add((year, region, scenario_name[scen_index / 20]), pickOutData(table, vert_index, scen_index, 1, 4));
+                    this.scenarios.Add((year, region, this.scenario_name[scen_index / 20]), pickOutData(table, vert_index, scen_index, 1, 4));
                 }
             }
         }
@@ -181,10 +198,14 @@ namespace EcoSys.Entities
 
             while (region != null)
             {
-                scenario_models.Add(region, pickModels(table, index, 0));
+                this.scenario_models.Add(region, pickModels(table, index, 0));
 
                 index += 18;
-                if (index < table.Rows.Count) region = table.Rows[index].Field<string>(0); else break;
+                if (index < table.Rows.Count)
+                    region = table.Rows[index].Field<string>(0);
+                else
+                    break;
+
                 region = text_info.ToTitleCase(region.ToLower());       //Решение для обеспечения однообразия названий
             }
 
@@ -201,7 +222,7 @@ namespace EcoSys.Entities
             {
                 condition_name = table.Rows[hor_index].Field<string>(0); ;       //Строка для хранения названия главного сценария
 
-                categories.Add(condition_name);
+                this.categories.Add(condition_name);
 
                 int row_step = 2, column_step = 8, current_column = 0;
 
@@ -209,7 +230,7 @@ namespace EcoSys.Entities
 
                 while (sub_condition != null)
                 {
-                    conditions.Add((condition_name, sub_condition), pickConditions(table, hor_index + row_step, current_column));
+                    this.conditions.Add((condition_name, sub_condition), pickConditions(table, hor_index + row_step, current_column));
                     current_column += column_step;
 
                     if (current_column < table.Columns.Count)
@@ -222,24 +243,24 @@ namespace EcoSys.Entities
 
             //Расчеты граф 8-12 придеться проводить отдельно, так как структура файла сильно нарушена
             condition_name = table.Rows[231].Field<string>(0); ;       //Строка для хранения названия главного сценария
-            categories.Add(condition_name);
-            pickConditionKeys(condition_name, conditions, 233, 300, table);
+            this.categories.Add(condition_name);
+            pickConditionKeys(condition_name, this.conditions, 233, 300, table);
 
             condition_name = table.Rows[300].Field<string>(0); ;       //Строка для хранения названия главного сценария
-            categories.Add(condition_name);
-            pickConditionKeys(condition_name, conditions, 302, 467, table);
+            this.categories.Add(condition_name);
+            pickConditionKeys(condition_name, this.conditions, 302, 467, table);
 
             condition_name = table.Rows[467].Field<string>(0); ;       //Строка для хранения названия главного сценария
-            categories.Add(condition_name);
-            pickConditionKeys(condition_name, conditions, 469, 568, table);
+            this.categories.Add(condition_name);
+            pickConditionKeys(condition_name, this.conditions, 469, 568, table);
 
             condition_name = table.Rows[568].Field<string>(0); ;       //Строка для хранения названия главного сценария
-            categories.Add(condition_name);
-            pickConditionKeys(condition_name, conditions, 570, 669, table);
+            this.categories.Add(condition_name);
+            pickConditionKeys(condition_name, this.conditions, 570, 669, table);
 
             condition_name = table.Rows[669].Field<string>(0); ;       //Строка для хранения названия главного сценария
-            categories.Add(condition_name);
-            pickConditionKeys(condition_name, conditions, 671, table.Rows.Count, table);
+            this.categories.Add(condition_name);
+            pickConditionKeys(condition_name, this.conditions, 671, table.Rows.Count, table);
         }
 
         private void pickConditionKeys(string condition_name, Dictionary<(string, string), DataTable> conditions, int start_row, int end_row, DataTable table)
@@ -291,7 +312,7 @@ namespace EcoSys.Entities
             {
                 string scenario = table.Rows[starting_index].Field<string>(0);
                 scenario = scenario.Substring(0, 1).ToUpper() + scenario.Substring(1).ToLower();
-                scenario_name.Add(scenario);
+                this.scenario_name.Add(scenario);
                 starting_index += 20;
                 step++;
             }
@@ -304,40 +325,49 @@ namespace EcoSys.Entities
 
             var result_table = new DataTable();
 
-            var lines_col = new DataColumn();
-            lines_col.ColumnName = "Сценарные условия";
-            lines_col.DataType = System.Type.GetType("System.String");
+            var lines_col = new DataColumn
+            {
+                ColumnName = "Сценарные условия",
+                DataType = System.Type.GetType("System.String")
+            };
 
             result_table.Columns.Add(lines_col);
 
-            var data_col = new DataColumn();
-            data_col.ColumnName = columns[0];
-            data_col.DataType = System.Type.GetType("System.String");
-            data_col.AllowDBNull = true;
+            var data_col = new DataColumn
+            {
+                ColumnName = this.columns[0],
+                DataType = System.Type.GetType("System.String"),
+                AllowDBNull = true
+            };
 
             result_table.Columns.Add(data_col);
 
 
             for (int i = 2; i < 7; i++)
             {
-                data_col = new DataColumn();
-                data_col.ColumnName = columns[i];
-                data_col.DataType = System.Type.GetType("System.String");
-                data_col.AllowDBNull = true;
+                data_col = new DataColumn
+                {
+                    ColumnName = this.columns[i],
+                    DataType = System.Type.GetType("System.String"),
+                    AllowDBNull = true
+                };
 
                 result_table.Columns.Add(data_col);
             }
 
-            for (int index = 0; index < lines.Count - 1; index++)
+            for (int index = 0; index < this.lines.Count - 1; index++)
             {
                 var row = result_table.NewRow();
 
-                row[0] = lines[index];
+                row[0] = this.lines[index];
 
                 for (int i = 0; i < result_table.Columns.Count - 1; i++)
                 {
                     var temp = table.Rows[row_start + index].Field<string?>(col_start + i);
-                    if (temp != null) row[i + 1] = temp; else row[i + 1] = "";
+                    if (temp != null)
+                        row[i + 1] = temp;
+                    else
+                        row[i + 1] = "";
                 }
 
                 result_table.Rows.Add(row);
@@ -352,18 +382,22 @@ namespace EcoSys.Entities
 
             var result_table = new DataTable();
 
-            var lines_col = new DataColumn();
-            lines_col.ColumnName = "Год";
-            lines_col.DataType = System.Type.GetType("System.String");
+            var lines_col = new DataColumn
+            {
+                ColumnName = "Год",
+                DataType = System.Type.GetType("System.String")
+            };
 
             result_table.Columns.Add(lines_col);
 
             for (int i = 0; i < 5; i++)
             {
-                var data_col = new DataColumn();
-                data_col.ColumnName = table.Rows[row_start - 1].Field<string>(col_start + i);
-                data_col.DataType = System.Type.GetType("System.Double");
-                data_col.AllowDBNull = true;
+                var data_col = new DataColumn
+                {
+                    ColumnName = table.Rows[row_start - 1].Field<string>(col_start + i),
+                    DataType = System.Type.GetType("System.Double"),
+                    AllowDBNull = true
+                };
 
                 result_table.Columns.Add(data_col);
             }
@@ -377,7 +411,10 @@ namespace EcoSys.Entities
                 for (int i = 0; i < 5; i++)
                 {
                     var temp = table.Rows[row_start + index].Field<double?>(col_start + i);
-                    if (temp != null) row[i + 1] = temp; else row[i + 1] = row[1];
+                    if (temp != null)
+                        row[i + 1] = temp;
+                    else
+                        row[i + 1] = row[1];
                 }
 
                 result_table.Rows.Add(row);
@@ -387,8 +424,11 @@ namespace EcoSys.Entities
 
         public bool checkCorrectness()
         {
-            List<int> data_fullness = new List<int> { scenarios.Count, scenario_models.Count, scenario_name.Count, regions.Count, years.Count, scenario_name.Count, categories.Count };
-            if (data_fullness.Any(item => item == 0)) return false; else return true;
+            List<int> data_fullness = new List<int> { this.scenarios.Count, this.scenario_models.Count, this.scenario_name.Count, this.regions.Count, this.years.Count, this.scenario_name.Count, this.categories.Count };
+            if (data_fullness.Any(item => item == 0))
+                return false;
+            else
+                return true;
         }
     }
 }

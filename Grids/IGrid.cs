@@ -1,6 +1,6 @@
 ﻿namespace EcoSys.Grids
 {
-    interface IGrid
+    internal interface IGrid
     {
         public void hideGrid();
         public void showGrid();

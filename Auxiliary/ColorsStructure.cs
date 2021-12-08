@@ -5,7 +5,7 @@ namespace EcoSys.Auxiliary
 {
     public static class ColorsStructure
     {
-        private static Dictionary<string, Brush> brushes = new Dictionary<string, Brush>
+        private static readonly Dictionary<string, Brush> brushes = new Dictionary<string, Brush>
         {
             { "Инерционный сценарий", Brushes.YellowGreen },
             { "Умеренно негативный сценарий", Brushes.IndianRed },
@@ -14,9 +14,6 @@ namespace EcoSys.Auxiliary
             { "Оптимистичный сценарий", Brushes.ForestGreen }
         };
 
-        public static Brush getColor(string key)
-        {
-            return brushes[key];
-        }
+        public static Brush getColor(string key) => brushes[key];
     }
 }

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace EcoSys.Entities
 {
@@ -12,14 +11,17 @@ namespace EcoSys.Entities
     {
         public static async void writeToExcel(DataTable table, HashSet<string> regions, string year, string type)
         {
-            var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
-
-            save_filedialog.Filter = "Excel-Файл (*.xlsx)|*.xlsx|Excel-файл (*.xlsm)|*.xlsm";
-            save_filedialog.RestoreDirectory = true;
+            var save_filedialog = new SaveFileDialog
+            {
+                Filter = "Excel-Файл (*.xlsx)|*.xlsx|Excel-файл (*.xlsm)|*.xlsm",
+                RestoreDirectory = true
+            };     //Происходит открытие диалогового окна для сохранения файла
 
             if (save_filedialog.ShowDialog() == true)
             {
-                if (save_filedialog.FileName == string.Empty) throw new Exception();
+                if (save_filedialog.FileName == string.Empty)
+                    throw new Exception();
+
                 try
                 {
                     IXLWorkbook workbook = new XLWorkbook();
@@ -38,10 +40,13 @@ namespace EcoSys.Entities
 
                     MessageBox.Show("Файл успешно создан!", "", MessageBoxButton.OK);
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     var dialog_result = MessageBox.Show("Возникла ошибка при создании файла. Попробуйте еще раз", "Ошибка сохранения", MessageBoxButton.OK);
-                    if (dialog_result == MessageBoxResult.OK) return;
+                    if (dialog_result == MessageBoxResult.OK)
+                    {
+                        return;
+                    }
                 }
 
             }
@@ -49,14 +54,17 @@ namespace EcoSys.Entities
 
         public static async void writeToExcel(List<DataTable> tables, HashSet<string> regions, string year)
         {
-            var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
-
-            save_filedialog.Filter = "Excel-Файл (*.xlsx)|*.xlsx|Excel-файл (*.xlsm)|*.xlsm";
-            save_filedialog.RestoreDirectory = true;
+            var save_filedialog = new SaveFileDialog
+            {
+                Filter = "Excel-Файл (*.xlsx)|*.xlsx|Excel-файл (*.xlsm)|*.xlsm",
+                RestoreDirectory = true
+            };     //Происходит открытие диалогового окна для сохранения файла
 
             if (save_filedialog.ShowDialog() == true)
             {
-                if (save_filedialog.FileName == string.Empty) throw new Exception();
+                if (save_filedialog.FileName == string.Empty)
+                    throw new Exception();
+
                 try
                 {
                     IXLWorkbook workbook = new XLWorkbook();
@@ -83,10 +91,13 @@ namespace EcoSys.Entities
 
                     MessageBox.Show("Файл успешно создан!", "", MessageBoxButton.OK);
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     var dialog_result = MessageBox.Show("Возникла ошибка при создании файла. Попробуйте еще раз", "Ошибка сохранения", MessageBoxButton.OK);
-                    if (dialog_result == MessageBoxResult.OK) return;
+                    if (dialog_result == MessageBoxResult.OK)
+                    {
+                        return;
+                    }
                 }
 
             }
@@ -94,14 +105,17 @@ namespace EcoSys.Entities
 
         public static async void writeToExcel(DataTable table, string region)
         {
-            var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
-
-            save_filedialog.Filter = "Excel-Файл (*.xlsx)|*.xlsx|Excel-файл (*.xlsm)|*.xlsm";
-            save_filedialog.RestoreDirectory = true;
+            var save_filedialog = new SaveFileDialog
+            {
+                Filter = "Excel-Файл (*.xlsx)|*.xlsx|Excel-файл (*.xlsm)|*.xlsm",
+                RestoreDirectory = true
+            };     //Происходит открытие диалогового окна для сохранения файла
 
             if (save_filedialog.ShowDialog() == true)
             {
-                if (save_filedialog.FileName == string.Empty) throw new Exception();
+                if (save_filedialog.FileName == string.Empty)
+                    throw new Exception();
+
                 try
                 {
                     IXLWorkbook workbook = new XLWorkbook();
@@ -120,10 +134,13 @@ namespace EcoSys.Entities
 
                     MessageBox.Show("Файл успешно создан!", "", MessageBoxButton.OK);
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     var dialog_result = MessageBox.Show("Возникла ошибка при создании файла. Попробуйте еще раз", "Ошибка сохранения", MessageBoxButton.OK);
-                    if (dialog_result == MessageBoxResult.OK) return;
+                    if (dialog_result == MessageBoxResult.OK)
+                    {
+                        return;
+                    }
                 }
 
             }

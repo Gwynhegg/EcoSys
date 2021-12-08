@@ -10,8 +10,7 @@ namespace EcoSys.Grids
     /// </summary>
     public partial class GreetsGrid : UserControl, IGrid
     {
-
-        System.Windows.Controls.Primitives.Popup pop;
+        private readonly System.Windows.Controls.Primitives.Popup pop;
         public GreetsGrid()
         {
             InitializeComponent();
@@ -19,15 +18,9 @@ namespace EcoSys.Grids
             pop = new System.Windows.Controls.Primitives.Popup() { Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse, Child = new TextBlock() { Text = "Скопировано в буфер обмена", Background = Brushes.White, FontSize = 14, Padding = new Thickness(2, 2, 2, 2) } };
         }
 
-        public void hideGrid()
-        {
-            this.Visibility = Visibility.Hidden;
-        }
+        public void hideGrid() => this.Visibility = Visibility.Hidden;
 
-        public void showGrid()
-        {
-            this.Visibility = Visibility.Visible;
-        }
+        public void showGrid() => this.Visibility = Visibility.Visible;
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
@@ -35,9 +28,6 @@ namespace EcoSys.Grids
             pop.IsOpen = true;
         }
 
-        private void Hyperlink_MouseLeave(object sender, MouseEventArgs e)
-        {
-            pop.IsOpen = false;
-        }
+        private void Hyperlink_MouseLeave(object sender, MouseEventArgs e) => pop.IsOpen = false;
     }
 }

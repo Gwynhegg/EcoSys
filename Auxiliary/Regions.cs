@@ -20,14 +20,17 @@ namespace EcoSys.Auxiliary
             {
                 Region needed_region = regions.Find(x => x.Name == region);
                 if (needed_region != null)
+                {
                     if (constituencies.ContainsKey(needed_region.FederalDistrictName))
-                        if (constituencies[needed_region.FederalDistrictName] != null) constituencies[needed_region.FederalDistrictName].Add(region);
-                        else
-                        {
-                            constituencies[needed_region.FederalDistrictName] = new List<string>();
+                    {
+                        if (constituencies[needed_region.FederalDistrictName] != null)
                             constituencies[needed_region.FederalDistrictName].Add(region);
-                        }
-                    else constituencies.Add(needed_region.FederalDistrictName, new List<string>() { region });
+                        else
+                            constituencies[needed_region.FederalDistrictName] = new List<string> { region };
+                    }
+                    else
+                        constituencies.Add(needed_region.FederalDistrictName, new List<string>() { region });
+                }
             }
             return constituencies;
         }
@@ -40,14 +43,38 @@ namespace EcoSys.Auxiliary
             for (int i = 0; i < regions.Count; i++)
             {
                 regions[i].Name = text_info.ToTitleCase(regions[i].Name.ToLower());       //Решение для обеспечения однообразия названий
-                if (regions[i].Name == "Республика Крым") regions[i].Name = "Крым";
-                else if (regions[i].Name == "Город Севастополь") regions[i].Name = "Севастополь";
-                else if (regions[i].Name == "Город Санкт-Петербург") regions[i].Name = "Санкт-Петербург";
-                else if (regions[i].Name == "Республика Мордовии") regions[i].Name = "Республика Мордовия";
-                else if (regions[i].Name == "Удмуртская Республики") regions[i].Name = "Республика Удмуртия";
-                else if (regions[i].Name == "Чувашская Республики") regions[i].Name = "Республика Чувашия";
-                else if (regions[i].Name == "Республика Ингушетии") regions[i].Name = "Республика Ингушетия";
-                else if (regions[i].Name == "Ставропольский Край") regions[i].Name = "Ставропольский Край";
+                if (regions[i].Name == "Республика Крым")
+                {
+                    regions[i].Name = "Крым";
+                }
+                else if (regions[i].Name == "Город Севастополь")
+                {
+                    regions[i].Name = "Севастополь";
+                }
+                else if (regions[i].Name == "Город Санкт-Петербург")
+                {
+                    regions[i].Name = "Санкт-Петербург";
+                }
+                else if (regions[i].Name == "Республика Мордовии")
+                {
+                    regions[i].Name = "Республика Мордовия";
+                }
+                else if (regions[i].Name == "Удмуртская Республики")
+                {
+                    regions[i].Name = "Республика Удмуртия";
+                }
+                else if (regions[i].Name == "Чувашская Республики")
+                {
+                    regions[i].Name = "Республика Чувашия";
+                }
+                else if (regions[i].Name == "Республика Ингушетии")
+                {
+                    regions[i].Name = "Республика Ингушетия";
+                }
+                else if (regions[i].Name == "Ставропольский Край")
+                {
+                    regions[i].Name = "Ставропольский Край";
+                }
             }
         }
     }

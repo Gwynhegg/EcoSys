@@ -14,11 +14,9 @@ namespace EcoSys.Grids
     /// </summary>
     public partial class SettingsGrid : UserControl, IGrid
     {
-        Entities.DataEntity data;
-        System.Windows.Controls.Primitives.Popup pop;
-
-
-        WorkWindow parent_window;
+        private Entities.DataEntity data;
+        private readonly System.Windows.Controls.Primitives.Popup pop;
+        private readonly WorkWindow parent_window;
 
         public SettingsGrid(Entities.DataEntity data, WorkWindow parent, bool auto)
         {
@@ -26,27 +24,30 @@ namespace EcoSys.Grids
             this.data = data;
             parent_window = parent;
 
-            if (auto) auto_launch.IsChecked = true;
+            if (auto)
+                auto_launch.IsChecked = true;
+
             pop = new System.Windows.Controls.Primitives.Popup() { Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse, Child = new TextBlock() { Text = "Скопировано в буфер обмена", Background = Brushes.White, FontSize = 14, Padding = new Thickness(2, 2, 2, 2) } };
 
         }
-
         ~SettingsGrid()
         {
             GC.Collect();
         }
-
         private void JSONButton_Click(object sender, RoutedEventArgs e)
         {
 
-            var save_filedialog = new SaveFileDialog();     //Происходит открытие диалогового окна для сохранения файла
-
-            save_filedialog.Filter = "JSON (*.json)|*.json";
-            save_filedialog.RestoreDirectory = true;
+            var save_filedialog = new SaveFileDialog
+            {
+                Filter = "JSON (*.json)|*.json",
+                RestoreDirectory = true
+            };     //Происходит открытие диалогового окна для сохранения файла
 
             if (save_filedialog.ShowDialog() == true)
             {
-                if (save_filedialog.FileName == string.Empty) throw new Exception();
+                if (save_filedialog.FileName == string.Empty)
+                    throw new Exception();
+
                 try
                 {
                     var writer = File.CreateText(save_filedialog.FileName);
@@ -58,17 +59,16 @@ namespace EcoSys.Grids
 
                     MessageBox.Show("Файл успешно создан!", "", MessageBoxButton.OK);
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     var dialog_result = MessageBox.Show("Возникла ошибка при создании файла. Попробуйте еще раз", "Ошибка сохранения", MessageBoxButton.OK);
-                    if (dialog_result == MessageBoxResult.OK) return;
+                    if (dialog_result == MessageBoxResult.OK)
+                        return;
                 }
 
             }
 
         }
-
-
         private void BackToChoose_Click(object sender, RoutedEventArgs e)       //кнопка для возвращения на предыдущую форму
         {
             var result = MessageBox.Show("При переходе на предыдущий экран прогресс будет утерян. Продолжить?", "Предупреждение", MessageBoxButton.YesNo);
@@ -82,31 +82,20 @@ namespace EcoSys.Grids
                 GC.Collect();
             }
         }
-
-        public void hideGrid()
-        {
-            this.Visibility = Visibility.Hidden;
-        }
-
-        public void showGrid()
-        {
-            this.Visibility = Visibility.Visible;
-        }
-
         public bool isAutolaunchActive()
         {
-            if (auto_launch.IsChecked == true) return true; else return false;
+            if (auto_launch.IsChecked == true)
+                return true;
+            else
+                return false;
         }
-
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetData(DataFormats.Text, "itchepurov@yandex.ru");
             pop.IsOpen = true;
         }
-
-        private void Hyperlink_MouseLeave(object sender, MouseEventArgs e)
-        {
-            pop.IsOpen = false;
-        }
+        private void Hyperlink_MouseLeave(object sender, MouseEventArgs e) => pop.IsOpen = false;
+        public void hideGrid() => this.Visibility = Visibility.Hidden;
+        public void showGrid() => this.Visibility = Visibility.Visible;
     }
 }

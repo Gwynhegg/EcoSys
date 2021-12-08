@@ -7,10 +7,7 @@ namespace EcoSys.Entities
 {
     public class TupleConverter<T1, T2> : System.ComponentModel.TypeConverter
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type source_type)
-        {
-            return source_type == typeof(string) || base.CanConvertFrom(context, source_type);
-        }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type source_type) => source_type == typeof(string) || base.CanConvertFrom(context, source_type);
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
