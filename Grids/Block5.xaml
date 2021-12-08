@@ -10,7 +10,7 @@
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="10"></RowDefinition>
-            <RowDefinition Height="20*"></RowDefinition>
+            <RowDefinition Height="10*"></RowDefinition>
             <RowDefinition Height="11*"></RowDefinition>
             <RowDefinition Height="50*"></RowDefinition>
             <RowDefinition Height="100*"></RowDefinition>
@@ -33,7 +33,8 @@
                 <RowDefinition Height="5*"></RowDefinition>
             </Grid.RowDefinitions>
             <Button x:Name="clear_fields" Grid.Row="0" Content="Очистить"></Button>
-            <Button x:Name="finalize_btn" Grid.Row="2" Content="Результат"></Button>
+            <Button x:Name="finalize_btn" Grid.Row="2" Content="Результат" Click="finalize_btn_Click" IsEnabled="False"></Button>
+            <Button x:Name="to_equation" Grid.Row="2" Content="Редактировать" Visibility="Hidden" Click="to_equation_Click"></Button>
         </Grid>
 
         <DataGrid x:Name="final_grid" Grid.Row="3" Grid.RowSpan="2" Grid.Column="1" Visibility="Hidden"></DataGrid>

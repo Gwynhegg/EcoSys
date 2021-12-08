@@ -13,7 +13,7 @@
             <RowDefinition Height="5*"></RowDefinition>
         </Grid.RowDefinitions>
         <TextBlock x:Name="category_name" Grid.Row="0" FontSize="14" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Center"></TextBlock>
-        <WrapPanel x:Name="equation_panel" Grid.Row="2" MinHeight="40"  VerticalAlignment="Stretch" HorizontalAlignment="Center"></WrapPanel>
+        <WrapPanel x:Name="equation_panel" Grid.Row="2" MinHeight="40"  VerticalAlignment="Stretch" HorizontalAlignment="Left"></WrapPanel>
         <Border BorderThickness="1,1,1,0" BorderBrush="Black" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"/>
     </Grid>
 </UserControl>

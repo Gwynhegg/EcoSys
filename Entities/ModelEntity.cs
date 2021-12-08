@@ -15,6 +15,23 @@ namespace EcoSys.Entities
         public List<string> categories { get; set; } = new List<string>();        //HashSet для хранения категорий - столбцов
         public Dictionary<string, List<string>> tips { get; set; } = new Dictionary<string, List<string>>();
 
+        public DataTable getCalculatedModelData(double?[] values, DataTable model)
+        {
+            var result_table = new DataTable();
+            result_table = model.Copy();
+            for (int i = 0; i < model.Rows.Count; i++)
+            {
+                var row = result_table.NewRow();
+                row[0] = model.Rows[i].Field<string>(0);
+                for (int j = 1; j < model.Columns.Count; j++)
+                {
+                    var equation = model.Rows[i].Field<string>(j);
+                    if (equation != null && values[i] != null) row[j] = Math.Round((EasyEquationParser.getRatioFromString(equation) * (double)values[i]), 3).ToString();
+                }
+                result_table.Rows.Add(row);
+            }
+            return result_table;
+        }
         public async Task createTables(DataSet dataset)
         {
             var table = dataset.Tables[0];

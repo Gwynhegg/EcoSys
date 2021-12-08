@@ -20,23 +20,24 @@ namespace EcoSys.Grids
     /// </summary>
     public partial class EquationHolder : UserControl
     {
+        private Block5 parent_block;
 
-        Entities.EquationsParser parser = new Entities.EquationsParser();
+        public Entities.EquationsParser parser { get; } = new Entities.EquationsParser();
         List<string> tips = new List<string>();
-        public EquationHolder(string category, string equation, List<string> tips)
+        public EquationHolder(Block5 parent, string category, string equation, List<string> tips)
         {
             InitializeComponent();
+            parent_block = parent;
             this.tips = tips;
             category_name.Text = category;
             createRatioAndValuesBundle(equation);
             createPlaceholders();
         }
 
-        public double getAnswer()
+        public byte getUsedCategory()
         {
-            return parser.answer;
+            return Byte.Parse(category_name.Text.Split('.')[0]);
         }
-
         private void createRatioAndValuesBundle(string equation)
         {
             string[] result = equation.Split('=','*','+','-');
@@ -95,7 +96,10 @@ namespace EcoSys.Grids
             {
                 (sender as TextBox).Opacity = 1;
                 tryToParseEquation();
-                if (parser.tryCalculateValue()) (this.equation_panel.Children[equation_panel.Children.Count - 1] as TextBlock).Text = " = " + parser.getAnswer();
+                if (parser.tryCalculateValue()) {
+                    (this.equation_panel.Children[equation_panel.Children.Count - 1] as TextBlock).Text = " = " + parser.getAnswerToString();
+                    parent_block.checkFields();
+                } 
             }
             else
             {
@@ -106,6 +110,7 @@ namespace EcoSys.Grids
                     (sender as TextBox).Opacity = 0.7;
                 }
 
+
             }
         }
 
@@ -115,7 +120,8 @@ namespace EcoSys.Grids
             for (int i = 0; i < values.Length; i++)
             {
                 double result;
-                if (Double.TryParse(values[i], out result)) parser.values[i] = result;
+                if (Double.TryParse(values[i], out result))
+                    if (values.Length == parser.values.Length) parser.values[i] = result; else parser.values[i + 1] = result;
             }
         }
     }
