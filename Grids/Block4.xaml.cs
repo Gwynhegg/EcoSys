@@ -72,7 +72,6 @@ namespace EcoSys.Grids
             }
             scenarios_grid.AutoGeneratingColumn += r2_AutoGeneratingColumn;
             scenarios_grid.ItemsSource = current_table.AsDataView();
-
             Auxiliary.GridStandard.standardizeGrid(scenarios_grid);
             scenarios_grid.Visibility = Visibility.Visible;
             createGraphs(current_step, this.ActualHeight, graphs_grid.ActualWidth);
@@ -103,7 +102,10 @@ namespace EcoSys.Grids
         private async void createGraphs(int current_step, double height, double width)
         {
             response_bundle = new List<object>();
-            await Task.Run(() => Dispatcher.Invoke(() => response_bundle = scenarios.getCategoriesData(current_step, height, width)));
+            if (current_step < 7)
+                await Task.Run(() => Dispatcher.Invoke(() => response_bundle = scenarios.getCategoriesData(current_step, height, width)));
+            else
+                await Task.Run(() => Dispatcher.Invoke(() => response_bundle = scenarios.getCategoriesAndRegionData(current_step, regions_box.Text, height, width)));
 
             graphs_list.ItemsSource = response_bundle;
         }
@@ -184,7 +186,7 @@ namespace EcoSys.Grids
 
             final_grid.AutoGeneratingColumn += r2_AutoGeneratingColumn;
             final_grid.ItemsSource = final_table.AsDataView();
-
+            final_grid.Columns[0].CanUserSort = false;
             Auxiliary.GridStandard.standardizeGrid(final_grid);
             final_grid.Visibility = Visibility.Visible;
             export_to_exc.IsEnabled = true;

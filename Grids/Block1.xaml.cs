@@ -177,6 +177,7 @@ namespace EcoSys.Grids
                     break;
             }
             this.data_field.ItemsSource = current_table.AsDataView();        //устанавливаем полученную через словарь таблицу в качестве представления данных
+            data_field.Columns[0].CanUserSort = false;
             this.data_field.Visibility = Visibility.Visible;
             Auxiliary.GridStandard.standardizeGrid(this.data_field);
         }

@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EcoSys.Grids
 {
@@ -51,7 +43,7 @@ namespace EcoSys.Grids
         {
             for (int i = 0; i < equations_list.Items.Count; i++)
             {
-                if ((equations_list.Items[i] as Grids.EquationHolder).parser.getAnswerToString().Contains("Y"))
+                if ((equations_list.Items[i] as Grids.EquationHolder).parser.getAnswerToString() is null)
                 {
                     finalize_btn.IsEnabled = false;
                     return;
@@ -66,7 +58,7 @@ namespace EcoSys.Grids
             for (int i = 0; i < equations_list.Items.Count; i++)
             {
                 var equation = equations_list.Items[i] as Grids.EquationHolder;
-                answers[equation.getUsedCategory()] = equation.parser.answer;
+                answers[equation.getUsedCategory() - 1] = equation.parser.answer;
             }
             if (answers.Count(x => x != null) == equations_list.Items.Count) { 
                 finalizeTable(answers);
@@ -78,6 +70,7 @@ namespace EcoSys.Grids
         {
             final_table = model.getCalculatedModelData(answers, scenario.scenario_models[model.regions[used_region_box.SelectedIndex]]);
             final_grid.ItemsSource = final_table.AsDataView();
+            final_grid.Columns[0].CanUserSort = false;
             Auxiliary.GridStandard.standardizeGrid(final_grid);
         }
 
@@ -98,14 +91,19 @@ namespace EcoSys.Grids
             command_buttons.Visibility = Visibility.Visible;
             to_equation.Visibility = Visibility.Hidden;
             finalize_btn.Visibility = Visibility.Visible;
+            final_grid.Visibility = Visibility.Hidden;
             finalize_btn.IsEnabled = false;
+            export_to_exc.IsEnabled = false;
+            to_equation.Visibility = Visibility.Hidden;
         }
 
         private void finalize_btn_Click(object sender, RoutedEventArgs e)
         {
             equations_list.Visibility = Visibility.Hidden;
             final_grid.Visibility = Visibility.Visible;
+            export_to_exc.IsEnabled = true;
             finalize_btn.Visibility = Visibility.Visible;
+            to_equation.Visibility= Visibility.Visible;
         }
 
         private void to_equation_Click(object sender, RoutedEventArgs e)
@@ -113,6 +111,40 @@ namespace EcoSys.Grids
             equations_list.Visibility = Visibility.Visible;
             final_grid.Visibility = Visibility.Hidden;
             to_equation.Visibility = Visibility.Hidden;
+        }
+
+        private void clear_fields_Click(object sender, RoutedEventArgs e)
+        {
+            to_equation.Visibility = Visibility.Hidden;
+            final_grid.Visibility = Visibility.Hidden;
+            equations_list.Visibility = Visibility.Visible;
+            for (int i = 0; i < equations_list.Items.Count; i++)
+                (equations_list.Items[i] as Grids.EquationHolder).clearValues();
+        }
+
+        private async void export_to_exc_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (final_table == null) throw new ArgumentNullException();
+
+                loading.Visibility = Visibility.Visible;
+                await Task.Run(() => Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(final_table, used_region_box.Text)));
+            }
+            catch (ArgumentNullException exc)
+            {
+                var dialog_result = MessageBox.Show("Не выбрана таблица для импортирования", "", MessageBoxButton.OK);
+                if (dialog_result == MessageBoxResult.OK) return;
+            }
+            catch (Exception exc)
+            {
+                var dialog_result = MessageBox.Show("Проблема при инициализации работы с Excel (допустимо несоответствие версий)", "", MessageBoxButton.OK);
+                if (dialog_result == MessageBoxResult.OK) return;
+            }
+            finally
+            {
+                loading.Visibility = Visibility.Hidden;
+            }
         }
     }
 }

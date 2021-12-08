@@ -49,6 +49,7 @@ namespace EcoSys.Grids
             await Task.Run(() => current_table = scenarios_entity.getScenarioModels(selected_index));
 
             data_grid.ItemsSource = current_table.AsDataView();
+            data_grid.Columns[0].CanUserSort = false;
             data_grid.Visibility = Visibility.Visible;
             Auxiliary.GridStandard.standardizeGrid(this.data_grid);
         }

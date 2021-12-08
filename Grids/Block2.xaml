@@ -10,27 +10,26 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"></RowDefinition>
-            <RowDefinition Height="55*" MaxHeight="50"></RowDefinition>
-            <RowDefinition Height="11*" MaxHeight="15"></RowDefinition>
-            <RowDefinition Height="55*" MaxHeight="50"></RowDefinition>
-            <RowDefinition Height="27*" MaxHeight="40"></RowDefinition>
-            <RowDefinition Height="274*" MinHeight="200"></RowDefinition>
-            <RowDefinition Height="55*" MaxHeight="60"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="5"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="40"></RowDefinition>
+            <RowDefinition Height="5"></RowDefinition>
+            <RowDefinition Height="10*" MinHeight="200"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="60"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="15"></ColumnDefinition>
-            <ColumnDefinition Width="200*" MinWidth="200"></ColumnDefinition>
-            <ColumnDefinition Width="30*"></ColumnDefinition>
-            <ColumnDefinition Width="283*" MinWidth="300"></ColumnDefinition>
-            <ColumnDefinition Width="14*" MaxWidth="15"></ColumnDefinition>
-            <ColumnDefinition Width="71*" MaxWidth="100"></ColumnDefinition>
-            <ColumnDefinition Width="15"></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="*" MaxWidth="200"></ColumnDefinition>
+            <ColumnDefinition Width="5"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MinWidth="530"></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MaxWidth="150"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Button x:Name ="show_hide" Content="Показать" Grid.Column="5" Grid.Row="1" Click="Button_Click" FontSize="14"/>
         <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="3" Click="export_to_exc_Click" FontSize="14"></Button>
-        <ComboBox x:Name="year_choose" Grid.Column="1" Grid.Row="3"  Text="Выберите год..." SelectionChanged="year_choose_SelectionChanged" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="14"/>
-        <ComboBox x:Name="matrix_type" Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" SelectionChanged="matrix_type_SelectionChanged" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" FontSize="14">
+        <ComboBox x:Name="year_choose" Grid.Column="1" Grid.Row="3"  Text="Выберите год..." SelectionChanged="year_choose_SelectionChanged" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" FontSize="14"/>
+        <ComboBox x:Name="matrix_type" Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" SelectionChanged="matrix_type_SelectionChanged" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" FontSize="14">
             <ComboBoxItem Content="Пассивная часть матрицы движения банковского капитала между секторами" ToolTip="Матрица формирования инвестиционного потенциала банковского сектора экономики " ></ComboBoxItem>
             <ComboBoxItem Content="Активная часть матрицы движения банковского капитала между секторами" ToolTip="Матрица использования инвестиционного потенциала банковского сектора экономики " ></ComboBoxItem>
             <ComboBoxItem Content="Сальдированная матрица движения банковского капитала между секторами" ToolTip="Матрица воспроизводства инвестиционного потенциала банковского сектора экономики " ></ComboBoxItem>

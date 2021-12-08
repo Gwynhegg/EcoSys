@@ -15,10 +15,11 @@ namespace EcoSys.Entities
         public List<string> categories { get; set; } = new List<string>();        //HashSet для хранения категорий - столбцов
         public Dictionary<string, List<string>> tips { get; set; } = new Dictionary<string, List<string>>();
 
-        public DataTable getCalculatedModelData(double?[] values, DataTable model)
-        {
+        public DataTable getCalculatedModelData(double?[] values, DataTable model)      //на основе высчитанных в блоке 5 значений формируем новую таблицу, скомпилированную из уравнения модели
+        {                                                                               //блока 4 и вычисленных значений
             var result_table = new DataTable();
             result_table = model.Copy();
+            result_table.Rows.Clear();
             for (int i = 0; i < model.Rows.Count; i++)
             {
                 var row = result_table.NewRow();
@@ -26,13 +27,17 @@ namespace EcoSys.Entities
                 for (int j = 1; j < model.Columns.Count; j++)
                 {
                     var equation = model.Rows[i].Field<string>(j);
-                    if (equation != null && values[i] != null) row[j] = Math.Round((EasyEquationParser.getRatioFromString(equation) * (double)values[i]), 3).ToString();
+                    if (equation != null && values[i] != null && !equation.Equals(String.Empty)) 
+                    {
+                        var temp = Math.Round((EasyEquationParser.getRatioFromString(equation) * (double)values[i]), 3).ToString();     //Использование парсера для выделения коэффицентов уравнения блока 4
+                        if (temp.Equals("-0")) row[j] = "0"; else row[j] = temp; 
+                    }
                 }
                 result_table.Rows.Add(row);
             }
             return result_table;
         }
-        public async Task createTables(DataSet dataset)
+        public async Task createTables(DataSet dataset)     //Асинхронное создание всех необходимых таблиц
         {
             var table = dataset.Tables[0];
             getRegions(table);
@@ -62,7 +67,7 @@ namespace EcoSys.Entities
             }
         }
 
-        private void getCategories(DataTable table)
+        private void getCategories(DataTable table)     //Получение имени категорий (столбцов) таблицы
         {
             int starting_index = 1;
             bool ending_condition = false;
@@ -74,7 +79,7 @@ namespace EcoSys.Entities
             }
         }
 
-        private async Task getModelEquations(DataTable table)
+        private async Task getModelEquations(DataTable table)       //Метод для считывания математического выражения для расчета значений
         {
             for (int i = 1; i < regions.Count; i++)
                 for(int j = 1; j < categories.Count; j++)
@@ -84,7 +89,7 @@ namespace EcoSys.Entities
                 }
         }
 
-        private async Task getModelTips(DataTable table)
+        private async Task getModelTips(DataTable table)        //Метод для считывания описаний используемых переменных
         {
             for (int i = 1; i < categories.Count + 1; i++)
             {
@@ -102,7 +107,7 @@ namespace EcoSys.Entities
 
         public bool checkCorrectness()
         {
-            return true;
+            if (model_equations.Count != 0 && regions.Count != 0 && categories.Count != 0 && tips.Count != 0) return true; else return false;
         }
     }
 }

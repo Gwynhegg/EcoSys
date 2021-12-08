@@ -43,6 +43,9 @@
 
   <ItemGroup>
     <Resource Include="Resources\background.png" />
+    <Resource Include="Resources\Letter_E_blue_35023.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Resources\Regions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

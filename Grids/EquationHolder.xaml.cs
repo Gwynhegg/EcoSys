@@ -59,6 +59,14 @@ namespace EcoSys.Grids
             parser.createValuesArray();
         }
 
+        public void clearValues()
+        {
+            parser.answer = null;
+            parser.createValuesArray();
+            equation_panel.Children.Clear();
+            createPlaceholders();
+        }
+
         private void createPlaceholders()
         {
             for (int i = 0; i < parser.monomial.Count; i++)

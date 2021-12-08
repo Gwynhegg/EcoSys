@@ -26,7 +26,7 @@ namespace EcoSys
 
             var grid = new Grids.GreetsGrid();      //добавляем Grid приветственного экрана с отображение подсказок по работе с системой. В дальнейшем данный экран будет скрыт
             Grid.SetColumn(grid, 0);
-            Grid.SetColumnSpan(grid, 2);
+            Grid.SetColumnSpan(grid, 3);
             Grid.SetRow(grid, 1);
             main_grid.Children.Insert(0, grid);
 
@@ -45,7 +45,7 @@ namespace EcoSys
             {
                 case "Settings":
                     if (!alreadyExist<Grids.SettingsGrid>())        //Проверка на существование указанного элемента Grid   
-                        createNewGrid(new Grids.SettingsGrid(data, scenarios, this, auto_launch));       //Если элемента нет - переходим к функции его создания
+                        createNewGrid(new Grids.SettingsGrid(data, this, auto_launch));       //Если элемента нет - переходим к функции его создания
                     break;
                 case "Block1Btn":
                     if (!alreadyExist<Grids.Block1>())
@@ -99,6 +99,10 @@ namespace EcoSys
                     writer.Write("auto_launch=" + ((Grids.SettingsGrid)grid).isAutolaunchActive());
                     writer.Close();
                 }
+
+            data = null;
+            scenarios = null;
+            model = null;
         }
     }
 }

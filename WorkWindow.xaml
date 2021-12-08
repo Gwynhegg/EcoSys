@@ -11,13 +11,14 @@
     </Window.Background>
     <Grid x:Name="main_grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="0.6*"></RowDefinition>
             <RowDefinition Height="20*" MinHeight="600"></RowDefinition>
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="90"></ColumnDefinition>
-            <ColumnDefinition Width="8*" MinWidth="710"></ColumnDefinition>
+            <ColumnDefinition Width="2*" MinWidth="95"></ColumnDefinition>
+            <ColumnDefinition Width="8*" MinWidth="685"></ColumnDefinition>
+            <ColumnDefinition Width="5"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <Expander x:Name="main_menu" Header="" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" MinHeight="500" MinWidth="90" VerticalAlignment="Top" FontSize="20" Background="{x:Null}" FontStyle="Normal" FontWeight="SemiBold">

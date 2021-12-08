@@ -10,21 +10,20 @@
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="10"></RowDefinition>
-            <RowDefinition Height="10*"></RowDefinition>
-            <RowDefinition Height="11*"></RowDefinition>
-            <RowDefinition Height="50*"></RowDefinition>
-            <RowDefinition Height="100*"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="40"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="100"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15"></ColumnDefinition>
             <ColumnDefinition Width="200*"></ColumnDefinition>
-            <ColumnDefinition Width="10*"></ColumnDefinition>
-            <ColumnDefinition Width="40*"></ColumnDefinition>
-            <ColumnDefinition Width="15"></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MinWidth="150"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="used_region_box" Grid.Row="1" Grid.Column="1" SelectionChanged="used_region_box_SelectionChanged"></ComboBox>
-        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="3" Content="Экспорт" IsEnabled="False"></Button>
+        <ComboBox x:Name="used_region_box" Grid.Row="1" Grid.Column="1" SelectionChanged="used_region_box_SelectionChanged" VerticalContentAlignment="Center"></ComboBox>
+        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="3" Content="Экспорт" IsEnabled="False" Click="export_to_exc_Click"></Button>
         <ListView x:Name="equations_list" Grid.Row="3" Grid.Column="1" Grid.RowSpan="2" Visibility="Hidden" ></ListView>
         <Grid x:Name="command_buttons" Grid.Row="3" Grid.Column="3" Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -32,7 +31,7 @@
                 <RowDefinition Height="1*"></RowDefinition>
                 <RowDefinition Height="5*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Button x:Name="clear_fields" Grid.Row="0" Content="Очистить"></Button>
+            <Button x:Name="clear_fields" Grid.Row="0" Content="Очистить" Click="clear_fields_Click"></Button>
             <Button x:Name="finalize_btn" Grid.Row="2" Content="Результат" Click="finalize_btn_Click" IsEnabled="False"></Button>
             <Button x:Name="to_equation" Grid.Row="2" Content="Редактировать" Visibility="Hidden" Click="to_equation_Click"></Button>
         </Grid>

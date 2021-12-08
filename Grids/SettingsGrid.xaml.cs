@@ -15,17 +15,15 @@ namespace EcoSys.Grids
     public partial class SettingsGrid : UserControl, IGrid
     {
         Entities.DataEntity data;
-        Entities.ScenarioEntity scenarios;
         System.Windows.Controls.Primitives.Popup pop;
 
 
         WorkWindow parent_window;
 
-        public SettingsGrid(Entities.DataEntity data, Entities.ScenarioEntity scenarios, WorkWindow parent, bool auto)
+        public SettingsGrid(Entities.DataEntity data, WorkWindow parent, bool auto)
         {
             InitializeComponent();
             this.data = data;
-            this.scenarios = scenarios;
             parent_window = parent;
 
             if (auto) auto_launch.IsChecked = true;
@@ -77,10 +75,11 @@ namespace EcoSys.Grids
 
             if (result == MessageBoxResult.Yes)
             {
+                data = null;
                 WelcomeWindow welcome_window = new WelcomeWindow(true);
                 welcome_window.Show();
-                GC.Collect();
                 parent_window.Close();
+                GC.Collect();
             }
         }
 

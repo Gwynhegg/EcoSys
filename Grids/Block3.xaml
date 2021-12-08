@@ -10,23 +10,20 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"></RowDefinition>
-            <RowDefinition Height="2*" MaxHeight="40"></RowDefinition>
-            <RowDefinition Height="1*" MaxHeight="15"></RowDefinition>
+            <RowDefinition Height="1*" MaxHeight="40"></RowDefinition>
+            <RowDefinition Height="5"></RowDefinition>
             <RowDefinition Height="10*"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="15"></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
             <ColumnDefinition Width="10*"></ColumnDefinition>
-            <ColumnDefinition Width="1*" MaxWidth="15"></ColumnDefinition>
-            <ColumnDefinition Width="7*"></ColumnDefinition>
-            <ColumnDefinition Width="1*" MaxWidth="15"></ColumnDefinition>
-            <ColumnDefinition Width="3*"></ColumnDefinition>
-            <ColumnDefinition Width="15"></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="3*" MaxWidth="150"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="regions_box" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" SelectionChanged="regions_box_SelectionChanged" FontSize="14"></ComboBox>
-        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="5" FontSize="14" Content="Экспорт" Click="export_to_exc_Click"></Button>
-        <DataGrid x:Name="data_grid" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" FontSize="14" Visibility="Hidden" CanUserAddRows="False" CanUserDeleteRows="False"></DataGrid>
+        <ComboBox x:Name="regions_box" Grid.Row="1" Grid.Column="1" SelectionChanged="regions_box_SelectionChanged" FontSize="14" VerticalContentAlignment="Center"></ComboBox>
+        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="3" FontSize="14" Content="Экспорт" Click="export_to_exc_Click"></Button>
+        <DataGrid x:Name="data_grid" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" FontSize="14" Visibility="Hidden" CanUserAddRows="False" CanUserDeleteRows="False"></DataGrid>
 
         <Grid x:Name="loading" Background="White" Opacity="0.9" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5"  Visibility="Hidden">
             <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>

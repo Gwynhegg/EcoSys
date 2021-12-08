@@ -55,13 +55,44 @@ namespace EcoSys.Entities
 
             var choosed_category = categories[category_index];
 
-            foreach (KeyValuePair<(string, string), DataTable> item in conditions)
+            var selective_bundle = conditions.Where(c => c.Key.Item1.Equals(choosed_category));
+            foreach (KeyValuePair<(string, string), DataTable> item in selective_bundle)
                 if (item.Key.Item1.Equals(choosed_category))
                 {
                     result_list.Add(new System.Windows.Controls.Label() { Content = item.Key.Item2 });
 
                     var used_data = item.Value;
 
+                    var segmented_data = used_data.Clone();
+
+                    for (int j = years.Count; j > 0; j--)
+                        segmented_data.ImportRow(used_data.Rows[used_data.Rows.Count - j]);
+
+                    roundDataTable(segmented_data, 3);
+
+                    System.Windows.Controls.DataGrid grid = new System.Windows.Controls.DataGrid() { ItemsSource = segmented_data.AsDataView() };
+                    Auxiliary.GridStandard.standardizeGrid(grid);
+                    result_list.Add(grid);
+
+                    result_list.Add(getGraph(used_data, current_height, current_width));
+                }
+
+            return result_list;
+        }
+
+        public List<object> getCategoriesAndRegionData(int category_index, string current_region, double current_height, double current_width)
+        {
+            var result_list = new List<object>();
+
+            var choosed_category = categories[category_index];
+
+            var selective_bundle = conditions.Where(c => c.Key.Item1.Equals(choosed_category) && c.Key.Item2.Split(". ")[0].Equals(current_region));
+            foreach (KeyValuePair<(string, string), DataTable> item in selective_bundle)
+                if (item.Key.Item1.Equals(choosed_category))
+                {
+                    result_list.Add(new System.Windows.Controls.Label() { Content = item.Key.Item2 });
+
+                    DataTable used_data = item.Value;
                     var segmented_data = used_data.Clone();
 
                     for (int j = years.Count; j > 0; j--)
@@ -222,7 +253,7 @@ namespace EcoSys.Entities
                     if (table.Rows[index].Field<string>(current_column) != null)
                     {
                         string region = text_info.ToTitleCase(table.Rows[index].Field<string>(current_column).ToLower());
-                        string sub_condition = region + "." + table.Rows[index + 1].Field<string>(current_column);
+                        string sub_condition = region + ". " + table.Rows[index + 1].Field<string>(current_column);
                         conditions.Add((condition_name, sub_condition), pickConditions(table, index + 1, current_column));
                         Console.WriteLine();
                     }
@@ -287,7 +318,7 @@ namespace EcoSys.Entities
             result_table.Columns.Add(data_col);
 
 
-            for (int i = 2; i < 6; i++)
+            for (int i = 2; i < 7; i++)
             {
                 data_col = new DataColumn();
                 data_col.ColumnName = columns[i];

@@ -1,7 +1,6 @@
 ﻿using ExcelDataReader;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -344,6 +343,13 @@ namespace EcoSys
         private void SecondIsOK_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SecondIsOK.Visibility = Visibility.Hidden;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            data_entity = null;
+            scenario_entity = null;
+            model_entity = null;
         }
 
         private void ThirdIsOK_MouseDown(object sender, MouseButtonEventArgs e)
