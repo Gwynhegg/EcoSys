@@ -1,8 +1,9 @@
-﻿using System.Windows.Media;
+﻿using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace EcoSys.Auxiliary
 {
-    public static class GridStandard
+    public class GridStandard
     {
         public static void standardizeGrid(System.Windows.Controls.DataGrid grid)
         {

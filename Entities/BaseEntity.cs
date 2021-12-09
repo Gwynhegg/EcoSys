@@ -62,14 +62,14 @@ namespace EcoSys.Entities
             return result_table;
         }
 
-        private protected void roundDataTable(DataTable table, int num_of_symb)      //Метод для задания количества знаков после запятой
+        private protected void roundDataTable(DataTable table)      //Метод для задания количества знаков после запятой
         {
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 for (int j = 1; j < table.Columns.Count; j++)
                 {
                     if (table.Rows[i].Field<double?>(j) != null)
-                        table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), num_of_symb));
+                        table.Rows[i].SetField<double>(j, Math.Round(table.Rows[i].Field<double>(j), Auxiliary.GlobalSettings.getSettings().decimal_places));
                 }
             }
         }
@@ -124,6 +124,7 @@ namespace EcoSys.Entities
 
         private protected object sumValues(double? first, double? second)
         {
+            if (first == null && second == null) return null;
             if (first == null)
                 first = 0;
 

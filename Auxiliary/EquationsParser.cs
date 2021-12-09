@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EcoSys.Entities
+namespace EcoSys.Auxiliary
 {
     public static class EasyEquationParser
     {

@@ -25,7 +25,7 @@ namespace EcoSys.Entities
                     result_table = summarizeDataTables(result_table, this.balance[(region, year)]);
             }
 
-            roundDataTable(result_table, 2);
+            roundDataTable(result_table);
 
             return result_table;
         }
@@ -44,7 +44,7 @@ namespace EcoSys.Entities
                 }
             }
 
-            roundDataTable(result_table, 2);
+            roundDataTable(result_table);
 
             return result_table;
         }
@@ -60,7 +60,7 @@ namespace EcoSys.Entities
                     result_table = summarizeDataTables(result_table, this.passive[(region, year)]);
             }
 
-            roundDataTable(result_table, 2);
+            roundDataTable(result_table);
 
             return result_table;
         }
@@ -79,7 +79,7 @@ namespace EcoSys.Entities
                 }
             }
 
-            roundDataTable(result_table, 2);
+            roundDataTable(result_table);
 
             return result_table;
         }
@@ -95,7 +95,7 @@ namespace EcoSys.Entities
                     result_table = summarizeDataTables(result_table, this.active[(region, year)]);
             }
 
-            roundDataTable(result_table, 2);
+            roundDataTable(result_table);
 
             return result_table;
         }
@@ -114,7 +114,7 @@ namespace EcoSys.Entities
                 }
             }
 
-            roundDataTable(result_table, 2);
+            roundDataTable(result_table);
 
             return result_table;
         }

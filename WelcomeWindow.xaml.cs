@@ -180,7 +180,7 @@ namespace EcoSys
         /// <param name="file_path">Путь к Json-файлу</param>
         private void importingJsonData(string file_path)      //Десериализация json-файла
         {
-            System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //ИСпользование кастомного конвертера
+            System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Auxiliary.TupleConverter<string, string>)));        //ИСпользование кастомного конвертера
             try
             {
                 data_entity = JsonConvert.DeserializeObject<Entities.DataEntity>(File.ReadAllText(file_path));        //Десериализуем Json-объект

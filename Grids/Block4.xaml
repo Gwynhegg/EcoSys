@@ -22,13 +22,15 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15"></ColumnDefinition>
-            <ColumnDefinition Width="368*" MinWidth="300"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MinWidth="400" MaxWidth="1000"></ColumnDefinition>
             <ColumnDefinition Width="10"></ColumnDefinition>
-            <ColumnDefinition Width="150*" MinWidth="150"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MinWidth="200" MaxWidth="300"></ColumnDefinition>
             <ColumnDefinition Width="10"></ColumnDefinition>
-            <ColumnDefinition Width="71*" MaxWidth="100"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MinWidth="30" MaxWidth="30"></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MinWidth="100"  MaxWidth="100"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Grid x:Name="command_buttons" Grid.Column="5" Grid.Row="3" Grid.RowSpan="3" Visibility="Hidden">
+        <Grid x:Name="command_buttons" Grid.Column="7" Grid.Row="3" Grid.RowSpan="3" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"></RowDefinition>
                 <RowDefinition Height="5"></RowDefinition>
@@ -41,17 +43,18 @@
             <Button x:Name="clear_grids"  Grid.Row="2" Content="Очистить" IsEnabled="True" Click="clear_grids_Click"></Button>
             <Button x:Name="show_final" Grid.Row="4" Content="Результат" IsEnabled="False" Click="show_final_Click"></Button>
         </Grid>
-        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="5" Grid.Row ="1" FontSize="14" IsEnabled="False" Click="export_to_exc_Click"></Button>
+        <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="7" Grid.Row ="1" FontSize="14" IsEnabled="False" Click="export_to_exc_Click"></Button>
         <ComboBox x:Name="regions_box" Grid.Row="1" Grid.Column="1" Text="Нажмите для выбора категорий..." SelectionChanged="regions_box_SelectionChanged" VerticalContentAlignment="Center"></ComboBox>
         <ComboBox x:Name="years_box" Grid.Row="1" Grid.Column="3" Text="Нажмите для выбора года..." SelectionChanged="years_box_SelectionChanged" VerticalContentAlignment="Center"></ComboBox>
-        <Grid x:Name="graphs_grid" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="4" Visibility="Hidden">
+        <Image x:Name="InfoButton" Source="/Resources/info.png" Grid.Row="1" Grid.Column="5" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" MouseDown="InfoButton_MouseDown" MouseLeave="InfoButton_MouseLeave"></Image>
+        <Grid x:Name="graphs_grid" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="5" Grid.RowSpan="4" Visibility="Hidden">
             <ListView x:Name="graphs_list" Grid.Row="0" Grid.Column="0"></ListView>
         </Grid>
-        <Expander x:Name="DropDownDataGrid" FontSize="16" FontWeight="DemiBold"  IsExpanded="True" Visibility="Hidden" Grid.Row="3" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="3" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" ExpandDirection="Down" Expanded="DropDownDataGrid_Expanded" Collapsed="DropDownDataGrid_Collapsed">
+        <Expander x:Name="DropDownDataGrid" FontSize="16" FontWeight="DemiBold"  IsExpanded="True" Visibility="Hidden" Grid.Row="3" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="5" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" ExpandDirection="Down" Expanded="DropDownDataGrid_Expanded" Collapsed="DropDownDataGrid_Collapsed">
             <DataGrid x:Name="scenarios_grid" FontSize="12" FontWeight="Normal" Visibility="Visible" SelectionChanged="scenarios_grid_SelectionChanged"></DataGrid>
         </Expander>
-        <DataGrid x:Name="final_grid" Visibility="Hidden" Grid.Row="3" Grid.Column="1" Grid.RowSpan="6" Grid.ColumnSpan="3"></DataGrid>
-        <Grid x:Name="loading" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="3" Grid.RowSpan="6">
+        <DataGrid x:Name="final_grid" Visibility="Hidden" Grid.Row="3" Grid.Column="1" Grid.RowSpan="6" Grid.ColumnSpan="5"></DataGrid>
+        <Grid x:Name="loading" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="3" Grid.RowSpan="6">
             <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
         </Grid>
     </Grid>

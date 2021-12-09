@@ -20,12 +20,15 @@
             <ColumnDefinition Width="15"></ColumnDefinition>
             <ColumnDefinition Width="200*"></ColumnDefinition>
             <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="1*" MinWidth="30" MaxWidth="30"></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
             <ColumnDefinition Width="1*" MinWidth="150"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <ComboBox x:Name="used_region_box" Grid.Row="1" Grid.Column="1" SelectionChanged="used_region_box_SelectionChanged" VerticalContentAlignment="Center"></ComboBox>
-        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="3" Content="Экспорт" IsEnabled="False" Click="export_to_exc_Click"></Button>
-        <ListView x:Name="equations_list" Grid.Row="3" Grid.Column="1" Grid.RowSpan="2" Visibility="Hidden" ></ListView>
-        <Grid x:Name="command_buttons" Grid.Row="3" Grid.Column="3" Visibility="Hidden">
+        <Button x:Name="export_to_exc" Grid.Row="1" Grid.Column="5" Content="Экспорт" IsEnabled="False" Click="export_to_exc_Click"></Button>
+        <Image x:Name="InfoButton" Source="/Resources/info.png" Grid.Row="1" Grid.Column="3" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" MouseDown="InfoButton_MouseDown" MouseLeave="InfoButton_MouseLeave"></Image>
+        <ListView x:Name="equations_list" Grid.Row="3" Grid.Column="1" Grid.RowSpan="2" Visibility="Hidden" Grid.ColumnSpan="3" ></ListView>
+        <Grid x:Name="command_buttons" Grid.Row="3" Grid.Column="5" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*"></RowDefinition>
                 <RowDefinition Height="1*"></RowDefinition>
@@ -36,8 +39,8 @@
             <Button x:Name="to_equation" Grid.Row="2" Content="Редактировать" Visibility="Hidden" Click="to_equation_Click"></Button>
         </Grid>
 
-        <DataGrid x:Name="final_grid" Grid.Row="3" Grid.RowSpan="2" Grid.Column="1" Visibility="Hidden"></DataGrid>
-        <Grid x:Name="loading" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="1" Grid.Row="3" Grid.RowSpan="2">
+        <DataGrid x:Name="final_grid" Grid.Row="3" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="3" Visibility="Hidden"></DataGrid>
+        <Grid x:Name="loading" Background="White" Opacity="0.9" Visibility="Hidden" Grid.Column="1" Grid.Row="3" Grid.RowSpan="2" Grid.ColumnSpan="3">
             <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
         </Grid>
     </Grid>

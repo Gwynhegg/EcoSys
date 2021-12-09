@@ -27,7 +27,7 @@ namespace EcoSys.Entities
                     var equation = model.Rows[i].Field<string>(j);
                     if (equation != null && values[i] != null && !equation.Equals(String.Empty))
                     {
-                        var temp = Math.Round((EasyEquationParser.getRatioFromString(equation) * (double)values[i]), 3).ToString();     //Использование парсера для выделения коэффицентов уравнения блока 4
+                        var temp = Math.Round((Auxiliary.EasyEquationParser.getRatioFromString(equation) * (double)values[i]), Auxiliary.GlobalSettings.getSettings().decimal_places).ToString();     //Использование парсера для выделения коэффицентов уравнения блока 4
                         if (temp.Equals("-0"))
                             row[j] = "0";
                         else

@@ -19,6 +19,7 @@ namespace EcoSys.Grids
         private DataTable final_table = null;
         private List<object> response_bundle = null;
         private int current_step = 0;
+        private System.Windows.Controls.Primitives.Popup pop;
 
         public Block4(Entities.ScenarioEntity scenarios, Dictionary<string, List<string>> regions)
         {
@@ -26,6 +27,9 @@ namespace EcoSys.Grids
 
             this.scenarios = scenarios;
             this.regions = regions;
+            createPopUp();
+            Auxiliary.ContextMenuCreator.createContextMenu(scenarios_grid);
+            Auxiliary.ContextMenuCreator.createContextMenu(final_grid);
 
             getAllRegions();
             getYears();
@@ -206,7 +210,7 @@ namespace EcoSys.Grids
                     throw new ArgumentNullException();
 
                 loading.Visibility = Visibility.Visible;
-                await Task.Run(() => this.Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(final_table, regions_box.Text)));
+                await Task.Run(() => this.Dispatcher.Invoke(() => Auxiliary.ExcelRecorder.writeToExcel(final_table, regions_box.Text)));
 
             }
             catch (ArgumentNullException)
@@ -237,10 +241,25 @@ namespace EcoSys.Grids
         public void hideGrid() => this.Visibility = Visibility.Hidden;
         public void showGrid() => this.Visibility = Visibility.Visible;
 
-
-
-
-
-
+        private void createPopUp()
+        {
+            var text = "\n  - Для выбора региона и года, на который рассчитан прогноз, выберите их с помощью элементов слева  \n" +
+                "  - После выбора параметров появится таблица, содержащая значения показателей в соответствии с различными сценариями \n" +
+                "  - Ниже будет представлены графики сценарных условий, разделенные по категориям \n" +
+                "  - Если Вы захотите рассмотреть графики внимательнее, то всегда можете нажать стрелку в левом углу таблицы для ее скрытия \n" +
+                "  - Для перехода к следующим сценарным условиям нужно выбрать один из сценариев в текущей таблице, после чего нажать кнопку \"Далее\" \n" +
+                "  - Во время заполнения у вас есть возможность оборвать процесс и начать заполнение таблиц заново с помощью кнопки \"Очистить\" \n" +
+                "  - По завершению заполнения последней категории и нажатию на кнопку \"Результат\" отобразится таблица, содержащая значения выбранных вами сценариев с их указанием \n" +
+                "  - Вы можете выгрузить таблицу в Excel, нажав кнопку \"Экспорт\" \n";
+            pop = Auxiliary.PopUpCreator.getPopUp(text);
+        }
+        private void InfoButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            pop.IsOpen = true;
+        }
+        private void InfoButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            pop.IsOpen = false;
+        }
     }
 }

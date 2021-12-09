@@ -52,7 +52,7 @@ namespace EcoSys.Grids
                 {
                     var writer = File.CreateText(save_filedialog.FileName);
 
-                    System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Entities.TupleConverter<string, string>)));        //использование кастомного конвертера
+                    System.ComponentModel.TypeDescriptor.AddAttributes(typeof((string, string)), new System.ComponentModel.TypeConverterAttribute(typeof(Auxiliary.TupleConverter<string, string>)));        //использование кастомного конвертера
 
                     writer.Write(JsonConvert.SerializeObject(data));        //Сериализуем объект с помощью Newtonsoft
                     writer.Close();
@@ -97,5 +97,11 @@ namespace EcoSys.Grids
         private void Hyperlink_MouseLeave(object sender, MouseEventArgs e) => pop.IsOpen = false;
         public void hideGrid() => this.Visibility = Visibility.Hidden;
         public void showGrid() => this.Visibility = Visibility.Visible;
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            SliderValue.Content = "Количество знаков после запятой = " + (int)Slider.Value;
+            Auxiliary.GlobalSettings.getSettings().decimal_places = (int)Slider.Value;
+        }
     }
 }

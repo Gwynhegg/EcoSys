@@ -38,7 +38,7 @@ namespace EcoSys.Entities
                 }
                 result_table.Rows.Add(row);
             }
-            roundDataTable(result_table, 2);
+            roundDataTable(result_table);
 
             return result_table;
         }
@@ -72,7 +72,7 @@ namespace EcoSys.Entities
                         segmented_data.ImportRow(used_data.Rows[used_data.Rows.Count - j]);
                     }
 
-                    roundDataTable(segmented_data, 3);
+                    roundDataTable(segmented_data);
 
                     System.Windows.Controls.DataGrid grid = new System.Windows.Controls.DataGrid() { ItemsSource = segmented_data.AsDataView() };
                     Auxiliary.GridStandard.standardizeGrid(grid);
@@ -106,7 +106,7 @@ namespace EcoSys.Entities
                         segmented_data.ImportRow(used_data.Rows[used_data.Rows.Count - j]);
                     }
 
-                    roundDataTable(segmented_data, 2);
+                    roundDataTable(segmented_data);
 
                     System.Windows.Controls.DataGrid grid = new System.Windows.Controls.DataGrid() { ItemsSource = segmented_data.AsDataView() };
                     Auxiliary.GridStandard.standardizeGrid(grid);

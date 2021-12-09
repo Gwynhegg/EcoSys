@@ -12,7 +12,7 @@ namespace EcoSys.Grids
     public partial class EquationHolder : UserControl
     {
         private readonly Block5 parent_block;
-        public Entities.EquationsParser parser { get; } = new Entities.EquationsParser();
+        public Auxiliary.EquationsParser parser { get; } = new Auxiliary.EquationsParser();
         private readonly List<string> tips = new List<string>();
         public EquationHolder(Block5 parent, string category, string equation, List<string> tips)
         {

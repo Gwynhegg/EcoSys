@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace EcoSys.Grids
 {
@@ -18,6 +19,7 @@ namespace EcoSys.Grids
         private readonly Entities.DataEntity data;
         private DataTable current_table = null;
         private readonly Dictionary<string, List<string>> regions;
+        private System.Windows.Controls.Primitives.Popup pop;
 
         public Block2(Entities.DataEntity data, Dictionary<string, List<string>> regions)
         {
@@ -25,9 +27,12 @@ namespace EcoSys.Grids
             this.data = data;
             region_query = new HashSet<string>();
             this.regions = regions;
+            createPopUp();
+            Auxiliary.ContextMenuCreator.createContextMenu(data_field);
 
             getAllRegions();
             getYears();
+
         }
         ~Block2()
         {
@@ -175,7 +180,7 @@ namespace EcoSys.Grids
                 if (result == MessageBoxResult.No)
                 {
                     loading.Visibility = Visibility.Visible;
-                    await Task.Run(() => this.Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(current_table, region_query, year_choose.Text, matrix_type.Text)));
+                    await Task.Run(() => this.Dispatcher.Invoke(() => Auxiliary.ExcelRecorder.writeToExcel(current_table, region_query, year_choose.Text, matrix_type.Text)));
                 }
                 else if (result == MessageBoxResult.Yes)
                 {
@@ -186,7 +191,7 @@ namespace EcoSys.Grids
                     loading.Visibility = Visibility.Visible;
                     await Task.Run(() => output_tables = new List<DataTable>() { data.getPassiveData(region_query, selected_year), data.getActiveData(region_query, selected_year), data.getBalanceData(region_query, selected_year) });
 
-                    await Task.Run(() => this.Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(output_tables, region_query, year_choose.Text)));
+                    await Task.Run(() => this.Dispatcher.Invoke(() => Auxiliary.ExcelRecorder.writeToExcel(output_tables, region_query, year_choose.Text)));
                 }
                 else
                     return;
@@ -218,5 +223,24 @@ namespace EcoSys.Grids
         }
         public void hideGrid() => this.Visibility = Visibility.Hidden;
         public void showGrid() => this.Visibility = Visibility.Visible;
+        private void createPopUp()
+        {
+            pop = new System.Windows.Controls.Primitives.Popup();
+            var text = "\n  - Для выбора нужного региона нажмите на кнопку \"Показать\", а затем выделить интересующие регионы  \n" +
+                "  - Поля снизу предназначены для выбора интересующего вас года и типа матрицы \n" +
+                "  - После заполнения всех полей будет построена таблица, содержащая интегрированные данные за указанный период \n" +
+                "  - С помощью кнопки \"Экспорт\" вы можете создать Excel-файл, содержащий полученную таблицу \n";
+            pop = Auxiliary.PopUpCreator.getPopUp(text);
+        }
+        private void InfoButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            pop.IsOpen = true;
+        }
+        private void InfoButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            pop.IsOpen = false;
+        }
     }
+
+
 }

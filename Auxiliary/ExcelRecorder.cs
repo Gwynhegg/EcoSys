@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Windows;
 
-namespace EcoSys.Entities
+namespace EcoSys.Auxiliary
 {
     public static class ExcelRecorder
     {

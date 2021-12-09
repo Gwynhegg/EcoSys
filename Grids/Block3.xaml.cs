@@ -13,15 +13,17 @@ namespace EcoSys.Grids
     {
         private readonly Entities.ScenarioEntity scenarios_entity;
         private DataTable current_table = null;
+        private System.Windows.Controls.Primitives.Popup pop;
+
 
         public Block3(Entities.ScenarioEntity scenarios)
         {
             InitializeComponent();
-
             scenarios_entity = scenarios;
+            createPopUp();
+            Auxiliary.ContextMenuCreator.createContextMenu(data_grid);
 
             getAllRegions();
-
         }
         ~Block3()
         {
@@ -57,7 +59,7 @@ namespace EcoSys.Grids
                     throw new ArgumentNullException();
 
                 loading.Visibility = Visibility.Visible;
-                await Task.Run(() => this.Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(current_table, regions_box.Text)));
+                await Task.Run(() => this.Dispatcher.Invoke(() => Auxiliary.ExcelRecorder.writeToExcel(current_table, regions_box.Text)));
             }
             catch (ArgumentNullException)
             {
@@ -78,5 +80,21 @@ namespace EcoSys.Grids
         }
         public void hideGrid() => this.Visibility = Visibility.Hidden;
         public void showGrid() => this.Visibility = Visibility.Visible;
+
+        private void createPopUp()
+        {
+            var text = "\n  - Для просмотра модели необходимого региона нажмите на элемент слева и выберите регион  \n" +
+                "  - После этого снизу появится таблица, отображающая выбранную модель \n" +
+                "  - С помощью кнопки \"Экспорт\" вы можете создать Excel-файл, содержащий полученную таблицу \n";
+            pop = Auxiliary.PopUpCreator.getPopUp(text);
+        }
+        private void InfoButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            pop.IsOpen = true;
+        }
+        private void InfoButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            pop.IsOpen = false;
+        }
     }
 }

@@ -15,11 +15,16 @@ namespace EcoSys.Grids
         private readonly Entities.ModelEntity model;
         private readonly Entities.ScenarioEntity scenario;
         private DataTable final_table = null;
+        private System.Windows.Controls.Primitives.Popup pop;
+
         public Block5(Entities.ModelEntity model, Entities.ScenarioEntity scenario)
         {
             InitializeComponent();
             this.model = model;
             this.scenario = scenario;
+            createPopUp();
+            Auxiliary.ContextMenuCreator.createContextMenu(final_grid);
+
             getRegions();
         }
         private void getRegions()
@@ -105,6 +110,7 @@ namespace EcoSys.Grids
         {
             to_equation.Visibility = Visibility.Hidden;
             final_grid.Visibility = Visibility.Hidden;
+            finalize_btn.IsEnabled = false;
             equations_list.Visibility = Visibility.Visible;
             for (int i = 0; i < equations_list.Items.Count; i++)
             {
@@ -121,7 +127,7 @@ namespace EcoSys.Grids
                 }
 
                 loading.Visibility = Visibility.Visible;
-                await Task.Run(() => this.Dispatcher.Invoke(() => Entities.ExcelRecorder.writeToExcel(final_table, used_region_box.Text)));
+                await Task.Run(() => this.Dispatcher.Invoke(() => Auxiliary.ExcelRecorder.writeToExcel(final_table, used_region_box.Text)));
             }
             catch (ArgumentNullException)
             {
@@ -146,5 +152,25 @@ namespace EcoSys.Grids
         }
         public void hideGrid() => this.Visibility = Visibility.Hidden;
         public void showGrid() => this.Visibility = Visibility.Visible;
+        private void createPopUp()
+        {
+            var text = "\n  - Для выбора региона, для которого будет высчитываться регрессия, воспользуйтесь элементом слева  \n" +
+                "  - После выбора региона снизу отобразиться список уравнений, сгруппированный по категориям \n" +
+                "  - Необходимые значения можно ввести в обозначенные именами переменных поля. При наведении на поле будет отображена короткая справка относительно переменной \n" +
+                "  - При условии, что все переменные в уравнении указаны, будет вычислено результирующее значение, которое сразу отобразится на экране \n" +
+                "  - По заполнению всех представленных уравнений Вы можете воспользоваться кнопкой \"Результат\" для формирования результирующей таблицы \n" +
+                "  - В таком случае будет вызвана соответствующая сценарная модель региона, в которую будут подставлены вычисленные значения \n" +
+                "  - Также Вы можете воспользоваться кнопками \"Очистить\" и \"редактировать\", чтобы внести корректировки в вычисляемые значения \n" +
+                "  - Вы можете выгрузить таблицу в Excel, нажав кнопку \"Экспорт\" \n";
+            pop = Auxiliary.PopUpCreator.getPopUp(text);
+        }
+        private void InfoButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            pop.IsOpen = true;
+        }
+        private void InfoButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            pop.IsOpen = false;
+        }
     }
 }
