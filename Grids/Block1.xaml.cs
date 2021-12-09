@@ -48,6 +48,10 @@ namespace EcoSys.Grids
 
                 constitution.IsExpanded = true;
 
+                CheckBox select_all = new CheckBox() { Content = "Выбрать все" };
+                select_all.Checked += checkAll;
+                select_all.Unchecked += checkAll;
+                constitution.Items.Add(select_all);
                 foreach (string region in pair.Value)       //Для каждого региона из данного округа...
                 {
                     CheckBox cb = new CheckBox
@@ -145,6 +149,18 @@ namespace EcoSys.Grids
                     Console.WriteLine("Произошла ошибка. Элемент уже находится в наборе.");
                 }
             }
+
+            TreeViewItem tree_ancestor = (sender as CheckBox).Parent as TreeViewItem;
+        }
+        private void checkAll(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem tree_ancestor = (sender as CheckBox).Parent as TreeViewItem;
+            if ((sender as CheckBox).IsChecked == true)
+                for (int i = 1; i < tree_ancestor.Items.Count; i++)
+                    (tree_ancestor.Items[i] as CheckBox).IsChecked = true;
+            else
+                for (int i = 1; i < tree_ancestor.Items.Count; i++)
+                    (tree_ancestor.Items[i] as CheckBox).IsChecked = false;
         }
         private async void matrix_type_SelectionChanged(object sender, SelectionChangedEventArgs e)       //Было принято решение о динамической загрузке таблицы
         {

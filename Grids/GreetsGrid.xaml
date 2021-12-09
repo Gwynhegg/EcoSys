@@ -13,7 +13,7 @@
             <ColumnDefinition Width="1*" MaxWidth="50"></ColumnDefinition>
 
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" FontStretch="Normal" FontSize="18" LineStackingStrategy="MaxHeight" TextAlignment="Justify" FontStyle="Normal" FontWeight="DemiBold" Margin="0,0,0,0" IsManipulationEnabled="True" Padding="10,0,10,0">
+        <TextBlock Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="WrapWithOverflow" FontStretch="Normal" FontSize="18" LineStackingStrategy="MaxHeight" TextAlignment="Left" FontStyle="Normal" FontWeight="DemiBold" Margin="0,0,0,0" IsManipulationEnabled="True" Padding="10,0,10,0">
             Добро пожаловать! Данное краткое руководство позволит вам ознакомиться с функционалом программы.
             <LineBreak></LineBreak>
             <LineBreak></LineBreak>

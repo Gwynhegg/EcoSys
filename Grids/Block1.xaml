@@ -30,7 +30,7 @@
         </Grid.ColumnDefinitions>
         <Button x:Name ="show_hide" Content="Показать" Grid.Column="7" Grid.Row="1" Click="Button_Click" FontSize="14"/>
         <Button x:Name="export_to_exc" Content="Экспорт" Grid.Column="7" Grid.Row ="3" Click="export_to_exc_Click" FontSize="14"></Button>
-        <ComboBox x:Name="year_choose" Grid.Column="1" Grid.Row="3"  Text="Выберите год..." SelectionChanged="year_choose_SelectionChanged" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" FontSize="14"/>
+        <ComboBox x:Name="year_choose" Grid.Column="1" Grid.Row="3"  Text="Выберите год..." SelectionChanged="year_choose_SelectionChanged" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14"/>
         <ComboBox x:Name="matrix_type" Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" SelectionChanged="matrix_type_SelectionChanged" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" FontSize="14">
             <ComboBoxItem Content="Пассивная часть матрицы движения банковского капитала между секторами" ToolTip="Матрица формирования инвестиционного потенциала банковского сектора экономики " ></ComboBoxItem>
             <ComboBoxItem Content="Активная часть матрицы движения банковского капитала между секторами" ToolTip="Матрица использования инвестиционного потенциала банковского сектора экономики " ></ComboBoxItem>
@@ -41,7 +41,7 @@
         <Grid x:Name="loading" Background="White" Opacity="0.9" Grid.Column="1" Grid.Row="5" Grid.RowSpan="2" Grid.ColumnSpan="7"  Visibility="Hidden">
         <Image gif:ImageBehavior.AnimatedSource="/Resources/loading.gif" Stretch="None" OverridesDefaultStyle="True" Opacity="1"></Image>
     </Grid>
-    <TextBox x:Name="regions_text" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5" Text="Нажмите на кнопку справа для выбора регионов..." TextWrapping="Wrap" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="False" TextChanged="regions_text_TextChanged" />
+    <TextBox x:Name="regions_text" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5" Text="Нажмите на кнопку справа для выбора регионов..." TextWrapping="WrapWithOverflow" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TextChanged="regions_text_TextChanged" IsReadOnly="True" VerticalScrollBarVisibility="Auto" />
         <Image x:Name="InfoButton" Source="/Resources/info.png" Grid.Row="3" Grid.Column="5" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" MouseDown="InfoButton_MouseDown" MouseLeave="InfoButton_MouseLeave"></Image>
         <Grid x:Name="region_grid" Visibility="Hidden" Grid.ColumnSpan="4" Grid.Column="3" Grid.Row="1" Grid.RowSpan="6" Background="#FF747474">
             <Grid.RowDefinitions>

@@ -24,7 +24,7 @@
             <ColumnDefinition Width="3*" MaxWidth="800"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Button x:Name="JSONButton" Content="Создать JSON-файл для файла МДФП" Grid.Row="1" Grid.Column="1" Click="JSONButton_Click" FontSize="10"/>
+        <Button x:Name="JSONButton" Content="Создать JSON-файл для файла МДФП" Grid.Row="1" Grid.Column="1" Click="JSONButton_Click" FontSize="16"/>
         <Button x:Name="BackToChoose" Content="На экран выбора файла" Grid.Row="3" Grid.Column="1" Click="BackToChoose_Click" FontSize="16"/>
         <Border BorderThickness="1,1,1,3" BorderBrush="Black" Grid.Column="1" Grid.Row="5"/>
         <Grid Grid.Row="7" Grid.Column="1">
@@ -34,7 +34,7 @@
                 <ColumnDefinition Width="1*" MaxWidth="150"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Label x:Name="SliderValue" Content="Количество знаков после запятой = " VerticalContentAlignment="Center" FontSize="16"></Label>
+            <Label x:Name="SliderValue" Content="Количество знаков после запятой = " VerticalContentAlignment="Center" FontSize="16" HorizontalContentAlignment="Center"></Label>
             <Slider x:Name="Slider" Grid.Column="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" VerticalAlignment="Center" Value="2" Minimum="1" HorizontalAlignment="Stretch" FontSize="16" ValueChanged="Slider_ValueChanged" SmallChange="1"></Slider>
         </Grid>
         <Border BorderThickness="1,1,1,3" BorderBrush="Black" Grid.Column="1" Grid.Row="7"/>
